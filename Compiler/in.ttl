@@ -1,0 +1,291 @@
+@base <http://www.vstu.ru/poas/code> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# input: (x + y) / (x * y) - x[i + j]
+
+# --------- Классы ---------
+
+<#operator>
+	a <#element> .
+	
+<#operand>
+	a <#element> ;
+	<#tokenCount> "1"^^xsd:integer .
+
+<#parenthesis>
+	a <#element> ;
+	<#tokenCount> "2"^^xsd:integer .
+
+<#plus>
+	a <#operator> ;
+	<#tokenCount> "1"^^xsd:integer ;
+    <#arity> <#binary> ;
+    <#place> <#infix> ;
+	<#precedence> "4"^^xsd:integer ;
+	<#associativity> <#left> ;
+	<#strictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand> "true"^^xsd:boolean ;
+    <#needsRightOperand> "true"^^xsd:boolean ;
+	<#needsInnerOperand> "false"^^xsd:boolean .
+
+<#minus>
+	a <#operator> ;
+	<#tokenCount> "1"^^xsd:integer ;
+    <#arity> <#binary> ;
+    <#place> <#infix> ;
+	<#precedence> "4"^^xsd:integer ;
+	<#associativity> <#left> ;
+	<#strictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand> "true"^^xsd:boolean ;
+    <#needsRightOperand> "true"^^xsd:boolean ;
+	<#needsInnerOperand> "false"^^xsd:boolean .
+
+<#multiplication>
+	a <#operator> ;
+	<#tokenCount> "1"^^xsd:integer ;
+    <#arity> <#binary> ;
+    <#place> <#infix> ;
+	<#precedence> "3"^^xsd:integer ;
+	<#associativity> <#left> ;
+	<#strictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand> "true"^^xsd:boolean ;
+    <#needsRightOperand> "true"^^xsd:boolean ;
+	<#needsInnerOperand> "false"^^xsd:boolean .
+
+<#division>
+	a <#operator> ;
+	<#tokenCount> "1"^^xsd:integer ;
+    <#arity> <#binary> ;
+    <#place> <#infix> ;
+	<#precedence> "3"^^xsd:integer ;
+	<#associativity> <#left> ;
+	<#strictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand> "true"^^xsd:boolean ;
+    <#needsRightOperand> "true"^^xsd:boolean ;
+	<#needsInnerOperand> "false"^^xsd:boolean .
+
+<#squareParenthesis>
+	a <#operator> ;
+	<#tokenCount> "2"^^xsd:integer ;
+    <#arity> <#binary> ;
+    <#place> <#around> ;
+	<#precedence> "1"^^xsd:integer ;
+	<#associativity> <#left> ;
+	<#strictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand> "true"^^xsd:boolean ;
+    <#needsRightOperand> "false"^^xsd:boolean ;
+	<#needsInnerOperand> "true"^^xsd:boolean .
+
+# --------- Элементы ---------
+
+<#element_parenthesis_1>
+    a <#parenthesis> ;
+	<#number> "1"^^xsd:integer ; 
+    <#hasToken> <#token_1_1> ;
+	<#hasToken> <#token_1_2> .
+
+<#element_x_2>
+    a <#operand> ;
+	<#number> "2"^^xsd:integer ; 
+	<#state> <#evaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_2> .
+
+<#element_plus_3>
+    a <#plus> ;
+	<#number> "3"^^xsd:integer ; 
+	<#state> <#unevaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_3> .
+
+<#element_y_4>
+    a <#operand> ;
+	<#number> "4"^^xsd:integer ; 
+	<#state> <#evaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_4> .
+
+<#element_division_5>
+    a <#division> ;
+	<#number> "5"^^xsd:integer ; 
+	<#state> <#unevaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_5> .
+
+<#element_parenthesis_6>
+    a <#parenthesis> ;
+	<#number> "6"^^xsd:integer ; 
+    <#hasToken> <#token_6_1> ;
+	<#hasToken> <#token_6_2> .
+
+<#element_x_7>
+    a <#operand> ;
+	<#number> "7"^^xsd:integer ; 
+	<#state> <#evaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_7> .
+
+<#element_multiplication_8>
+    a <#multiplication> ;
+	<#number> "8"^^xsd:integer ; 
+	<#state> <#unevaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_8> .
+
+<#element_y_9>
+    a <#operand> ;
+	<#number> "9"^^xsd:integer ; 
+	<#state> <#evaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_9> .
+
+<#element_minus_10>
+    a <#minus> ;
+	<#number> "10"^^xsd:integer ; 
+	<#state> <#unevaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_10> .
+
+<#element_x_11>
+    a <#operand> ;
+	<#number> "11"^^xsd:integer ; 
+	<#state> <#evaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_11> .
+
+<#element_squareParenthesis_12>
+    a <#squareParenthesis> ;
+	<#number> "12"^^xsd:integer ; 
+	<#state> <#unevaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_12_1> ;
+	<#hasToken> <#token_12_2> .
+
+<#element_i_13>
+    a <#operand> ;
+	<#number> "13"^^xsd:integer ; 
+	<#state> <#evaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_13> .
+	
+<#element_plus_14>
+    a <#plus> ;
+	<#number> "14"^^xsd:integer ; 
+	<#state> <#unevaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_14> .
+	
+<#element_j_15>
+    a <#operand> ;
+	<#number> "15"^^xsd:integer ; 
+	<#state> <#evaluated> ;
+    <#evaluatesTo> <#none> ;
+	<#hasToken> <#token_15> .
+
+# --------- Токены ---------
+
+<#token_1_1>
+	a <#token> ;
+	<#isTokenOf> <#element_parenthesis_1> ;
+    <#leftOf> <#token_2> .
+
+<#token_1_2>
+	a <#token> ;
+	<#isTokenOf> <#element_parenthesis_1> ;
+	<#leftOf> <#token_5> ;
+    <#rightOf> <#token_4> .
+
+<#token_2>
+	a <#token> ;
+	<#isTokenOf> <#element_x_2> ;
+	<#leftOf> <#token_3> ;
+    <#rightOf> <#token_1_1> .
+
+<#token_3>
+	a <#token> ;
+	<#isTokenOf> <#element_plus_3> ;
+	<#leftOf> <#token_4> ;
+    <#rightOf> <#token_2> .
+
+<#token_4>
+	a <#token> ;
+	<#isTokenOf> <#element_y_4> ;
+	<#leftOf> <#token_1_2> ;
+    <#rightOf> <#token_3> .
+
+<#token_5>
+	a <#token> ;
+	<#isTokenOf> <#element_division_5> ;
+	<#leftOf> <#token_6_1> ;
+    <#rightOf> <#token_1_2> .
+
+<#token_6_1>
+	a <#token> ;
+	<#isTokenOf> <#element_parenthesis_6> ;
+    <#leftOf> <#token_7> ;
+	<#rightOf> <#token_5> .
+
+<#token_6_2>
+	a <#token> ;
+	<#isTokenOf> <#element_parenthesis_6> ;
+	<#leftOf> <#token_10> ;
+    <#rightOf> <#token_9> .
+
+<#token_7>
+	a <#token> ;
+	<#isTokenOf> <#element_x_7> ;
+	<#leftOf> <#token_8> ;
+    <#rightOf> <#token_6_1> .
+
+<#token_8>
+	a <#token> ;
+	<#isTokenOf> <#element_multiplication_8> ;
+	<#leftOf> <#token_9> ;
+    <#rightOf> <#token_7> .
+
+<#token_9>
+	a <#token> ;
+	<#isTokenOf> <#element_y_9> ;
+	<#leftOf> <#token_6_2> ;
+    <#rightOf> <#token_8> .
+
+<#token_10>
+	a <#token> ;
+	<#isTokenOf> <#element_minus_10> ;
+	<#leftOf> <#token_11> ;
+    <#rightOf> <#token_9> .
+
+<#token_11>
+	a <#token> ;
+	<#isTokenOf> <#element_x_11> ;
+	<#leftOf> <#token_12_1> ;
+    <#rightOf> <#token_10> .
+
+<#token_12_1>
+	a <#token> ;
+	<#isTokenOf> <#element_squareParenthesis_12> ;
+	<#leftOf> <#token_13> ;
+    <#rightOf> <#token_11> .
+
+<#token_12_2>
+	a <#token> ;
+	<#isTokenOf> <#element_squareParenthesis_12> ;
+    <#rightOf> <#token_15> .
+
+<#token_13>
+	a <#token> ;
+	<#isTokenOf> <#element_i_13> ;
+	<#leftOf> <#token_14> ;
+    <#rightOf> <#token_12_1> .
+
+<#token_14>
+	a <#token> ;
+	<#isTokenOf> <#element_plus_14> ;
+	<#leftOf> <#token_15> ;
+    <#rightOf> <#token_13> .
+
+<#token_15>
+	a <#token> ;
+	<#isTokenOf> <#element_j_15> ;
+	<#leftOf> <#token_12_2> ;
+    <#rightOf> <#token_14> .
