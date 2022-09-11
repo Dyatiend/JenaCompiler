@@ -22,11 +22,13 @@ public class Compare extends BaseOperator {
     @Override
     public List<List<DataType>> argsDataTypes() {
         List<List<DataType>> result = new ArrayList<>();
+
         result.add(List.of(DataType.INTEGER, DataType.DOUBLE));
         result.add(List.of(DataType.DOUBLE, DataType.INTEGER));
         result.add(List.of(DataType.INTEGER, DataType.INTEGER));
         result.add(List.of(DataType.DOUBLE, DataType.DOUBLE));
         result.add(List.of(DataType.STRING, DataType.STRING));
+
         return result;
     }
 
@@ -41,7 +43,7 @@ public class Compare extends BaseOperator {
 
         // Объявляем переменные
         String value = "";
-        String rulePart = "";
+        String ruleHead = "";
         String completedRules = "";
 
         // Получаем аргументы
@@ -54,28 +56,28 @@ public class Compare extends BaseOperator {
 
         // Генерируем имена
         String skolemName = NamingManager.genVarName();
-        String resFlagName = NamingManager.genFlagName();
+        String resFlagName = NamingManager.genPredName();
 
         // Подставляем в сколем все объекты операторов
         StringBuilder skolemArgs = new StringBuilder().append(skolemName);
-        for(String val : arg0.usedObjects()) {
+        for(String val : arg0.objectsUsedInRule()) {
             skolemArgs.append(",");
             skolemArgs.append(val);
         }
-        for(String val : arg1.usedObjects()) {
+        for(String val : arg1.objectsUsedInRule()) {
             skolemArgs.append(",");
             skolemArgs.append(val);
         }
 
         // Правило для проверки эквивалентности
-        String operatorsPart = compiledArg0.rulePart() + compiledArg1.rulePart();
-        String equal = operatorsPart + "equal(" + compiledArg0.value() + "," + compiledArg1.value() + ")";
+        String operatorsPart = compiledArg0.ruleHead() + compiledArg1.ruleHead();
+        String equal = operatorsPart + JenaUtil.genEqualPrim(compiledArg0.value(), compiledArg1.value());
         String equalRule = JenaUtil.genRule(
                 equal,
                 skolemArgs.toString(),
                 skolemName,
                 resFlagName,
-                "\"equal\"^^xsd:string");
+                JenaUtil.genStingVal("equal"));
 
         // Собираем правила
         completedRules = compiledArg0.completedRules() + compiledArg1.completedRules() + equalRule;
@@ -83,22 +85,22 @@ public class Compare extends BaseOperator {
         // Правила для проверки больше/меньше (только для чисел)
         if(arg0.resultDataType() != DataType.STRING) {
             // Правило для проверки меньше
-            String less = operatorsPart + "lessThan(" + compiledArg0.value() + "," + compiledArg1.value() + ")";
+            String less = operatorsPart + JenaUtil.genLessThanPrim(compiledArg0.value(), compiledArg1.value());
             String lessRule = JenaUtil.genRule(
                     less,
                     skolemArgs.toString(),
                     skolemName,
                     resFlagName,
-                    "\"less\"^^xsd:string");
+                    JenaUtil.genStingVal("less"));
 
             // Правило для проверки больше
-            String greater = operatorsPart + "greaterThan(" + compiledArg0.value() + "," + compiledArg1.value() + ")";
+            String greater = operatorsPart + JenaUtil.genGreaterThanPrim(compiledArg0.value(), compiledArg1.value());
             String greaterRule = JenaUtil.genRule(
                     greater,
                     skolemArgs.toString(),
                     skolemName,
                     resFlagName,
-                    "\"greater\"^^xsd:string");
+                    JenaUtil.genStingVal("greater"));
 
             completedRules += lessRule + greaterRule;
         }
@@ -108,21 +110,33 @@ public class Compare extends BaseOperator {
         String empty = NamingManager.genVarName();
 
         // Правило для проверки undetermined
-        String undetermined = "noValue(" + empty + "," + resFlagName + ")";
+        String undetermined = JenaUtil.genNotEqualPrim(empty, resFlagName);
         String undeterminedRule = JenaUtil.genRule(
                 undetermined,
                 skolemArgs.toString(),
                 skolemName,
                 resFlagName,
-                "\"undetermined\"^^xsd:string");
+                JenaUtil.genStingVal("undetermined"));
 
         completedRules += undeterminedRule;
 
         value = NamingManager.genVarName();
 
-        rulePart = "makeSkolem(" + skolemArgs+ ")" +
+        // FIXME?: придумать способ инициализации получше
+        // Инициализируем переменные в новом правиле
+        StringBuilder initPart = new StringBuilder();
+        for(String var : arg0.objectsUsedInRule()) {
+            initPart.append(JenaUtil.genTriple(var, NamingManager.genVarName(), NamingManager.genVarName()));
+        }
+        for(String var : arg1.objectsUsedInRule()) {
+            initPart.append(JenaUtil.genTriple(var, NamingManager.genVarName(), NamingManager.genVarName()));
+        }
+        ruleHead = initPart + JenaUtil.genMakeSkolemPrim(skolemArgs.toString()) +
                 JenaUtil.genTriple(skolemName, resFlagName, value);
 
-        return new CompilationResult(value, rulePart, completedRules);
+        usedObjects = new ArrayList<>(arg0.objectsUsedInRule());
+        usedObjects.addAll(new ArrayList<>(arg1.objectsUsedInRule()));
+
+        return new CompilationResult(value, ruleHead, completedRules);
     }
 }

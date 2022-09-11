@@ -9,6 +9,7 @@ import util.JenaUtil;
 import static util.JenaUtil.POAS_PREF;
 
 public class RelationshipValue extends Value {
+
     public RelationshipValue(String value) {
         super(value);
         if(!RelationshipsDictionary.exist(value)) throw new IllegalArgumentException("Указанного отношения не существует");
@@ -21,6 +22,6 @@ public class RelationshipValue extends Value {
 
     @Override
     public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genRuleLink(POAS_PREF, value), "", "");
+        return new CompilationResult(JenaUtil.genLink(POAS_PREF, value), "", "");
     }
 }

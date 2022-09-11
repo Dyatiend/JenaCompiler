@@ -1,7 +1,6 @@
 package compiler.operators;
 
 import compiler.Operator;
-import org.checkerframework.checker.units.qual.C;
 import util.CompilationResult;
 import util.DataType;
 import util.JenaUtil;
@@ -10,6 +9,10 @@ import util.NamingManager;
 import java.util.ArrayList;
 import java.util.List;
 
+// FIXME: переделать под maximize/minimize?
+/**
+ * Выбор экстремального объекта
+ */
 public class GetExtreme extends BaseOperator {
 
     private final String varName;
@@ -18,7 +21,7 @@ public class GetExtreme extends BaseOperator {
     /**
      * Шаблон правила выбора экстремального
      */
-    private static final String EXTREME_PATTER = "[<rulePart>->drop(0)]";
+    private static final String EXTREME_PATTERN = "[<ruleHead>->drop(0)]";
 
     /**
      * Конструктор
@@ -33,7 +36,9 @@ public class GetExtreme extends BaseOperator {
     @Override
     public List<List<DataType>> argsDataTypes() {
         List<List<DataType>> result = new ArrayList<>();
+
         result.add(List.of(DataType.BOOLEAN, DataType.BOOLEAN));
+
         return result;
     }
 
@@ -60,29 +65,28 @@ public class GetExtreme extends BaseOperator {
         // Пустые переменные
         String empty1 = NamingManager.genVarName();
         String empty2 = NamingManager.genVarName();
-        String empty3 = NamingManager.genVarName();
 
         // ---------------- Генерируем правило, помечающее объекты множества --------------
 
         // Флаг, указывающий на объекты множества
-        String flag = NamingManager.genFlagName();
+        String flag = NamingManager.genPredName();
         // Skolem name
         String skolemName = NamingManager.genVarName();
 
-        // Собираем правило, помечающее классы
-        String part = compiledArg0.rulePart();
+        // Собираем правило, помечающее объекты
+        String part = compiledArg0.ruleHead();
 
-        String rule = JenaUtil.genRule(part, skolemName, skolemName, flag, JenaUtil.genRuleVar(varName));
+        String rule = JenaUtil.genRule(part, skolemName, skolemName, flag, JenaUtil.genVar(varName));
 
         // ---------------- Генерируем правило, помечающее потенциальный экстремум --------------
 
         // Флаг цикла
-        String cycleFlagName = NamingManager.genFlagName();
+        String cycleFlagName = NamingManager.genPredName();
         // Переменная цикла
         String cycleVar = NamingManager.genVarName();
 
         // Собираем правило, организующее цикл
-        String cyclePart = "noValue(" + empty1 + "," + cycleFlagName + ")" +
+        String cyclePart = JenaUtil.genNoValuePrim(empty1, cycleFlagName) +
                 JenaUtil.genTriple(empty2, flag, cycleVar);
         String cycleRule = JenaUtil.genRule(cyclePart, skolemName, skolemName, cycleFlagName, cycleVar);
 
@@ -91,17 +95,17 @@ public class GetExtreme extends BaseOperator {
         // Инициализируем потенциальный экстремум
         String extremeVar = NamingManager.genVarName();
         String filterPart = JenaUtil.genTriple(empty1, cycleFlagName, extremeVar);
-        filterPart += "bind(" + extremeVar + "," + JenaUtil.genRuleVar(extremeVarName) + ")";
+        filterPart += JenaUtil.genBindPrim(extremeVar, JenaUtil.genVar(extremeVarName));
 
         // Инициализируем переменную
         String var = NamingManager.genVarName();
         filterPart += JenaUtil.genTriple(empty2, flag, var);
-        filterPart += "bind(" + var + "," + JenaUtil.genRuleVar(varName) + ")";
+        filterPart += JenaUtil.genBindPrim(var, JenaUtil.genVar(varName));
 
-        filterPart += compiledArg1.rulePart();
+        filterPart += compiledArg1.ruleHead();
 
-        String filterRule = EXTREME_PATTER;
-        filterRule = filterRule.replace("<rulePart>", filterPart);
+        String filterRule = EXTREME_PATTERN;
+        filterRule = filterRule.replace("<ruleHead>", filterPart);
 
         value = NamingManager.genVarName();
 
@@ -113,9 +117,9 @@ public class GetExtreme extends BaseOperator {
                 compiledArg1.completedRules() +
                 rule + cycleRule + filterRule + JenaUtil.PAUSE_MARK;
 
-        // TODO: проверить количество объектов?
+        // TODO: проверить количество объектов
 
-        usedObjects = List.of(compiledArg0.value());
+        usedObjects = List.of(value);
 
         return new CompilationResult(value, rulePart, completedRules);
     }

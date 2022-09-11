@@ -4,6 +4,7 @@ import util.DataType;
 import util.Pair;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,25 +16,35 @@ public class PropertiesDictionary {
      * Свойства
      *
      * row - имя свойства
-     * col - true - если относится к классу, false - если к объекту
-     * val - тип данных
+     * val - First - список классов с данным свойством, null - если относится к объекту, Second - тип данных
      */
-    private static final Map<String, Pair<Boolean, DataType>> properties = new HashMap<>();
+    private static final Map<String, Pair<List<String>, DataType>> properties = new HashMap<>();
 
     static {
         // TODO: чтение из файла
-        properties.put("tokenCount", new Pair<>(true, DataType.INTEGER));
-        properties.put("arity", new Pair<>(true, DataType.STRING));
-        properties.put("place", new Pair<>(true, DataType.STRING));
-        properties.put("precedence", new Pair<>(true, DataType.INTEGER));
-        properties.put("associativity", new Pair<>(true, DataType.STRING));
-        properties.put("needsLeftOperand", new Pair<>(true, DataType.BOOLEAN));
-        properties.put("needsRightOperand", new Pair<>(true, DataType.BOOLEAN));
-        properties.put("needsInnerOperand", new Pair<>(true, DataType.BOOLEAN));
-        properties.put("strictOperandOrder", new Pair<>(true, DataType.BOOLEAN));
 
-        properties.put("state", new Pair<>(false, DataType.STRING));
-        properties.put("evaluatesTo", new Pair<>(false, DataType.STRING));
+        // Добавляем свойства
+        properties.put("tokenCount", new Pair<>(List.of("element", "plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"), DataType.INTEGER));
+        properties.put("arity", new Pair<>(List.of("plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"), DataType.STRING));
+        properties.put("place", new Pair<>(List.of("plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"), DataType.STRING));
+        properties.put("precedence", new Pair<>(List.of("plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"), DataType.INTEGER));
+        properties.put("associativity", new Pair<>(List.of("plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"), DataType.STRING));
+        properties.put("needsLeftOperand", new Pair<>(List.of("plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"), DataType.BOOLEAN));
+        properties.put("needsRightOperand", new Pair<>(List.of("plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"), DataType.BOOLEAN));
+        properties.put("needsInnerOperand", new Pair<>(List.of("plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"), DataType.BOOLEAN));
+        properties.put("strictOperandOrder", new Pair<>(List.of("plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"), DataType.BOOLEAN));
+
+        properties.put("state", new Pair<>(null, DataType.STRING));
+        properties.put("evaluatesTo", new Pair<>(null, DataType.STRING));
     }
 
     /**
@@ -52,7 +63,7 @@ public class PropertiesDictionary {
      */
     public static boolean isStatic(String propertyName) {
         if(!exist(propertyName)) return false;
-        return properties.get(propertyName).first();
+        return properties.get(propertyName).first() != null;
     }
 
     /**
@@ -63,5 +74,28 @@ public class PropertiesDictionary {
     public static DataType dataType(String propertyName) {
         if(!exist(propertyName)) return null;
         return properties.get(propertyName).second();
+    }
+
+    /**
+     * Переопределяется ли свойство
+     * @param propertyName Имя свойства
+     * @return true - если переопределяется, иначе - false
+     */
+    public static boolean isPropertyBeingOverridden(String propertyName) {
+        if(!exist(propertyName)) return false;
+        if(properties.get(propertyName).first() == null) return false;
+
+        List<String> classes = properties.get(propertyName).first();
+        for (int i = 0; i < classes.size(); ++i) {
+            for (int j = 0; j < classes.size(); ++j) {
+                if(i == j) continue;
+
+                if(ClassesDictionary.isParentOf(classes.get(i), classes.get(j))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

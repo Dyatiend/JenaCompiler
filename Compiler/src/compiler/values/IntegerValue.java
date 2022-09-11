@@ -6,6 +6,7 @@ import util.DataType;
 import util.JenaUtil;
 
 public class IntegerValue extends Value {
+
     public IntegerValue(Integer value) {
         super(Integer.toString(value));
     }

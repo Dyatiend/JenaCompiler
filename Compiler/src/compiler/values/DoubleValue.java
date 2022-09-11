@@ -6,6 +6,7 @@ import util.DataType;
 import util.JenaUtil;
 
 public class DoubleValue extends Value {
+
     public DoubleValue(Double value) {
         super(Double.toString(value));
     }

@@ -32,7 +32,9 @@ public class CheckClass extends BaseOperator {
     @Override
     public List<List<DataType>> argsDataTypes() {
         List<List<DataType>> result = new ArrayList<>();
+
         result.add(List.of(DataType.OBJECT, DataType.CLASS));
+
         return result;
     }
 
@@ -45,7 +47,7 @@ public class CheckClass extends BaseOperator {
     public CompilationResult compile() {
         // Объявляем переменные
         String value = "";
-        String rulePart = "";
+        String ruleHead = "";
         String completedRules = "";
 
         // Получаем аргументы
@@ -60,13 +62,16 @@ public class CheckClass extends BaseOperator {
         if(arg1 instanceof ClassValue &&
                 ClassesDictionary.isComputable(((ClassValue) arg1).value())) {
             // Получаем выражение для вычисления
-            Operator calculation = ClassesDictionary.howToCalculate(((ClassValue) arg1).value(), arg0);
+            Pair<String, Operator> calculation = ClassesDictionary.howToCalculate(((ClassValue) arg1).value());
+            String varName = calculation.first();
+            Operator expression = calculation.second();
 
-            CompilationResult compiledCalculation = calculation.compile(); // Выражение для вычисления
+            CompilationResult compiledCalculation = expression.compile(); // Выражение для вычисления
 
             // Собираем правило
-            rulePart = compiledArg0.rulePart() + compiledArg1.rulePart(); // Собираем части первого и второго аргументов
-            rulePart += compiledCalculation.rulePart(); // Добавляем результат компиляции вычисления
+            ruleHead = compiledArg0.ruleHead() + compiledArg1.ruleHead(); // Собираем части первого и второго аргументов
+            ruleHead += JenaUtil.genBindPrim(compiledArg0.value(), varName); // Инициализируем переменную
+            ruleHead += compiledCalculation.ruleHead(); // Добавляем результат компиляции вычисления
 
             // Передаем завершенные правила дальше
             completedRules = compiledArg0.completedRules() +
@@ -75,11 +80,12 @@ public class CheckClass extends BaseOperator {
         }
         else {
             // Собираем правило
-            rulePart = compiledArg0.rulePart() + compiledArg1.rulePart(); // Собираем части первого и второго аргументов
+            ruleHead = compiledArg0.ruleHead() + compiledArg1.ruleHead(); // Собираем части первого и второго аргументов
+
             // Добавляем проверку класса
-            rulePart += JenaUtil.genTriple(
+            ruleHead += JenaUtil.genTriple(
                     compiledArg0.value(),
-                    JenaUtil.genRuleLink(JenaUtil.RDF_PREF, CLASS_PRED_NAME),
+                    JenaUtil.genLink(JenaUtil.RDF_PREF, CLASS_PRED_NAME),
                     compiledArg1.value());
 
             // Передаем завершенные правила дальше
@@ -88,6 +94,6 @@ public class CheckClass extends BaseOperator {
 
         usedObjects = List.of(compiledArg0.value());
 
-        return new CompilationResult(value, rulePart, completedRules);
+        return new CompilationResult(value, ruleHead, completedRules);
     }
 }

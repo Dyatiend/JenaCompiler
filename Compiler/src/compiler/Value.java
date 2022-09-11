@@ -1,6 +1,5 @@
 package compiler;
 
-import util.CompilationResult;
 import util.DataType;
 
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import java.util.List;
  * Значение в выражении
  */
 public abstract class Value implements Operator {
+
     /**
      * Значение
      */

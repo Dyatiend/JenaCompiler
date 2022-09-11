@@ -1,16 +1,14 @@
 package compiler.operators;
 
 import compiler.Operator;
-import compiler.values.ClassValue;
-import dictionaries.ClassesDictionary;
 import util.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+// FIXME?: а этот оператор нужен вообще?
 /**
  * Получить класс объекта
- * FIXME: А этот оператор нужен вообще?
  */
 public class GetClass extends BaseOperator {
 
@@ -35,7 +33,9 @@ public class GetClass extends BaseOperator {
     @Override
     public List<List<DataType>> argsDataTypes() {
         List<List<DataType>> result = new ArrayList<>();
+
         result.add(List.of(DataType.OBJECT));
+
         return result;
     }
 
@@ -59,13 +59,13 @@ public class GetClass extends BaseOperator {
 
         value = NamingManager.genVarName();
 
-        rulePart = compiledArg0.rulePart();
+        rulePart = compiledArg0.ruleHead();
 
         rulePart += JenaUtil.genTriple(
                 compiledArg0.value(),
-                JenaUtil.genRuleLink(JenaUtil.RDF_PREF, CLASS_PRED_NAME),
+                JenaUtil.genLink(JenaUtil.RDF_PREF, CLASS_PRED_NAME),
                 value) +
-                "noValue(" + value + "," + JenaUtil.genRuleLink(JenaUtil.RDF_PREF, SUBCLASS_PRED_NAME) + ")";
+                JenaUtil.genNoValuePrim(value, JenaUtil.genLink(JenaUtil.RDF_PREF, SUBCLASS_PRED_NAME));
 
         completedRules = compiledArg0.completedRules();
 

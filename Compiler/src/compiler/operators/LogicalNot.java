@@ -15,6 +15,7 @@ import static util.JenaUtil.PAUSE_MARK;
  * Логическое отрицание
  */
 public class LogicalNot extends BaseOperator {
+
     /**
      * Конструктор
      * @param args Аргументы
@@ -26,7 +27,9 @@ public class LogicalNot extends BaseOperator {
     @Override
     public List<List<DataType>> argsDataTypes() {
         List<List<DataType>> result = new ArrayList<>();
+
         result.add(List.of(DataType.BOOLEAN));
+
         return result;
     }
 
@@ -52,17 +55,17 @@ public class LogicalNot extends BaseOperator {
 
         // Генерируем имена
         String skolemName = NamingManager.genVarName();
-        String resFlagName = NamingManager.genFlagName();
+        String resFlagName = NamingManager.genPredName();
 
         // Подставляем в сколем все объекты операторов
         StringBuilder skolemArgs = new StringBuilder().append(skolemName);
-        for(String val : arg0.usedObjects()) {
+        for(String val : arg0.objectsUsedInRule()) {
             skolemArgs.append(",");
             skolemArgs.append(val);
         }
 
         // Генерируем правило
-        String rule = JenaUtil.genBooleanRule(compiledArg0.rulePart(), skolemArgs.toString(), skolemName, resFlagName);
+        String rule = JenaUtil.genBooleanRule(compiledArg0.ruleHead(), skolemArgs.toString(), skolemName, resFlagName);
 
         // Добавляем правило в набор завершенных правил
         completedRules = compiledArg0.completedRules() + rule;
@@ -70,9 +73,18 @@ public class LogicalNot extends BaseOperator {
         // Добавляем паузу
         completedRules += PAUSE_MARK;
 
+        // FIXME?: придумать способ инициализации получше
+        // Инициализируем переменные в новом правиле
+        StringBuilder initPart = new StringBuilder();
+        for(String var : arg0.objectsUsedInRule()) {
+            initPart.append(JenaUtil.genTriple(var, NamingManager.genVarName(), NamingManager.genVarName()));
+        }
+
         // Добавляем в правило проверку отсутствия флага
-        rulePart = "makeSkolem(" + skolemArgs+ ")" +
-                "noValue(" + skolemName + "," + resFlagName + ")";
+        rulePart = initPart + JenaUtil.genMakeSkolemPrim(skolemArgs.toString()) +
+                JenaUtil.genNoValuePrim(skolemName, resFlagName);
+
+        usedObjects = new ArrayList<>(arg0.objectsUsedInRule());
 
         return new CompilationResult(value, rulePart, completedRules);
     }

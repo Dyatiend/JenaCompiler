@@ -9,12 +9,11 @@ import util.CompilationResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import static util.JenaUtil.*;
-
 /**
  * Оператор
  */
 public interface Operator {
+
     /**
      * Список аргументов
      * @return Список аргументов
@@ -22,10 +21,10 @@ public interface Operator {
     default List<Operator> args() { return new ArrayList<>(); }
 
     /**
-     * Список использованных объектов
-     * @return Список использованных объектов
+     * Список объектов, использованных в правиле
+     * @return Список объектов, использованных в правиле
      */
-    default List<String> usedObjects() { return new ArrayList<>(); }
+    default List<String> objectsUsedInRule() { return new ArrayList<>(); }
 
     /**
      * Получить аргумент
@@ -34,11 +33,11 @@ public interface Operator {
      */
     default Operator arg(int index) { return args().get(index); }
 
+    // FIXME?: придумать более удобный способ задания нескольких комбинаций типов входных данных?
     /**
      * Список типов данных аргументов
      * @return Список типов данных аргументов
      */
-    // FIXME: Придумать более удобный способ задания нескольких комбинаций типов входных данных?
     List<List<DataType>> argsDataTypes();
 
     /**
@@ -53,43 +52,47 @@ public interface Operator {
      */
     DataType resultDataType();
 
+    // TODO: валидация переменных, вводимых операторами
+    // TODO: таблица переменных, вводимых операторами и их валидация
+    // TODO?: оптимизация пауз?
+    // TODO?: оптимизация правил? (удаление одинаковых строк)
     /**
      * Скомпилировать выражение
-     * @return Правила для вычисления выражения и имя флага для чтения результата (если есть)
+     * @return Правила для вычисления выражения и имя предиката для чтения результата (если есть)
      */
-    // TODO: валидация переменных, вводимых операторами
     default CompilationResult compileExpression() {
         // Компилируем оператор
         CompilationResult result = compile();
 
-        // Добавляем вспомогательное правило нумерации, если нужно
+        // Добавляем вспомогательные правила, если нужно
         String rules = RelationshipsDictionary.isLinerScaleUsed() ?
-                RelationshipsDictionary.NUMERATION_RULES + result.completedRules() :
+                RelationshipsDictionary.auxiliaryLinerScaleRules() + result.completedRules() :
                 result.completedRules();
 
         // Генерируем имена
         String skolemName = NamingManager.genVarName();
-        String resFlagName = resultDataType() != null ? NamingManager.genFlagName() : "";
+        String resPredName = resultDataType() != null ? NamingManager.genPredName() : "";
         String resVarName = result.value();
 
         // Если есть незаконченное правило
-        if(!result.rulePart().isEmpty() && resultDataType() != null) {
+        if(!result.ruleHead().isEmpty() && resultDataType() != null) {
             // Генерируем правило
-            String rule = "";
-            if (resultDataType() == DataType.BOOLEAN) rule = JenaUtil.genBooleanRule(result.rulePart(), skolemName, skolemName, resFlagName);
-            else rule = JenaUtil.genRule(result.rulePart(), skolemName, skolemName, resFlagName, resVarName);
+            String rule;
+            if (resultDataType() == DataType.BOOLEAN)
+                rule = JenaUtil.genBooleanRule(result.ruleHead(), skolemName, skolemName, resPredName);
+            else
+                rule = JenaUtil.genRule(result.ruleHead(), skolemName, skolemName, resPredName, resVarName);
 
             // Добавляем правило к остальным
             rules += rule;
         }
 
-        return new CompilationResult(resFlagName, "", rules);
+        return new CompilationResult(resPredName, "", rules);
     }
 
     /**
      * Скомпилировать оператор
-     * @return Правила для вычисления выражения, часть правила для проверки и имя флага для чтения результата (если есть)
+     * @return Правила для вычисления выражения, часть правила для проверки и имя предиката для чтения результата (если есть)
      */
-    // FIXME: Оптимизация правил? (удаление одинаковых строк)
     CompilationResult compile();
 }

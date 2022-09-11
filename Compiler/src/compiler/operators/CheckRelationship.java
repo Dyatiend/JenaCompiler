@@ -8,11 +8,9 @@ import dictionaries.RelationshipsDictionary;
 import util.CompilationResult;
 import util.DataType;
 import util.NamingManager;
-import util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class CheckRelationship extends BaseOperator {
 
@@ -27,7 +25,9 @@ public class CheckRelationship extends BaseOperator {
     @Override
     public List<List<DataType>> argsDataTypes() {
         List<List<DataType>> result = new ArrayList<>();
+
         result.add(List.of(DataType.RELATIONSHIP, DataType.OBJECT));
+
         return result;
     }
 
@@ -45,13 +45,13 @@ public class CheckRelationship extends BaseOperator {
     public CompilationResult compile() {
         // Объявляем переменные
         String value = "";
-        String rulePart = "";
+        String ruleHead = "";
         String completedRules = "";
         StringBuilder rulePartBuilder = new StringBuilder();
         StringBuilder completedRulesBuilder = new StringBuilder();
 
+        // FIXME?: сейчас отношение можно получить только из value, если это изменится, тогда придется фиксить
         // Проверяем кол-во аргументов
-        // FIXME?: сейчас отношение можно получить только из value, но может это измениться, тогда придется фиксить
         RelationshipValue relValue = (RelationshipValue) arg(0);
         String relName = relValue.value();
         if(RelationshipsDictionary.args(relName).size() != args().size() - 1) {
@@ -64,50 +64,53 @@ public class CheckRelationship extends BaseOperator {
         for(Operator arg : args()) {
             compiledArgs.add(arg.compile());
             argValues.add(compiledArgs.get(compiledArgs.size()-1).value());
-            rulePartBuilder.append(compiledArgs.get(compiledArgs.size() - 1).rulePart());
+            rulePartBuilder.append(compiledArgs.get(compiledArgs.size() - 1).ruleHead());
             completedRulesBuilder.append(compiledArgs.get(compiledArgs.size() - 1).completedRules());
         }
-        rulePart = rulePartBuilder.toString();
+        ruleHead = rulePartBuilder.toString();
         completedRules = completedRulesBuilder.toString();
 
         // ------------------- Добавляем переходы между классами --------------------
-
-        // Способы получения объекта:
-        // Получить объект, связанный отношением
-        // Получить объект по условию - TODO: как вычислить класс из условия
-        // Получить экстремальный объект по условию и отношению - TODO: как вычислить класс из условия
-        // Переменная дерева мысли
-        // Переменная, вводимая квантором - TODO: как определить, если нужна инфа с верхнего уровня?
-        // Прямая ссылка - невозможно определить
 
         for(int i = 1; i < args().size(); ++i) {
             String actualClass = "";
             String expectedClass = "";
 
-            // Определяем классы аргументов
+            // ------------------- Определяем классы аргументов --------------------
+
+            // TODO: добавить способы "Переменная, вводимая оператором", "Объект, полученный по условию"
+            //  и "Экстремальный объект" после добавления таблицы
+            // Если объект получен через отношение
             if(arg(i) instanceof GetByRelationship arg) {
                 actualClass = RelationshipsDictionary.args(((RelationshipValue)arg.arg(1)).value()).get(1);
                 expectedClass = RelationshipsDictionary.args(relName).get(i - 1);
             }
+            // Если объект получен из переменной дерева
             else if (arg(i) instanceof DecisionTreeVarValue arg) {
                 actualClass = ClassesDictionary.decisionTreeVarClass(arg.value());
                 expectedClass = RelationshipsDictionary.args(relName).get(i - 1);
             }
 
+            // Если классы не равны
             if(!expectedClass.equals(actualClass)) {
+                // Если есть переход между классами
                 if(ClassesDictionary.hasTransition(actualClass, expectedClass)) {
-                    // TODO: КАК ОПРЕДЕЛЯТЬ КАКОЙ ИЗ ДВУХ ТОКЕНОВ БРАТЬ?
+                    // TODO: определять необходимый объект в ситуации, когда связь не один к одному
                     String transitionRel = ClassesDictionary.transition(actualClass, expectedClass);
                     String transitionPattern = RelationshipsDictionary.pattern(transitionRel).first();
 
-                    // FIXME: связь перехода всегда простая бинарная?
+                    // FIXME?: добавить заполнение вспомогательных переменных, если появятся такие переходы
+                    // Добавляем переход
                     String newArgValue = NamingManager.genVarName();
+
                     transitionPattern = transitionPattern.replace("<arg1>", argValues.get(i));
                     transitionPattern = transitionPattern.replace("<arg2>", newArgValue);
                     argValues.set(i, newArgValue);
-                    rulePart += transitionPattern;
+
+                    ruleHead += transitionPattern;
                     completedRules += RelationshipsDictionary.pattern(transitionRel).second();
                 }
+                // Иначе - исключение
                 else {
                     throw new IllegalArgumentException("Некорректный класс объекта " + i);
                 }
@@ -115,6 +118,7 @@ public class CheckRelationship extends BaseOperator {
         }
 
         // ------------------- Добавляем проверку отношения --------------------
+
         String relPattern = RelationshipsDictionary.pattern(relName).first();
         for(int i = 1; i <= RelationshipsDictionary.args(relName).size(); ++i) {
             relPattern = relPattern.replace("<arg" + i + ">", argValues.get(i));
@@ -123,11 +127,12 @@ public class CheckRelationship extends BaseOperator {
             relPattern = relPattern.replace("<var" + i + ">", NamingManager.genVarName());
         }
 
-        rulePart += relPattern;
+        ruleHead += relPattern;
         completedRules += RelationshipsDictionary.pattern(relName).second();
 
         usedObjects = new ArrayList<>(argValues);
+        usedObjects.remove(0);
 
-        return new CompilationResult(value, rulePart, completedRules);
+        return new CompilationResult(value, ruleHead, completedRules);
     }
 }

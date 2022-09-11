@@ -7,9 +7,10 @@ import util.JenaUtil;
 import util.NamingManager;
 
 import static util.JenaUtil.POAS_PREF;
-import static util.JenaUtil.VAR_LINK;
+import static util.JenaUtil.VAR_PRED;
 
 public class DecisionTreeVarValue extends Value {
+
     public DecisionTreeVarValue(String value) {
         super(value);
     }
@@ -23,7 +24,7 @@ public class DecisionTreeVarValue extends Value {
     public CompilationResult compile() {
         String resVarName = NamingManager.genVarName();
         return new CompilationResult(resVarName,
-                "(" + resVarName + " " + JenaUtil.genRuleLink(POAS_PREF, VAR_LINK) + " " + JenaUtil.genStingVal(value) + ")",
+                JenaUtil.genTriple(resVarName, JenaUtil.genLink(POAS_PREF, VAR_PRED), JenaUtil.genStingVal(value)),
                 "");
     }
 }

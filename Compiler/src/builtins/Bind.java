@@ -6,6 +6,7 @@ import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
 public class Bind extends BaseBuiltin {
+
     /**
      * Return a name for this builtin, normally this will be the name of the
      * functor that will be used to invoke it.

@@ -5,9 +5,12 @@ import util.CompilationResult;
 import util.DataType;
 import util.JenaUtil;
 
+import java.util.List;
+
 import static util.JenaUtil.POAS_PREF;
 
 public class ObjectValue extends Value {
+
     public ObjectValue(String value) {
         super(value);
     }
@@ -19,6 +22,6 @@ public class ObjectValue extends Value {
 
     @Override
     public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genRuleLink(POAS_PREF, value), "", "");
+        return new CompilationResult(JenaUtil.genLink(POAS_PREF, value), "", "");
     }
 }

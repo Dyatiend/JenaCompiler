@@ -5,34 +5,39 @@ import com.google.common.collect.Table;
 import compiler.Operator;
 import compiler.Variable;
 import compiler.operators.CheckPropertyValue;
-import compiler.operators.CheckRelationship;
 import compiler.operators.LogicalNot;
 import compiler.values.PropertyValue;
 import compiler.values.StringValue;
 import util.DataType;
 import util.Pair;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Словарь классов
  */
 public class ClassesDictionary {
 
+    // +++++++++++++++++++++++++++++++++ Свойства ++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     /**
      * Список классов
+     *
+     * key - класс
+     * val - предок
      */
-    private static final List<String> classes = new ArrayList<>();
+    private static final Map<String, String> classes = new HashMap<>();
 
     /**
      * Вычисляемые классы
      *
-     * Класс вычисляется путем вычисления bool выражения над объектом
+     * Класс вычисляется путем вычисления boolean выражения над объектом
      *
      * key - класс
-     * val - First -имя переменной, куда подставить объект, Second - выражение для вычисления
-     *
-     * FIXME - другой способ?
+     * val - First - имя переменной, куда подставить объект, Second - выражение для вычисления
      */
     private static final Map<String, Pair<String, Operator>> calculations = new HashMap<>();
 
@@ -45,31 +50,52 @@ public class ClassesDictionary {
      */
     private static final Table<String, String, String> transitions = HashBasedTable.create();
 
+    /**
+     * Переменные дерева мысли
+     *
+     * key - имя переменной
+     * val - класс переменной
+     */
     private static final Map<String, String> decisionTreeVars = new HashMap<>();
+
+    // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     static {
         // TODO: чтение из файла
-        classes.add("token");
-        classes.add("element");
-        classes.add("operand");
-        classes.add("operator");
 
-        classes.add("plus");
-        classes.add("minus");
-        classes.add("multiplication");
-        classes.add("division");
-        classes.add("squareParenthesis");
-        classes.add("parenthesis");
+        // Добавляем классы
+        classes.put("token", null);
+        classes.put("element", null);
+        classes.put("operand", null);
+        classes.put("operator", null);
 
-        // TODO добавить выражения
-        // TODO: не работает, т.к. некоторые операторы не позволят просто забиндить переменную
-        calculations.put("operand", new Pair<>("obj", null));
-        calculations.put("operator", new Pair<>("obj", null));
+        classes.put("plus", "element");
+        classes.put("minus", "element");
+        classes.put("multiplication", "element");
+        classes.put("division", "element");
+        classes.put("squareParenthesis", "element");
+        classes.put("parenthesis", "element");
 
+        // Добавляем выражения для вычисления классов
+        Operator var = new Variable("obj", DataType.OBJECT);
+        Operator prop = new PropertyValue("state");
+        Operator stringVal = new StringValue("unevaluated");
+        Operator checkProp = new CheckPropertyValue(List.of(var, prop, stringVal));
+        Operator not = new LogicalNot(List.of(checkProp));
+        calculations.put("operand", new Pair<>("obj", not));
+
+        var = new Variable("obj", DataType.OBJECT);
+        prop = new PropertyValue("state");
+        stringVal = new StringValue("unevaluated");
+        checkProp = new CheckPropertyValue(List.of(var, prop, stringVal));
+        calculations.put("operator", new Pair<>("obj", checkProp));
+
+        // Добавляем переходы
         transitions.put("element", "token", "hasToken");
         transitions.put("token", "element", "isTokenOf");
 
-        // TODO добавить все переменные
+        // Добавляем переменные
         decisionTreeVars.put("X", "element");
         decisionTreeVars.put("X1", "token");
         decisionTreeVars.put("X2", "token");
@@ -79,13 +105,23 @@ public class ClassesDictionary {
         decisionTreeVars.put("Z", "element");
     }
 
+    // ++++++++++++++++++++++++++++++++++++ Методы +++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     /**
      * Существует ли класс
      * @param className Имя класса
      * @return true - если существует, иначе - false
      */
     public static boolean exist(String className) {
-        return classes.contains(className);
+        return classes.containsKey(className);
+    }
+
+    public static boolean isParentOf(String parent, String child) {
+        if(!exist(parent) || !exist(child)) return false;
+
+        if(classes.get(child).equals(parent)) return true;
+        return isParentOf(parent, classes.get(child));
     }
 
     /**
@@ -98,21 +134,11 @@ public class ClassesDictionary {
     /**
      * Как вычислить класс
      * @param className Имя класса
-     * @return Выражение для вычисления ИМЯ ПЕРЕМЕННОЙ КУДА ПОСТААВИТЬ ОБЪЕКТ
+     * @return Выражение для вычисления и имя переменной, в которую надо подставить объект
      */
-    public static Operator howToCalculate(String className, Operator obj) {
+    public static Pair<String, Operator> howToCalculate(String className) {
         if (!isComputable(className)) return null;
-
-        // TODO: более адекватный вид
-        if(className.equals("operand")) {
-            Operator propVal = new PropertyValue("state");
-            Operator strVal = new StringValue("unevaluated");
-            Operator op = new CheckPropertyValue(List.of(obj, propVal, strVal));
-            Operator not = new LogicalNot(List.of(op));
-            return not;
-        }
-
-        return null;
+        return calculations.get(className);
     }
 
     /**

@@ -23,7 +23,9 @@ public class ForAllQuantifier extends BaseOperator {
     @Override
     public List<List<DataType>> argsDataTypes() {
         List<List<DataType>> result = new ArrayList<>();
+
         result.add(List.of(DataType.BOOLEAN, DataType.BOOLEAN));
+
         return result;
     }
 
@@ -40,6 +42,10 @@ public class ForAllQuantifier extends BaseOperator {
         Operator existence = new ExistenceQuantifier(List.of(and), varName);
         Operator res = new LogicalNot(List.of(existence));
 
-        return res.compile();
+        CompilationResult compilationResult = res.compile();
+
+        usedObjects = new ArrayList<>(res.objectsUsedInRule());
+
+        return compilationResult;
     }
 }

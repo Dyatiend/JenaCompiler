@@ -5,17 +5,10 @@ import compiler.Variable;
 import compiler.operators.*;
 import compiler.values.*;
 import compiler.values.ClassValue;
-import org.apache.jena.rdf.model.*;
-import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
-import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
-import org.apache.jena.reasoner.rulesys.Rule;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.util.PrintUtil;
 import util.DataType;
 
-import java.io.InputStream;
 import java.util.List;
 
 import static util.JenaUtil.*;
@@ -23,23 +16,17 @@ import static util.JenaUtil.*;
 public class Main {
     public static void main(String[] args) {
         // Добавляем префиксы
-        PrintUtil.registerPrefix(POAS_PREF, POAS_PREF_LINK);
-        PrintUtil.registerPrefix(XSD_PREF, XSD_PREF_LINK);
-        PrintUtil.registerPrefix(RDF_PREF, RDF_PREF_LINK);
+        PrintUtil.registerPrefix(POAS_PREF, POAS_PREF_URL);
+        PrintUtil.registerPrefix(XSD_PREF, XSD_PREF_URL);
+        PrintUtil.registerPrefix(RDF_PREF, RDF_PREF_URL);
 
         // Регистрируем Builtin'ы
         BuiltinRegistry.theRegistry.register(new Bind());
         BuiltinRegistry.theRegistry.register(new AbsoluteValue());
 
-        // FIXME: флаги в NOT и OR работают на все выражение если использовать переменные операторов
-        //  для NOT в теории можно ставить не глобальный флаг, а свой для каждой переменной, но как быть с OR
-        //  аналогично со сравнением
-
-        // РЕШЕНИЕ: генерить уникальный сколем - нужно протестить
-
         Operator var = new Variable("A", DataType.OBJECT);
         Operator X = new DecisionTreeVarValue("X");
-        Operator relVal1 = new RelationshipValue("leftOf");
+        Operator relVal1 = new RelationshipValue("token_leftOf");
         Operator checkRel1 = new CheckRelationship(List.of(relVal1, var, X));
 
         Operator strVal = new StringValue("used");
@@ -54,7 +41,7 @@ public class Main {
         Operator and2 = new LogicalAnd(List.of(and1, checkClass));
 
         Operator extremeVar = new Variable("extremeA", DataType.OBJECT);
-        Operator relVal2 = new RelationshipValue("isCloserToThan");
+        Operator relVal2 = new RelationshipValue("token_isCloserToThan");
 
         // Здесь extremeA и A поменялись местами, т.к. идет вычисление "от обратного"
         // т.е. здесь при вычислении связи будет считаться, что extremeA не экстремальный

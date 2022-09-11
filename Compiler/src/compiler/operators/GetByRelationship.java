@@ -5,7 +5,6 @@ import compiler.values.RelationshipValue;
 import dictionaries.RelationshipsDictionary;
 import util.CompilationResult;
 import util.DataType;
-import util.JenaUtil;
 import util.NamingManager;
 
 import java.util.ArrayList;
@@ -24,7 +23,9 @@ public class GetByRelationship extends BaseOperator {
     @Override
     public List<List<DataType>> argsDataTypes() {
         List<List<DataType>> result = new ArrayList<>();
+
         result.add(List.of(DataType.OBJECT, DataType.RELATIONSHIP));
+
         return result;
     }
 
@@ -35,9 +36,10 @@ public class GetByRelationship extends BaseOperator {
 
     @Override
     public CompilationResult compile() {
-        // TODO: вернуть один самый первый или вернуть false если несколько? (во втором случае понадобится пауза)
+        // TODO: возвращать false, если несколько объектов
 
-        // FIXME?: сейчас отношение можно получить только из value, но может это измениться, тогда придется фиксить
+        // FIXME?: сейчас отношение можно получить только из value, если это изменится, тогда придется фиксить
+        // Проверяем бинарность отношения
         RelationshipValue relValue = (RelationshipValue) arg(1);
         String relName = relValue.value();
         if(RelationshipsDictionary.args(relName).size() != 2) {
@@ -57,10 +59,12 @@ public class GetByRelationship extends BaseOperator {
         CompilationResult compiledArg0 = arg0.compile();
         CompilationResult compiledArg1 = arg1.compile();
 
+        // Собираем правило
         value = NamingManager.genVarName();
-        rulePart = compiledArg0.rulePart() + compiledArg1.rulePart();
+        rulePart = compiledArg0.ruleHead() + compiledArg1.ruleHead();
         completedRules = compiledArg0.completedRules() + compiledArg1.completedRules();
 
+        // Получаем шаблон отношения и заполняем его
         String relPattern = RelationshipsDictionary.pattern(relName).first();
 
         relPattern = relPattern.replace("<arg1>", compiledArg0.value());
@@ -74,7 +78,7 @@ public class GetByRelationship extends BaseOperator {
         rulePart += relPattern;
         completedRules += RelationshipsDictionary.pattern(relName).second();
 
-        usedObjects = List.of(compiledArg0.value());
+        usedObjects = List.of(compiledArg0.value(), value);
 
         return new CompilationResult(value, rulePart, completedRules);
     }

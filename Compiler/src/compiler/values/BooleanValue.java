@@ -6,6 +6,7 @@ import util.DataType;
 import util.JenaUtil;
 
 public class BooleanValue extends Value {
+
     public BooleanValue(Boolean value) {
         super(Boolean.toString(value));
     }

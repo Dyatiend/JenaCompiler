@@ -7,6 +7,7 @@ import util.DataType;
 import util.JenaUtil;
 
 public class ComparisonResultValue extends Value {
+
     public ComparisonResultValue(ComparisonResult value) {
         super(ComparisonResult.toString(value));
     }

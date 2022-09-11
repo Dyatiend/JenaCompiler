@@ -15,6 +15,7 @@ import static util.JenaUtil.PAUSE_MARK;
  * Логическое ИЛИ
  */
 public class LogicalOr extends BaseOperator {
+
     /**
      * Конструктор
      * @param args Аргументы
@@ -26,7 +27,9 @@ public class LogicalOr extends BaseOperator {
     @Override
     public List<List<DataType>> argsDataTypes() {
         List<List<DataType>> result = new ArrayList<>();
+
         result.add(List.of(DataType.BOOLEAN, DataType.BOOLEAN));
+
         return result;
     }
 
@@ -37,8 +40,6 @@ public class LogicalOr extends BaseOperator {
 
     @Override
     public CompilationResult compile() {
-        // FIXME: размножение правил?
-
         // Объявляем переменные
         String value = "";
         String rulePart = "";
@@ -54,22 +55,22 @@ public class LogicalOr extends BaseOperator {
 
         // Генерируем имена
         String skolemName = NamingManager.genVarName();
-        String resFlagName = NamingManager.genFlagName();
+        String resFlagName = NamingManager.genPredName();
 
         // Подставляем в сколем все объекты операторов
         StringBuilder skolemArgs = new StringBuilder().append(skolemName);
-        for(String val : arg0.usedObjects()) {
+        for(String val : arg0.objectsUsedInRule()) {
             skolemArgs.append(",");
             skolemArgs.append(val);
         }
-        for(String val : arg1.usedObjects()) {
+        for(String val : arg1.objectsUsedInRule()) {
             skolemArgs.append(",");
             skolemArgs.append(val);
         }
 
         // Компилируем правила
-        String firstRule = JenaUtil.genBooleanRule(compiledArg0.rulePart(), skolemArgs.toString(), skolemName, resFlagName);
-        String secondRule = JenaUtil.genBooleanRule(compiledArg1.rulePart(), skolemArgs.toString(), skolemName, resFlagName);
+        String firstRule = JenaUtil.genBooleanRule(compiledArg0.ruleHead(), skolemArgs.toString(), skolemName, resFlagName);
+        String secondRule = JenaUtil.genBooleanRule(compiledArg1.ruleHead(), skolemArgs.toString(), skolemName, resFlagName);
 
         // Добавляем правило в набор завершенных правил
         completedRules = compiledArg0.completedRules() + compiledArg1.completedRules() + firstRule + secondRule;
@@ -77,13 +78,23 @@ public class LogicalOr extends BaseOperator {
         // Добавляем паузу
         completedRules += PAUSE_MARK;
 
+        // FIXME?: придумать способ инициализации получше
+        // Инициализируем переменные в новом правиле
+        StringBuilder initPart = new StringBuilder();
+        for(String var : arg0.objectsUsedInRule()) {
+            initPart.append(JenaUtil.genTriple(var, NamingManager.genVarName(), NamingManager.genVarName()));
+        }
+        for(String var : arg1.objectsUsedInRule()) {
+            initPart.append(JenaUtil.genTriple(var, NamingManager.genVarName(), NamingManager.genVarName()));
+        }
+
         // Добавляем в правило проверку наличия флага
         String flagValueVar = NamingManager.genVarName();
-        rulePart = "makeSkolem(" + skolemArgs+ ")" +
+        rulePart = initPart + JenaUtil.genMakeSkolemPrim(skolemArgs.toString()) +
                 JenaUtil.genTriple(skolemName, resFlagName, flagValueVar);
 
-        usedObjects = new ArrayList<>(arg0.usedObjects());
-        usedObjects.addAll(new ArrayList<>(arg0.usedObjects()));
+        usedObjects = new ArrayList<>(arg0.objectsUsedInRule());
+        usedObjects.addAll(new ArrayList<>(arg1.objectsUsedInRule()));
 
         return new CompilationResult(value, rulePart, completedRules);
     }

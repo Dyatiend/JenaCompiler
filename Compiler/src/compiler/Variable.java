@@ -44,6 +44,6 @@ public class Variable implements Operator {
 
     @Override
     public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genRuleVar(name), "", "");
+        return new CompilationResult(JenaUtil.genVar(name), "", "");
     }
 }

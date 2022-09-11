@@ -1,6 +1,7 @@
 package compiler.operators;
 
 import compiler.Operator;
+import util.CompilationResult;
 import util.DataType;
 
 import java.util.ArrayList;
@@ -10,19 +11,19 @@ import java.util.List;
  * Базовый оператор
  */
 public abstract class BaseOperator implements Operator {
+
     /**
      * Аргументы
      */
     private final List<Operator> args;
 
     /**
-     * Объекты, над которыми вычисляется оператор
-     * TODO: передавать все и дочерние объекты?
+     * Объекты, использованные в правиле
      */
     protected List<String> usedObjects = new ArrayList<>();
 
     @Override
-    public List<String> usedObjects() {
+    public List<String> objectsUsedInRule() {
         return usedObjects;
     }
 
@@ -40,7 +41,6 @@ public abstract class BaseOperator implements Operator {
      * Проверка аргументов
      * @param args Аргументы
      */
-    // TODO: Проверять переменные, вводимые операторами
     private void checkArgs(List<Operator> args) {
         // Получаем список типов данных
         List<DataType> actualArgsDataTypes = new ArrayList<>();

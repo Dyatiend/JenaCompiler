@@ -4,7 +4,6 @@ import compiler.Operator;
 import util.CompilationResult;
 import util.DataType;
 import util.JenaUtil;
-import util.NamingManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +33,13 @@ public class CompareWithComparisonOperator extends BaseOperator {
     @Override
     public List<List<DataType>> argsDataTypes() {
         List<List<DataType>> result = new ArrayList<>();
+
         result.add(List.of(DataType.INTEGER, DataType.DOUBLE));
         result.add(List.of(DataType.DOUBLE, DataType.INTEGER));
         result.add(List.of(DataType.INTEGER, DataType.INTEGER));
         result.add(List.of(DataType.DOUBLE, DataType.DOUBLE));
         result.add(List.of(DataType.STRING, DataType.STRING));
+
         return result;
     }
 
@@ -51,7 +52,7 @@ public class CompareWithComparisonOperator extends BaseOperator {
     public CompilationResult compile() {
         // Объявляем переменные
         String value = "";
-        String rulePart = "";
+        String ruleHead = "";
         String completedRules = "";
 
         // Получаем аргументы
@@ -62,26 +63,27 @@ public class CompareWithComparisonOperator extends BaseOperator {
         CompilationResult compiledArg0 = arg0.compile();
         CompilationResult compiledArg1 = arg1.compile();
 
-        rulePart = compiledArg0.rulePart() + compiledArg1.rulePart();
+        ruleHead = compiledArg0.ruleHead() + compiledArg1.ruleHead();
         completedRules = compiledArg0.completedRules() + compiledArg1.completedRules();
 
         switch (operator) {
             case LESS -> {
                 // Правило для проверки меньше
-                rulePart += "lessThan(" + compiledArg0.value() + "," + compiledArg1.value() + ")";
+                ruleHead += JenaUtil.genLessThanPrim(compiledArg0.value(), compiledArg1.value());
             }
             case GREATER -> {
                 // Правило для проверки больше
-                rulePart += "greaterThan(" + compiledArg0.value() + "," + compiledArg1.value() + ")";
+                ruleHead += JenaUtil.genGreaterThanPrim(compiledArg0.value(), compiledArg1.value());
             }
             case EQUAL -> {
                 // Правило для проверки эквивалентности
-                rulePart += "equal(" + compiledArg0.value() + "," + compiledArg1.value() + ")";
+                ruleHead += JenaUtil.genEqualPrim(compiledArg0.value(), compiledArg1.value());
             }
         }
 
-        usedObjects = List.of(compiledArg0.value(), compiledArg1.value());
+        usedObjects = new ArrayList<>(arg0.objectsUsedInRule());
+        usedObjects.addAll(new ArrayList<>(arg1.objectsUsedInRule()));
 
-        return new CompilationResult(value, rulePart, completedRules);
+        return new CompilationResult(value, ruleHead, completedRules);
     }
 }

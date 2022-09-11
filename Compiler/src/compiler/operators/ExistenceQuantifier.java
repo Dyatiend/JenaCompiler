@@ -3,6 +3,7 @@ package compiler.operators;
 import compiler.Operator;
 import util.CompilationResult;
 import util.DataType;
+import util.JenaUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,9 @@ public class ExistenceQuantifier extends BaseOperator {
     @Override
     public List<List<DataType>> argsDataTypes() {
         List<List<DataType>> result = new ArrayList<>();
+
         result.add(List.of(DataType.BOOLEAN));
+
         return result;
     }
 
@@ -48,10 +51,10 @@ public class ExistenceQuantifier extends BaseOperator {
         // Компилируем аргументы
         CompilationResult compiledArg0 = arg0.compile();
 
-        rulePart = compiledArg0.rulePart();
+        rulePart = compiledArg0.ruleHead();
         completedRules = compiledArg0.completedRules();
 
-        usedObjects = List.of(compiledArg0.value());
+        usedObjects = List.of(JenaUtil.genVar(varName));
 
         return new CompilationResult(value, rulePart, completedRules);
     }
