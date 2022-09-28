@@ -13,7 +13,7 @@ import static util.JenaUtil.POAS_PREF;
 import static util.JenaUtil.VAR_PRED;
 
 /**
- * Присваивание
+ * Присваивание TODO: пофиксить перезапись
  */
 public class Assign extends BaseOperator {
 

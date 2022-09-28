@@ -4,6 +4,7 @@ import compiler.Operator;
 import util.CompilationResult;
 import util.DataType;
 import util.JenaUtil;
+import util.NamingManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,10 @@ public class ExistenceQuantifier extends BaseOperator {
         // Компилируем аргументы
         CompilationResult compiledArg0 = arg0.compile();
 
-        rulePart = compiledArg0.ruleHead();
+        // Инициализация переменной
+        rulePart = "(" + JenaUtil.genVar(varName) + " " + NamingManager.genVarName() + " " + NamingManager.genVarName() + ")";
+
+        rulePart += compiledArg0.ruleHead();
         completedRules = compiledArg0.completedRules();
 
         usedObjects = List.of(JenaUtil.genVar(varName));

@@ -24,33 +24,50 @@ public class Main {
         BuiltinRegistry.theRegistry.register(new Bind());
         BuiltinRegistry.theRegistry.register(new AbsoluteValue());
 
-        Operator var = new Variable("A", DataType.OBJECT);
-        Operator X = new DecisionTreeVarValue("X");
-        Operator relVal1 = new RelationshipValue("token_leftOf");
-        Operator checkRel1 = new CheckRelationship(List.of(relVal1, var, X));
 
-        Operator strVal = new StringValue("used");
-        Operator propVal = new PropertyValue("state");
-        Operator checkProp = new CheckPropertyValue(List.of(var, propVal, strVal));
-        Operator not = new LogicalNot(List.of(checkProp));
 
-        Operator classVal = new ClassValue("operand");
-        Operator checkClass = new CheckClass(List.of(var, classVal));
 
-        Operator and1 = new LogicalAnd(List.of(checkRel1, not));
-        Operator and2 = new LogicalAnd(List.of(and1, checkClass));
+//        Operator boolVal1 = new BooleanValue(true);
+//        Operator boolVal2 = new BooleanValue(true);
+//        Operator boolVal3 = new BooleanValue(true);
+//        Operator forAll1 = new ForAllQuantifier(List.of(boolVal1, boolVal2), "A");
+//        Operator forAll2 = new ForAllQuantifier(List.of(boolVal3, forAll1), "B");
+//        System.out.println(forAll2.compileExpression());
 
-        Operator extremeVar = new Variable("extremeA", DataType.OBJECT);
-        Operator relVal2 = new RelationshipValue("token_isCloserToThan");
 
-        // Здесь extremeA и A поменялись местами, т.к. идет вычисление "от обратного"
-        // т.е. здесь при вычислении связи будет считаться, что extremeA не экстремальный
-        // TODO: придумать способ определения позиции для экстремума и остальных элементов?
-        Operator checkRel2 = new CheckRelationship(List.of(relVal2, var, X, extremeVar));
+        Operator o = Operator.fromXML("src/test/data/test1.xml");
 
-        Operator getExtreme = new GetExtreme(List.of(and2, checkRel2), "A", "extremeA");
 
-        System.out.println(getExtreme.compileExpression());
+//        Operator var = new Variable("A", DataType.OBJECT);
+//        Operator X = new DecisionTreeVarValue("X");
+//        Operator relVal1 = new RelationshipValue("token_leftOf");
+//        Operator checkRel1 = new CheckRelationship(List.of(relVal1, var, X));
+//
+//        Operator strVal = new StringValue("used");
+//        Operator propVal = new PropertyValue("state");
+//        Operator checkProp = new CheckPropertyValue(List.of(var, propVal, strVal));
+//        Operator not = new LogicalNot(List.of(checkProp));
+//
+//        Operator classVal = new ClassValue("operand");
+//        Operator checkClass = new CheckClass(List.of(var, classVal));
+//
+//        Operator and1 = new LogicalAnd(List.of(checkRel1, not));
+//        Operator and2 = new LogicalAnd(List.of(and1, checkClass));
+//
+//        Operator extremeVar = new Variable("extremeA", DataType.OBJECT);
+//        Operator relVal2 = new RelationshipValue("token_isCloserToThan");
+//
+//        // Здесь extremeA и A поменялись местами, т.к. идет вычисление "от обратного"
+//        // т.е. здесь при вычислении связи будет считаться, что extremeA не экстремальный
+//        // TODO: придумать способ определения позиции для экстремума и остальных элементов?
+//        Operator checkRel2 = new CheckRelationship(List.of(relVal2, var, X, extremeVar));
+//
+//        Operator getExtreme = new GetExtreme(List.of(and2, checkRel2), "A", "extremeA");
+//
+//        System.out.println(getExtreme.compileExpression());
+
+
+
 
 
 //        Operator classValue = new ClassValue("token");

@@ -1,11 +1,19 @@
 package compiler;
 
 import dictionaries.RelationshipsDictionary;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import util.DataType;
 import util.JenaUtil;
 import util.NamingManager;
 import util.CompilationResult;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,4 +103,78 @@ public interface Operator {
      * @return Правила для вычисления выражения, часть правила для проверки и имя предиката для чтения результата (если есть)
      */
     CompilationResult compile();
+
+    /**
+     * Создает дерево из XML файла
+     * @param path Путь к файлу
+     * @return Дерево выражения
+     */
+    static Operator fromXML(String path) {
+        try {
+            // Создается билдер дерева
+            DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            // Создается дерево DOM документа из файла
+            Document document = documentBuilder.parse(path);
+
+            // Получаем корневой элемент
+            Node root = document.getDocumentElement();
+
+            System.out.println("List of nodes:");
+            System.out.println();
+            Operator.build(root);
+            // Просматриваем всех детей
+            NodeList childNodes = root.getChildNodes();
+            for (int i = 0; i < childNodes.getLength(); ++i) {
+                Node child = childNodes.item(i);
+
+//                // Если нода не текст, то это книга - заходим внутрь
+//                if (child.getNodeType() != Node.TEXT_NODE) {
+//                    NodeList bookProps = book.getChildNodes();
+//                    for(int j = 0; j < bookProps.getLength(); j++) {
+//                        Node bookProp = bookProps.item(j);
+//                        // Если нода не текст, то это один из параметров книги - печатаем
+//                        if (bookProp.getNodeType() != Node.TEXT_NODE) {
+//                            System.out.println(bookProp.getNodeName() + ":" + bookProp.getChildNodes().item(0).getTextContent());
+//                        }
+//                    }
+//                    System.out.println("===========>>>>");
+//                }
+            }
+            return null;
+        } catch (ParserConfigurationException | IOException | SAXException ex) {
+            ex.printStackTrace(System.out);
+        }
+        return null;
+    }
+
+    /**
+     * Создает оператор из узла XML
+     * @param node XML узел
+     * @return Оператор
+     */
+    private static Operator build(Node node) {
+        // Просматриваем всех детей
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); ++i) {
+            Node child = childNodes.item(i);
+
+            if (child.getNodeName().equals("block")) {
+                System.out.println("Type: " + child.getAttributes().getNamedItem("type").getNodeValue());
+                System.out.println();
+                System.out.println("Children: ");
+                Operator.build(child);
+            }
+            else if (child.getNodeName().equals("field") || child.getNodeName().equals("value"))  {
+                System.out.println("Name: " + child.getAttributes().getNamedItem("name").getNodeValue());
+                System.out.println();
+                System.out.println("Children: ");
+                Operator.build(child);
+            }
+            else {
+                System.out.println("Text: " + child.getNodeValue());
+                System.out.println();
+            }
+        }
+        return null;
+    }
 }
