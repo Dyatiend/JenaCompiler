@@ -1,14 +1,14 @@
 package compiler;
 
+import compiler.operators.*;
+import compiler.values.*;
+import compiler.values.ClassValue;
 import dictionaries.RelationshipsDictionary;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import util.DataType;
-import util.JenaUtil;
-import util.NamingManager;
-import util.CompilationResult;
+import util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -109,7 +109,7 @@ public interface Operator {
      * @param path Путь к файлу
      * @return Дерево выражения
      */
-    static Operator fromXML(String path) {
+    static Operator fromXML(String path) throws IllegalAccessException {
         try {
             // Создается билдер дерева
             DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -117,30 +117,30 @@ public interface Operator {
             Document document = documentBuilder.parse(path);
 
             // Получаем корневой элемент
-            Node root = document.getDocumentElement();
+            Node xml = document.getDocumentElement();
 
-            System.out.println("List of nodes:");
-            System.out.println();
-            Operator.build(root);
-            // Просматриваем всех детей
-            NodeList childNodes = root.getChildNodes();
+            // Корень выражения
+            Node root = null;
+
+            // Ищем корень
+            NodeList childNodes = xml.getChildNodes();
             for (int i = 0; i < childNodes.getLength(); ++i) {
                 Node child = childNodes.item(i);
-
-//                // Если нода не текст, то это книга - заходим внутрь
-//                if (child.getNodeType() != Node.TEXT_NODE) {
-//                    NodeList bookProps = book.getChildNodes();
-//                    for(int j = 0; j < bookProps.getLength(); j++) {
-//                        Node bookProp = bookProps.item(j);
-//                        // Если нода не текст, то это один из параметров книги - печатаем
-//                        if (bookProp.getNodeType() != Node.TEXT_NODE) {
-//                            System.out.println(bookProp.getNodeName() + ":" + bookProp.getChildNodes().item(0).getTextContent());
-//                        }
-//                    }
-//                    System.out.println("===========>>>>");
-//                }
+                if(child.getNodeType() == Node.ELEMENT_NODE) {
+                    if (root == null) {
+                        root = child;
+                    }
+                    else {
+                        throw new IllegalAccessException("Выражение должно иметь один корневой узел");
+                    }
+                }
             }
-            return null;
+            if(root == null) {
+                throw new IllegalAccessException("Не найден корневой узел выражения");
+            }
+
+            // Строим дерево
+            return Operator.build(root);
         } catch (ParserConfigurationException | IOException | SAXException ex) {
             ex.printStackTrace(System.out);
         }
@@ -153,28 +153,153 @@ public interface Operator {
      * @return Оператор
      */
     private static Operator build(Node node) {
-        // Просматриваем всех детей
-        NodeList childNodes = node.getChildNodes();
-        for (int i = 0; i < childNodes.getLength(); ++i) {
-            Node child = childNodes.item(i);
+        Operator operator;
 
-            if (child.getNodeName().equals("block")) {
-                System.out.println("Type: " + child.getAttributes().getNamedItem("type").getNodeValue());
-                System.out.println();
-                System.out.println("Children: ");
-                Operator.build(child);
-            }
-            else if (child.getNodeName().equals("field") || child.getNodeName().equals("value"))  {
-                System.out.println("Name: " + child.getAttributes().getNamedItem("name").getNodeValue());
-                System.out.println();
-                System.out.println("Children: ");
-                Operator.build(child);
-            }
-            else {
-                System.out.println("Text: " + child.getNodeValue());
-                System.out.println();
+        if(node.getNodeName().equals("block")) {
+            switch (node.getAttributes().getNamedItem("type").getNodeValue()) {
+                case "object" -> {
+                    String name = node.getFirstChild().getTextContent();
+                    return new ObjectValue(name);
+                }
+                case "class" -> {
+                    String name = node.getFirstChild().getTextContent();
+                    return new ClassValue(name);
+                }
+                case "property" -> {
+                    String name = node.getFirstChild().getTextContent();
+                    return new PropertyValue(name);
+                }
+                case "relationship" -> {
+                    String name = node.getFirstChild().getTextContent();
+                    return new RelationshipValue(name);
+                }
+                case "boolean" -> {
+                    String val = node.getFirstChild().getTextContent();
+                    return new BooleanValue(val.equals("true"));
+                }
+                case "integer" -> {
+                    String val = node.getFirstChild().getTextContent();
+                    return new IntegerValue(Integer.valueOf(val));
+                }
+                case "double" -> {
+                    String val = node.getFirstChild().getTextContent();
+                    return new DoubleValue(Double.valueOf(val));
+                }
+                case "comparison_result" -> {
+                    String val = node.getFirstChild().getTextContent();
+                    return new ComparisonResultValue(ComparisonResult.valueOf(val.toUpperCase()));
+                }
+                case "ref_to_decision_tree_var" -> {
+                    String name = node.getFirstChild().getTextContent();
+                    return new DecisionTreeVarValue(name);
+                }
+                case "get_class" -> {
+                    return new GetClass(List.of(build(node.getFirstChild().getFirstChild())));
+                }
+                case "get_property_value" -> {
+                    return new GetPropertyValue(List.of(
+                            build(node.getFirstChild().getFirstChild()),
+                            build(node.getLastChild().getFirstChild())
+                    ));
+                }
+                case "get_relationship_object" -> {
+                    return new GetByRelationship(List.of(
+                            build(node.getFirstChild().getFirstChild()),
+                            build(node.getLastChild().getFirstChild())
+                    ));
+                }
+                case "get_condition_object" -> {
+                    return new GetByCondition(List.of(
+                            build(node.getLastChild().getFirstChild())),
+                            node.getFirstChild().getTextContent()
+                    );
+                }
+                case "get_extr_object_condition_and_relation" -> {
+                    // TODO
+                }
+                case "assign_value_to_property" -> {
+                    return new Assign(List.of(
+                            build(node.getChildNodes().item(0).getFirstChild()),
+                            build(node.getChildNodes().item(1).getFirstChild()),
+                            build(node.getChildNodes().item(2).getFirstChild())
+                    ));
+                }
+                case "assign_value_to_variable_decision_tree" -> {
+                    return new Assign(List.of(
+                            build(node.getFirstChild().getFirstChild()),
+                            build(node.getLastChild().getFirstChild())
+                    ));
+                }
+                case "check_object_class" -> {
+                    return new CheckClass(List.of(
+                            build(node.getFirstChild().getFirstChild()),
+                            build(node.getLastChild().getFirstChild())
+                    ));
+                }
+                case "check_value_of_property" -> {
+                    return new CheckPropertyValue(List.of(
+                            build(node.getChildNodes().item(0).getFirstChild()),
+                            build(node.getChildNodes().item(1).getFirstChild()),
+                            build(node.getChildNodes().item(2).getFirstChild())
+                    ));
+                }
+                case "check_relationship" -> {
+                    ArrayList<Operator> args = new ArrayList<>();
+                    NodeList childNodes = node.getChildNodes();
+                    for (int i = 0; i < childNodes.getLength(); ++i) {
+                        Node child = childNodes.item(i);
+                        if(child.getNodeType() == Node.ELEMENT_NODE) {
+                            args.add(build(child.getFirstChild()));
+                        }
+                    }
+                    return new CheckRelationship(args);
+                }
+                case "and" -> {
+                    return new LogicalAnd(List.of(
+                            build(node.getFirstChild().getFirstChild()),
+                            build(node.getLastChild().getFirstChild())
+                    ));
+                }
+                case "or" -> {
+                    return new LogicalOr(List.of(
+                            build(node.getFirstChild().getFirstChild()),
+                            build(node.getLastChild().getFirstChild())
+                    ));
+                }
+                case "not" -> {
+                    return new LogicalNot(List.of(
+                            build(node.getFirstChild().getFirstChild())
+                    ));
+                }
+                case "comparison" -> {
+                    return new CompareWithComparisonOperator(List.of(
+                            build(node.getChildNodes().item(1).getFirstChild()),
+                            build(node.getChildNodes().item(2).getFirstChild())),
+                            CompareWithComparisonOperator.ComparisonOperator.valueOf(node.getChildNodes().item(0).getTextContent())
+                    );
+                }
+                case "three_digit_comparison" -> {
+                    return new Compare(List.of(
+                            build(node.getFirstChild().getFirstChild()),
+                            build(node.getLastChild().getFirstChild())
+                    ));
+                }
+                case "quantifier_of_existence" -> {
+                    return new ExistenceQuantifier(List.of(
+                            build(node.getLastChild().getFirstChild())),
+                            node.getFirstChild().getTextContent()
+                    );
+                }
+                case "quantifier_of_generality" -> {
+                    return new ForAllQuantifier(List.of(
+                            build(node.getChildNodes().item(1).getFirstChild()),
+                            build(node.getChildNodes().item(2).getFirstChild())),
+                            node.getChildNodes().item(0).getTextContent()
+                    );
+                }
             }
         }
+
         return null;
     }
 }
