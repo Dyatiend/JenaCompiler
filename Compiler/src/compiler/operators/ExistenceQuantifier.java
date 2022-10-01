@@ -1,6 +1,7 @@
 package compiler.operators;
 
 import compiler.Operator;
+import compiler.values.BooleanValue;
 import util.CompilationResult;
 import util.DataType;
 import util.JenaUtil;
@@ -54,6 +55,17 @@ public class ExistenceQuantifier extends BaseOperator {
 
         // Инициализация переменной
         rulePart = "(" + JenaUtil.genVar(varName) + " " + NamingManager.genVarName() + " " + NamingManager.genVarName() + ")";
+
+        // Если оператор булево значение
+        if(arg0 instanceof BooleanValue) {
+            // Добавляем выражение, равное значению
+            if(Boolean.parseBoolean(((BooleanValue) arg0).value())) {
+                rulePart += JenaUtil.genEqualPrim("1", "1");
+            }
+            else {
+                rulePart += JenaUtil.genEqualPrim("0", "1");
+            }
+        }
 
         rulePart += compiledArg0.ruleHead();
         completedRules = compiledArg0.completedRules();

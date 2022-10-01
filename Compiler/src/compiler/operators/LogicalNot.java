@@ -1,6 +1,7 @@
 package compiler.operators;
 
 import compiler.Operator;
+import compiler.values.BooleanValue;
 import util.CompilationResult;
 import util.DataType;
 import util.JenaUtil;
@@ -47,11 +48,24 @@ public class LogicalNot extends BaseOperator {
         String rulePart = "";
         String completedRules = "";
 
+        String operRule = "";
+
         // Получаем аргументы
         Operator arg0 = arg(0);
 
         // Компилируем аргументы
         CompilationResult compiledArg0 = arg0.compile();
+
+        // Если оператор - булево значение
+        if (arg0 instanceof BooleanValue) {
+            // Добавляем выражение, равное значению
+            if(Boolean.parseBoolean(((BooleanValue) arg0).value())) {
+                operRule += JenaUtil.genEqualPrim("1", "1");
+            }
+            else {
+                operRule += JenaUtil.genEqualPrim("0", "1");
+            }
+        }
 
         // Генерируем имена
         String skolemName = NamingManager.genVarName();
@@ -65,7 +79,7 @@ public class LogicalNot extends BaseOperator {
         }
 
         // Генерируем правило
-        String rule = JenaUtil.genBooleanRule(compiledArg0.ruleHead(), skolemArgs.toString(), skolemName, resFlagName);
+        String rule = JenaUtil.genBooleanRule(operRule + compiledArg0.ruleHead(), skolemArgs.toString(), skolemName, resFlagName);
 
         // Добавляем правило в набор завершенных правил
         completedRules = compiledArg0.completedRules() + rule;

@@ -9,7 +9,7 @@ import util.NamingManager;
 import java.util.ArrayList;
 import java.util.List;
 
-// FIXME: переделать под maximize/minimize?
+// FIXME: переделать
 /**
  * Выбор экстремального объекта
  */

@@ -1,9 +1,11 @@
 package compiler.operators;
 
 import compiler.Operator;
+import compiler.values.BooleanValue;
 import util.CompilationResult;
 import util.DataType;
 import util.JenaUtil;
+import util.NamingManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +52,22 @@ public class GetByCondition extends BaseOperator {
         // Компилируем аргументы
         CompilationResult compiledArg0 = arg0.compile();
 
+        // Инициализация переменной
+        rulePart = "(" + JenaUtil.genVar(varName) + " " + NamingManager.genVarName() + " " + NamingManager.genVarName() + ")";
+
+        // Если оператор булево значение
+        if(arg0 instanceof BooleanValue) {
+            // Добавляем выражение, равное значению
+            if(Boolean.parseBoolean(((BooleanValue) arg0).value())) {
+                rulePart += JenaUtil.genEqualPrim("1", "1");
+            }
+            else {
+                rulePart += JenaUtil.genEqualPrim("0", "1");
+            }
+        }
+
         value = JenaUtil.genVar(varName);
-        rulePart = compiledArg0.ruleHead();
+        rulePart += compiledArg0.ruleHead();
         completedRules = compiledArg0.completedRules();
 
         usedObjects = List.of(value);

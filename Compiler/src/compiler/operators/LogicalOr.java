@@ -1,6 +1,7 @@
 package compiler.operators;
 
 import compiler.Operator;
+import compiler.values.BooleanValue;
 import util.CompilationResult;
 import util.DataType;
 import util.JenaUtil;
@@ -45,6 +46,9 @@ public class LogicalOr extends BaseOperator {
         String rulePart = "";
         String completedRules = "";
 
+        String firstOperRule = "";
+        String secondOperRule = "";
+
         // Получаем аргументы
         Operator arg0 = arg(0);
         Operator arg1 = arg(1);
@@ -52,6 +56,26 @@ public class LogicalOr extends BaseOperator {
         // Компилируем аргументы
         CompilationResult compiledArg0 = arg0.compile();
         CompilationResult compiledArg1 = arg1.compile();
+
+        // Если операторы - булевы значения
+        if (arg0 instanceof BooleanValue) {
+            // Добавляем выражение, равное значению
+            if(Boolean.parseBoolean(((BooleanValue) arg0).value())) {
+                firstOperRule += JenaUtil.genEqualPrim("1", "1");
+            }
+            else {
+                firstOperRule += JenaUtil.genEqualPrim("0", "1");
+            }
+        }
+        if (arg1 instanceof BooleanValue) {
+            // Добавляем выражение, равное значению
+            if(Boolean.parseBoolean(((BooleanValue) arg1).value())) {
+                secondOperRule += JenaUtil.genEqualPrim("1", "1");
+            }
+            else {
+                secondOperRule += JenaUtil.genEqualPrim("0", "1");
+            }
+        }
 
         // Генерируем имена
         String skolemName = NamingManager.genVarName();
@@ -69,8 +93,8 @@ public class LogicalOr extends BaseOperator {
         }
 
         // Компилируем правила
-        String firstRule = JenaUtil.genBooleanRule(compiledArg0.ruleHead(), skolemArgs.toString(), skolemName, resFlagName);
-        String secondRule = JenaUtil.genBooleanRule(compiledArg1.ruleHead(), skolemArgs.toString(), skolemName, resFlagName);
+        String firstRule = JenaUtil.genBooleanRule(firstOperRule + compiledArg0.ruleHead(), skolemArgs.toString(), skolemName, resFlagName);
+        String secondRule = JenaUtil.genBooleanRule(secondOperRule + compiledArg1.ruleHead(), skolemArgs.toString(), skolemName, resFlagName);
 
         // Добавляем правило в набор завершенных правил
         completedRules = compiledArg0.completedRules() + compiledArg1.completedRules() + firstRule + secondRule;
