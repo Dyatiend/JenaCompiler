@@ -95,6 +95,12 @@ public interface Operator {
             rules += rule;
         }
 
+        // Удаляем префикс из результата FIXME: может тогда лучше вообще их не использовать?
+        // TODO: добавлять сюда удаление префиксов при добавлении нового префикса не удобно, надо  придумать фикс
+        resPredName = resPredName.replace(JenaUtil.POAS_PREF + ":", JenaUtil.POAS_PREF_URL);
+        resPredName = resPredName.replace(JenaUtil.XSD_PREF + ":", JenaUtil.XSD_PREF_URL);
+        resPredName = resPredName.replace(JenaUtil.RDF_PREF + ":", JenaUtil.RDF_PREF_URL);
+
         return new CompilationResult(resPredName, "", rules);
     }
 
@@ -175,7 +181,7 @@ public interface Operator {
                 }
                 case "boolean" -> {
                     String val = node.getFirstChild().getTextContent();
-                    return new BooleanValue(val.equals("true"));
+                    return new BooleanValue(val.equals("TRUE"));
                 }
                 case "integer" -> {
                     String val = node.getFirstChild().getTextContent();

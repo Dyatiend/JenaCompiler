@@ -5,11 +5,20 @@ import compiler.Variable;
 import compiler.operators.*;
 import compiler.values.*;
 import compiler.values.ClassValue;
+import org.apache.jena.base.Sys;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
+import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
+import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.util.PrintUtil;
+import org.apache.jena.vocabulary.VCARD;
+import util.CompilationResult;
 import util.DataType;
+import util.JenaUtil;
 
 import java.util.List;
+import java.util.Objects;
 
 import static util.JenaUtil.*;
 
@@ -35,8 +44,41 @@ public class Main {
 //        System.out.println(forAll2.compileExpression());
 
 
-        Operator o = Operator.fromXML("src/test/data/test1.xml");
+//        try {
+//            Operator o = Operator.fromXML("src/test/data/test1.xml");
+//        } catch (IllegalAccessException ex) {
+//            ex.printStackTrace();
+//        }
 
+// Читаем выражение
+        Operator operator = null;
+        try {
+            operator = Operator.fromXML("./test/compiler/operators/testLogicalAnd/expressions/test_trueAndTrue.xml");
+        }
+        catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        }
+
+
+        // Компилируем
+        CompilationResult result = operator.compileExpression();
+
+        // Создаем модель
+        Model model = ModelFactory.createDefaultModel();
+        // Запускаем ризонер
+
+        List<Rule> rules = Rule.parseRules(result.completedRules());
+        Reasoner reasoner = new GenericRuleReasoner(rules);
+        InfModel inf = ModelFactory.createInfModel(reasoner, model);
+
+
+        // Читаем результат
+        Property property = inf.getProperty(result.value());
+
+
+        var iter =inf.listSubjectsWithProperty(property);
+
+        System.out.println(iter.hasNext());
 
 //        Operator var = new Variable("A", DataType.OBJECT);
 //        Operator X = new DecisionTreeVarValue("X");
