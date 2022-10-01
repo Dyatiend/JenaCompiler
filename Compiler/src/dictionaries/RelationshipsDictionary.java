@@ -89,7 +89,7 @@ public class RelationshipsDictionary {
     /**
      * Использованы ли отношения линейной шкалы
      */
-    private static final boolean isLinerScaleUsed;
+    private static boolean isLinerScaleUsed = false;
 
     /**
      * Вспомогательные правила для работы правил линейной шкалы
@@ -116,7 +116,13 @@ public class RelationshipsDictionary {
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    static {
+    public static void init(String path) {
+        // Очищаем старые значения
+        relationships.clear();
+        patterns.clear();
+        auxiliaryLinerScaleRules = "";
+        isLinerScaleUsed = false;
+
         // TODO: чтение из файла
         // FIXME?: не считать классы линейной шкалой?
 

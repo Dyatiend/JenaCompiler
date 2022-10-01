@@ -20,7 +20,10 @@ public class PropertiesDictionary {
      */
     private static final Map<String, Pair<List<String>, DataType>> properties = new HashMap<>();
 
-    static {
+    public static void init(String path) {
+        // Очищаем старые значения
+        properties.clear();
+
         // TODO: чтение из файла
 
         // Добавляем свойства

@@ -61,7 +61,13 @@ public class ClassesDictionary {
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    static {
+    public static void init(String path) {
+        // Очищаем старые значения
+        classes.clear();
+        calculations.clear();
+        transitions.clear();
+        decisionTreeVars.clear();
+
         // TODO: чтение из файла
 
         // Добавляем классы
