@@ -1,0 +1,1 @@
+<xml xmlns="https://developers.google.com/blockly/xml"><block type="or" id="urTDLXlH_bZJ+a),u{S7" x="184" y="82"><value name="operand1"><block type="boolean" id="9-e:E;__R1*3xc1I/?~|"><field name="value">TRUE</field></block></value><value name="operand2"><block type="boolean" id="?VGH5yHUnA9.=9}X/]c/"><field name="value">FALSE</field></block></value></block></xml>
