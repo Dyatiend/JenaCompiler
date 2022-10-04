@@ -131,6 +131,10 @@ public class Compare extends BaseOperator {
         for(String var : arg1.objectsUsedInRule()) {
             initPart.append(JenaUtil.genTriple(var, NamingManager.genVarName(), NamingManager.genVarName()));
         }
+        if(arg0.objectsUsedInRule().isEmpty() && arg1.objectsUsedInRule().isEmpty()) {
+            initPart.append(JenaUtil.genTriple(NamingManager.genVarName(), NamingManager.genVarName(), NamingManager.genVarName()));
+        }
+
         ruleHead = initPart + JenaUtil.genMakeSkolemPrim(skolemArgs.toString()) +
                 JenaUtil.genTriple(skolemName, resFlagName, value);
 

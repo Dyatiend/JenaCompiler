@@ -234,6 +234,7 @@ public class JenaUtil {
         return rule;
     }
 
+    // FIXME: Придумать способ, чтобы в skolemArgs не надо было добавлять skolemName
     /**
      * Сгенерировать булево правило
      * @param ruleHead Голова правила

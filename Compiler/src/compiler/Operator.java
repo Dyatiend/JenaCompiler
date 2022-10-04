@@ -72,8 +72,14 @@ public interface Operator {
         // Компилируем оператор
         CompilationResult result = compile();
 
+        // Добавляем пустой триплет в граф, чтобы он никогда небыл пустым
+        // FIXME: придумать другой способ
+        String tmp = NamingManager.genVarName();
+        String rules = JenaUtil.genBooleanRule("", tmp, tmp, NamingManager.genPredName());
+        rules += JenaUtil.PAUSE_MARK;
+
         // Добавляем вспомогательные правила, если нужно
-        String rules = RelationshipsDictionary.isLinerScaleUsed() ?
+        rules += RelationshipsDictionary.isLinerScaleUsed() ?
                 RelationshipsDictionary.auxiliaryLinerScaleRules() + result.completedRules() :
                 result.completedRules();
 

@@ -61,9 +61,13 @@ class LogicalAndTest {
         Model model = ModelFactory.createDefaultModel();
 
         // Запускаем ризонер
-        List<Rule> rules = Rule.parseRules(result.completedRules());
-        Reasoner reasoner = new GenericRuleReasoner(rules);
-        InfModel inf = ModelFactory.createInfModel(reasoner, model);
+        InfModel inf = ModelFactory.createInfModel(new GenericRuleReasoner(List.of()), model);
+        String[] rulesSets = result.completedRules().split(PAUSE_MARK);
+        for(String set : rulesSets) {
+            List<Rule> rules = Rule.parseRules(set);
+            Reasoner reasoner = new GenericRuleReasoner(rules);
+            inf = ModelFactory.createInfModel(reasoner, inf);
+        }
 
         // Читаем результат
         Property property = inf.getProperty(result.value());
@@ -95,9 +99,13 @@ class LogicalAndTest {
         Model model = ModelFactory.createDefaultModel();
 
         // Запускаем ризонер
-        List<Rule> rules = Rule.parseRules(result.completedRules());
-        Reasoner reasoner = new GenericRuleReasoner(rules);
-        InfModel inf = ModelFactory.createInfModel(reasoner, model);
+        InfModel inf = ModelFactory.createInfModel(new GenericRuleReasoner(List.of()), model);
+        String[] rulesSets = result.completedRules().split(PAUSE_MARK);
+        for(String set : rulesSets) {
+            List<Rule> rules = Rule.parseRules(set);
+            Reasoner reasoner = new GenericRuleReasoner(rules);
+            inf = ModelFactory.createInfModel(reasoner, inf);
+        }
 
         // Читаем результат
         Property property = inf.getProperty(result.value());
@@ -129,9 +137,13 @@ class LogicalAndTest {
         Model model = ModelFactory.createDefaultModel();
 
         // Запускаем ризонер
-        List<Rule> rules = Rule.parseRules(result.completedRules());
-        Reasoner reasoner = new GenericRuleReasoner(rules);
-        InfModel inf = ModelFactory.createInfModel(reasoner, model);
+        InfModel inf = ModelFactory.createInfModel(new GenericRuleReasoner(List.of()), model);
+        String[] rulesSets = result.completedRules().split(PAUSE_MARK);
+        for(String set : rulesSets) {
+            List<Rule> rules = Rule.parseRules(set);
+            Reasoner reasoner = new GenericRuleReasoner(rules);
+            inf = ModelFactory.createInfModel(reasoner, inf);
+        }
 
         // Читаем результат
         Property property = inf.getProperty(result.value());
@@ -163,9 +175,13 @@ class LogicalAndTest {
         Model model = ModelFactory.createDefaultModel();
 
         // Запускаем ризонер
-        List<Rule> rules = Rule.parseRules(result.completedRules());
-        Reasoner reasoner = new GenericRuleReasoner(rules);
-        InfModel inf = ModelFactory.createInfModel(reasoner, model);
+        InfModel inf = ModelFactory.createInfModel(new GenericRuleReasoner(List.of()), model);
+        String[] rulesSets = result.completedRules().split(PAUSE_MARK);
+        for(String set : rulesSets) {
+            List<Rule> rules = Rule.parseRules(set);
+            Reasoner reasoner = new GenericRuleReasoner(rules);
+            inf = ModelFactory.createInfModel(reasoner, inf);
+        }
 
         // Читаем результат
         Property property = inf.getProperty(result.value());

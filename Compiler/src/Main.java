@@ -17,6 +17,7 @@ import util.CompilationResult;
 import util.DataType;
 import util.JenaUtil;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,35 +51,65 @@ public class Main {
 //            ex.printStackTrace();
 //        }
 
-// Читаем выражение
+        // Читаем выражение
         Operator operator = null;
         try {
-            operator = Operator.fromXML("./test/compiler/operators/testLogicalAnd/expressions/test_trueAndTrue.xml");
+            operator = Operator.fromXML("./test/compiler/operators/testLogicalNot/expressions/test_notTrue.xml");
         }
         catch (IllegalAccessException ex) {
             ex.printStackTrace();
         }
-
 
         // Компилируем
         CompilationResult result = operator.compileExpression();
 
         // Создаем модель
         Model model = ModelFactory.createDefaultModel();
+
         // Запускаем ризонер
+        InfModel inf = ModelFactory.createInfModel(new GenericRuleReasoner(List.of()), model);
+        String[] rulesSets = result.completedRules().split(PAUSE_MARK);
 
-        List<Rule> rules = Rule.parseRules(result.completedRules());
+        String tmp = "[equal(0,1)makeSkolem(?~0~)->(?~0~ poas:~0~ 1)]";
+
+        List<Rule> rules = Rule.parseRules(tmp);
         Reasoner reasoner = new GenericRuleReasoner(rules);
-        InfModel inf = ModelFactory.createInfModel(reasoner, model);
+        inf = ModelFactory.createInfModel(reasoner, inf);
 
+        StmtIterator i = inf.listStatements();
+        while(i.hasNext()) {
+            System.out.println(i.next());
+        }
+
+        System.out.println("-----------------");
+
+        tmp = "[(?~1~ ?~2~ ?~3~)makeSkolem(?~4~)->(?~4~ poas:~1~ 1)]";
+
+        List<Rule> rules1 = Rule.parseRules(tmp);
+        Reasoner reasoner1 = new GenericRuleReasoner(rules1);
+        InfModel inf1 = ModelFactory.createInfModel(reasoner1, inf);
+
+         i = inf1.listStatements();
+        while(i.hasNext()) {
+            System.out.println(i.next());
+        }
+
+//        http://www.vstu.ru/poas/code#
+//        for(String set : rulesSets) {
+//            List<Rule> rules = Rule.parseRules(set);
+//            Reasoner reasoner = new GenericRuleReasoner(rules);
+//            inf = ModelFactory.createInfModel(reasoner, inf);
+//
+//            StmtIterator i = inf.listStatements();
+//            while(i.hasNext()) {
+//                System.out.println(i.next());
+//            }
+//            System.out.println("-----------------");
+//        }
 
         // Читаем результат
         Property property = inf.getProperty(result.value());
 
-
-        var iter =inf.listSubjectsWithProperty(property);
-
-        System.out.println(iter.hasNext());
 
 //        Operator var = new Variable("A", DataType.OBJECT);
 //        Operator X = new DecisionTreeVarValue("X");

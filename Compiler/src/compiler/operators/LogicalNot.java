@@ -93,6 +93,9 @@ public class LogicalNot extends BaseOperator {
         for(String var : arg0.objectsUsedInRule()) {
             initPart.append(JenaUtil.genTriple(var, NamingManager.genVarName(), NamingManager.genVarName()));
         }
+        if(arg0.objectsUsedInRule().isEmpty()) {
+            initPart.append(JenaUtil.genTriple(NamingManager.genVarName(), NamingManager.genVarName(), NamingManager.genVarName()));
+        }
 
         // Добавляем в правило проверку отсутствия флага
         rulePart = initPart + JenaUtil.genMakeSkolemPrim(skolemArgs.toString()) +
