@@ -1,72 +1,99 @@
-package dictionaries;
+package dictionaries
 
-import util.DataType;
-import util.Pair;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import util.DataType
 
 /**
  * Словарь свойств
  */
-public class PropertiesDictionary {
+object PropertiesDictionary {
+
+    // +++++++++++++++++++++++++++++++++ Свойства ++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
      * Свойства
-     *
      * row - имя свойства
      * val - First - список классов с данным свойством, null - если относится к объекту, Second - тип данных
      */
-    private static final Map<String, Pair<List<String>, DataType>> properties = new HashMap<>();
+    private val properties: MutableMap<String, Pair<List<String>?, DataType>> = HashMap()
 
-    public static void init(String path) {
+    /**
+     * Enum свойства
+     * row - имя свойства
+     * val - Отношение, определяющее порядок значений линейного enum
+     */
+    private val enums: MutableMap<String, String?> = HashMap()
+
+    // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    fun init(path: String) {
         // Очищаем старые значения
-        properties.clear();
+        properties.clear()
 
         // TODO: чтение из файла
 
         // Добавляем свойства
-        properties.put("tokenCount", new Pair<>(List.of("element", "plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"), DataType.INTEGER));
-        properties.put("arity", new Pair<>(List.of("plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"), DataType.STRING));
-        properties.put("place", new Pair<>(List.of("plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"), DataType.STRING));
-        properties.put("precedence", new Pair<>(List.of("plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"), DataType.INTEGER));
-        properties.put("associativity", new Pair<>(List.of("plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"), DataType.STRING));
-        properties.put("needsLeftOperand", new Pair<>(List.of("plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"), DataType.BOOLEAN));
-        properties.put("needsRightOperand", new Pair<>(List.of("plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"), DataType.BOOLEAN));
-        properties.put("needsInnerOperand", new Pair<>(List.of("plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"), DataType.BOOLEAN));
-        properties.put("strictOperandOrder", new Pair<>(List.of("plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"), DataType.BOOLEAN));
+        properties["countOfTokens"] = Pair(listOf(
+                "element", "plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"
+        ), DataType.Integer)
+        properties["arity"] = Pair(listOf(
+                "plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"
+        ), DataType.Enum)
+        properties["place"] = Pair(listOf(
+                "plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"
+        ), DataType.Enum)
+        properties["precedence"] = Pair(listOf(
+                "plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"
+        ), DataType.Integer)
+        properties["associativity"] = Pair(listOf(
+                "plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"
+        ), DataType.Enum)
+        properties["needsLeftOperand"] = Pair(listOf(
+                "plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"
+        ), DataType.Boolean)
+        properties["needsRightOperand"] = Pair(listOf(
+                "plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"
+        ), DataType.Boolean)
+        properties["needsInnerOperand"] = Pair(listOf(
+                "plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"
+        ), DataType.Boolean)
+        properties["hasStrictOperandOrder"] = Pair(listOf(
+                "plus", "minus", "multiplication",
+                "division", "squareParenthesis", "parenthesis"
+        ), DataType.Boolean)
 
-        properties.put("state", new Pair<>(null, DataType.STRING));
-        properties.put("evaluatesTo", new Pair<>(null, DataType.STRING));
+        properties["state"] = Pair(null, DataType.LinerEnum)
+        properties["evaluatesTo"] = Pair(null, DataType.Enum)
+
+        enums["state"] = "state_directlyLeftOf"
     }
+
+    // ++++++++++++++++++++++++++++++++++++ Методы +++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
      * Существует ли свойство
      * @param propertyName Имя свойства
      * @return true - если существует, иначе - false
      */
-    public static boolean exist(String propertyName) {
-        return properties.containsKey(propertyName);
-    }
+    fun exist(propertyName: String): Boolean = properties.containsKey(propertyName)
 
     /**
      * Является ли статическим
      * @param propertyName Имя свойства
      * @return true - если относится к классу, false - если к объекту
      */
-    public static boolean isStatic(String propertyName) {
-        if(!exist(propertyName)) return false;
-        return properties.get(propertyName).first() != null;
+    fun isStatic(propertyName: String): Boolean {
+        return if (!exist(propertyName)) false else properties[propertyName]?.first != null
     }
 
     /**
@@ -74,31 +101,32 @@ public class PropertiesDictionary {
      * @param propertyName Имя свойства
      * @return Тип данных
      */
-    public static DataType dataType(String propertyName) {
-        if(!exist(propertyName)) return null;
-        return properties.get(propertyName).second();
+    fun dataType(propertyName: String): DataType? {
+        return if (!exist(propertyName)) null else properties[propertyName]!!.second
     }
+
+    /**
+     * Получить отношение, задающее порядок значений enum свойства
+     */
+    fun orderRelationship(propertyName: String): String? = enums[propertyName]
 
     /**
      * Переопределяется ли свойство
      * @param propertyName Имя свойства
      * @return true - если переопределяется, иначе - false
      */
-    public static boolean isPropertyBeingOverridden(String propertyName) {
-        if(!exist(propertyName)) return false;
-        if(properties.get(propertyName).first() == null) return false;
-
-        List<String> classes = properties.get(propertyName).first();
-        for (int i = 0; i < classes.size(); ++i) {
-            for (int j = 0; j < classes.size(); ++j) {
-                if(i == j) continue;
-
-                if(ClassesDictionary.isParentOf(classes.get(i), classes.get(j))) {
-                    return true;
+    fun isPropertyBeingOverridden(propertyName: String): Boolean {
+        if (!exist(propertyName)) return false
+        if (properties[propertyName]?.first == null) return false
+        val classes: List<String> = properties[propertyName]?.first!!
+        for (i in classes.indices) {
+            for (j in classes.indices) {
+                if (i == j) continue
+                if (ClassesDictionary.isParentOf(classes[i], classes[j])) {
+                    return true
                 }
             }
         }
-
-        return false;
+        return false
     }
 }

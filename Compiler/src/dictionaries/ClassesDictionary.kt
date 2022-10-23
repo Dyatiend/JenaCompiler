@@ -1,114 +1,111 @@
-package dictionaries;
+package dictionaries
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
-import compiler.Operator;
-import compiler.Variable;
-import compiler.operators.CheckPropertyValue;
-import compiler.operators.LogicalNot;
-import compiler.values.PropertyValue;
-import compiler.values.StringValue;
-import util.DataType;
-import util.Pair;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.HashBasedTable
+import com.google.common.collect.Table
+import compiler.Operator
+import compiler.Variable
+import compiler.operators.CheckPropertyValue
+import compiler.operators.LogicalNot
+import compiler.values.EnumValue
+import compiler.values.PropertyValue
+import util.DataType
 
 /**
  * Словарь классов
  */
-public class ClassesDictionary {
+object ClassesDictionary {
 
     // +++++++++++++++++++++++++++++++++ Свойства ++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
      * Список классов
-     *
      * key - класс
      * val - предок
      */
-    private static final Map<String, String> classes = new HashMap<>();
+    private var classes: MutableMap<String, String?> = HashMap()
 
     /**
      * Вычисляемые классы
-     *
      * Класс вычисляется путем вычисления boolean выражения над объектом
-     *
      * key - класс
      * val - First - имя переменной, куда подставить объект, Second - выражение для вычисления
      */
-    private static final Map<String, Pair<String, Operator>> calculations = new HashMap<>();
+    private var calculations: MutableMap<String, Pair<String, Operator>> = HashMap()
 
     /**
      * Переходы между классами
-     *
      * row - источник
      * col - назначение
      * val - отношение, по которому идет переход
      */
-    private static final Table<String, String, String> transitions = HashBasedTable.create();
+    private var transitions: Table<String, String, String> = HashBasedTable.create()
 
     /**
      * Переменные дерева мысли
-     *
      * key - имя переменной
      * val - класс переменной
      */
-    private static final Map<String, String> decisionTreeVars = new HashMap<>();
+    private var decisionTreeVars: MutableMap<String, String> = HashMap()
 
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    public static void init(String path) {
+    fun init(path: String) {
         // Очищаем старые значения
-        classes.clear();
-        calculations.clear();
-        transitions.clear();
-        decisionTreeVars.clear();
+        classes.clear()
+        calculations.clear()
+        transitions.clear()
+        decisionTreeVars.clear()
 
         // TODO: чтение из файла
 
         // Добавляем классы
-        classes.put("token", null);
-        classes.put("element", null);
-        classes.put("operand", null);
-        classes.put("operator", null);
-
-        classes.put("plus", "element");
-        classes.put("minus", "element");
-        classes.put("multiplication", "element");
-        classes.put("division", "element");
-        classes.put("squareParenthesis", "element");
-        classes.put("parenthesis", "element");
+        classes["token"] = null
+        classes["element"] = null
+        classes["operand"] = null
+        classes["operator"] = null
+        classes["plus"] = "element"
+        classes["minus"] = "element"
+        classes["multiplication"] = "element"
+        classes["division"] = "element"
+        classes["squareParenthesis"] = "element"
+        classes["parenthesis"] = "element"
 
         // Добавляем выражения для вычисления классов
-        Operator var = new Variable("obj", DataType.OBJECT);
-        Operator prop = new PropertyValue("state");
-        Operator stringVal = new StringValue("unevaluated");
-        Operator checkProp = new CheckPropertyValue(List.of(var, prop, stringVal));
-        Operator not = new LogicalNot(List.of(checkProp));
-        calculations.put("operand", new Pair<>("obj", not));
+        var variable: Operator = Variable("obj", DataType.Object)
+        var property: Operator = PropertyValue("state")
+        var value: Operator = EnumValue("unevaluated")
+        var checkProperty: Operator = CheckPropertyValue(listOf(variable, property, value))
+        val not: Operator = LogicalNot(listOf(checkProperty))
 
-        var = new Variable("obj", DataType.OBJECT);
-        prop = new PropertyValue("state");
-        stringVal = new StringValue("unevaluated");
-        checkProp = new CheckPropertyValue(List.of(var, prop, stringVal));
-        calculations.put("operator", new Pair<>("obj", checkProp));
+        calculations["operand"] = Pair("obj", not)
+
+        variable = Variable("obj", DataType.Object)
+        property = PropertyValue("state")
+        value = EnumValue("unevaluated")
+        checkProperty = CheckPropertyValue(listOf(variable, property, value))
+
+        calculations["operator"] = Pair("obj", checkProperty)
 
         // Добавляем переходы
-        transitions.put("element", "token", "hasToken");
-        transitions.put("token", "element", "isTokenOf");
+        transitions.put("element", "token", "has")
+        transitions.put("token", "element", "belongsTo")
 
         // Добавляем переменные
-        decisionTreeVars.put("X", "element");
-        decisionTreeVars.put("X1", "token");
-        decisionTreeVars.put("X2", "token");
-        decisionTreeVars.put("Y", "element");
-        decisionTreeVars.put("Y1", "token");
-        decisionTreeVars.put("Y2", "token");
-        decisionTreeVars.put("Z", "element");
+        decisionTreeVars["X"] = "element"
+        decisionTreeVars["X1"] = "token"
+        decisionTreeVars["X2"] = "token"
+        decisionTreeVars["Y"] = "element"
+        decisionTreeVars["Y1"] = "token"
+        decisionTreeVars["Y2"] = "token"
+        decisionTreeVars["Z"] = "element"
+        decisionTreeVars["Z1"] = "token"
+        decisionTreeVars["Z2"] = "token"
+        decisionTreeVars["A"] = "element"
+        decisionTreeVars["B"] = "element"
+        decisionTreeVars["T"] = "element"
+        decisionTreeVars["U"] = "element"
     }
 
     // ++++++++++++++++++++++++++++++++++++ Методы +++++++++++++++++++++++++++++++++
@@ -119,15 +116,17 @@ public class ClassesDictionary {
      * @param className Имя класса
      * @return true - если существует, иначе - false
      */
-    public static boolean exist(String className) {
-        return classes.containsKey(className);
-    }
+    fun exist(className: String): Boolean = classes.containsKey(className)
 
-    public static boolean isParentOf(String parent, String child) {
-        if(!exist(parent) || !exist(child)) return false;
-
-        if(classes.get(child).equals(parent)) return true;
-        return isParentOf(parent, classes.get(child));
+    /**
+     * Является ли класс родителем другого
+     * @param parent Родитель
+     * @param child Ребенок
+     * @return true - если является, иначе - false
+     */
+    fun isParentOf(parent: String, child: String): Boolean {
+        if (!exist(parent) || !exist(child)) return false
+        return if (classes[child] == parent) true else isParentOf(parent, classes[child]!!)
     }
 
     /**
@@ -135,16 +134,15 @@ public class ClassesDictionary {
      * @param className Имя класса
      * @return true - если вычисляемый, иначе - false
      */
-    public static boolean isComputable(String className) { return calculations.containsKey(className); }
+    fun isComputable(className: String): Boolean = calculations.containsKey(className)
 
     /**
      * Как вычислить класс
      * @param className Имя класса
      * @return Выражение для вычисления и имя переменной, в которую надо подставить объект
      */
-    public static Pair<String, Operator> howToCalculate(String className) {
-        if (!isComputable(className)) return null;
-        return calculations.get(className);
+    fun howToCalculate(className: String): Pair<String, Operator>? {
+        return if (!isComputable(className)) null else calculations[className]
     }
 
     /**
@@ -153,7 +151,7 @@ public class ClassesDictionary {
      * @param to Назначение
      * @return true - если есть переход, иначе - false
      */
-    public static boolean hasTransition(String from, String to) { return transitions.contains(from, to); }
+    fun hasTransition(from: String, to: String): Boolean = transitions.contains(from, to)
 
     /**
      * Переход между классами
@@ -161,9 +159,8 @@ public class ClassesDictionary {
      * @param to Назначение
      * @return Имя отношения, по которому идет переход
      */
-    public static String transition(String from, String to) {
-        if (!hasTransition(from, to)) return null;
-        return transitions.get(from, to);
+    fun transition(from: String, to: String): String? {
+        return if (!hasTransition(from, to)) null else transitions[from, to]
     }
 
     /**
@@ -171,7 +168,5 @@ public class ClassesDictionary {
      * @param varName Имя переменной
      * @return Класс переменной
      */
-    public static String decisionTreeVarClass(String varName) {
-        return decisionTreeVars.get(varName);
-    }
+    fun decisionTreeVarClass(varName: String): String? = decisionTreeVars[varName]
 }

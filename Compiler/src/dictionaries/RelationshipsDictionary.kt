@@ -1,248 +1,316 @@
-package dictionaries;
+package dictionaries
 
-import util.JenaUtil;
-import util.Pair;
+import util.JenaUtil
+import util.JenaUtil.POAS_PREF
+import util.JenaUtil.RDF_PREF
 
-import java.util.*;
-
-import static util.JenaUtil.POAS_PREF;
-
-// TODO?: добавить транзитивность и экстремальность?
-// TODO?: statement list?
-// FIXME: множественные переходы между классами (Как узнать какой токен нужен для отношения?)
 /**
  * Словарь свойств
  */
-public class RelationshipsDictionary {
+object RelationshipsDictionary {
 
     // ++++++ Шаблоны вспомогательных правил для свойств линейного порядка +++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    public static final String NUMERATION_RULES_PATTERN = """
-            [
-                (?var1 <linerPred> ?var2)
-                noValue(?var3, <linerPred>, ?var1)
-                ->
-                (?var1 <numberPred> "1"^^xsd:integer)
-            ]
-            
-            [
-                (?var1 <linerPred> ?var2)
-                noValue(?var2, <numberPred>)
-                (?var1 <numberPred> ?var3)
-                addOne(?var3, ?var4)
-                ->
-                (?var2 <numberPred> ?var4)
-            ]
-            """;
+    private const val ASCENDING_NUMERATION_RULES_PATTERN = """
+        [
+        (?var1 <linerPred> ?var2)
+        noValue(?var3, <linerPred>, ?var1)
+        ->
+        (?var1 <numberPred> "1"^^xsd:integer)
+        ]
+        [
+        (?var1 <linerPred> ?var2)
+        noValue(?var2, <numberPred>)
+        (?var1 <numberPred> ?var3)
+        addOne(?var3, ?var4)
+        ->
+        (?var2 <numberPred> ?var4)
+        ]
+    """
 
-    public static final int LEFT_OF_VAR_COUNT = 2;
-    public static final String LEFT_OF_PATTERN = """
-            (<arg1> <numberPred> <var1>)
-            (<arg2> <numberPred> <var2>)
-            lessThan(<var1>, <var2>)
-            """;
+    private const val DESCENDING_NUMERATION_RULES_PATTERN = """
+        [
+        (?var1 <linerPred> ?var2)
+        noValue(?var2, <linerPred>, ?var3)
+        ->
+        (?var1 <numberPred> "1"^^xsd:integer)
+        ]
+        [
+        (?var1 <linerPred> ?var2)
+        noValue(?var1, <numberPred>)
+        (?var2 <numberPred> ?var3)
+        addOne(?var3, ?var4)
+        ->
+        (?var1 <numberPred> ?var4)
+        ]
+    """
 
-    public static final int RIGHT_OF_VAR_COUNT = 2;
-    public static final String RIGHT_OF_PATTERN = """
-            (<arg1> <numberPred> <var1>)
-            (<arg2> <numberPred> <var2>)
-            greaterThan(<var1>, <var2>)
-            """;
+    private const val LEFT_OF_VAR_COUNT = 2
+    private const val LEFT_OF_PATTERN = """
+        (<arg1> <numberPred> <var1>)
+        (<arg2> <numberPred> <var2>)
+        lessThan(<var1>, <var2>)
+    """
 
-    public static final int IS_BETWEEN_VAR_COUNT = 3;
-    public static final String IS_BETWEEN_PATTERN = """
-            (<arg1> <numberPred> <var1>)
-            (<arg2> <numberPred> <var2>)
-            (<arg3> <numberPred> <var3>)
-            greaterThan(<var1>, <var2>)
-            lessThan(<var1>, <var3>)
-            """;
+    private const val RIGHT_OF_VAR_COUNT = 2
+    private const val RIGHT_OF_PATTERN = """
+        (<arg1> <numberPred> <var1>)
+        (<arg2> <numberPred> <var2>)
+        greaterThan(<var1>, <var2>)
+    """
 
-    public static final int IS_CLOSER_TO_THAN_VAR_COUNT = 7;
-    public static final String IS_CLOSER_TO_THAN_PATTERN = """
-            (<arg1> <numberPred> <var1>)
-            (<arg2> <numberPred> <var2>)
-            (<arg3> <numberPred> <var3>)
-            difference(<var2>, <var1>, <var4>)
-            difference(<var2>, <var3>, <var5>)
-            absoluteValue(<var4>, <var6>)
-            absoluteValue(<var5>, <var7>)
-            lessThan(<var6>, <var7>)
-            """;
+    private const val IS_BETWEEN_VAR_COUNT = 3
+    private const val IS_BETWEEN_PATTERN = """
+        (<arg1> <numberPred> <var1>)
+        (<arg2> <numberPred> <var2>)
+        (<arg3> <numberPred> <var3>)
+        greaterThan(<var1>, <var2>)
+        lessThan(<var1>, <var3>)
+    """
 
-    public static final int IS_FURTHER_FROM_THAN_VAR_COUNT = 7;
-    public static final String IS_FURTHER_FROM_THAN_PATTERN = """
-            (<arg1> <numberPred> <var1>)
-            (<arg2> <numberPred> <var2>)
-            (<arg3> <numberPred> <var3>)
-            difference(<var2>, <var1>, <var4>)
-            difference(<var2>, <var3>, <var5>)
-            absoluteValue(<var4>, <var6>)
-            absoluteValue(<var5>, <var7>)
-            greaterThan(<var6>, <var7>)
-            """;
+    private const val IS_CLOSER_TO_THAN_VAR_COUNT = 7
+    private const val IS_CLOSER_TO_THAN_PATTERN = """
+        (<arg1> <numberPred> <var1>)
+        (<arg2> <numberPred> <var2>)
+        (<arg3> <numberPred> <var3>)
+        difference(<var2>, <var1>, <var4>)
+        difference(<var2>, <var3>, <var5>)
+        absoluteValue(<var4>, <var6>)
+        absoluteValue(<var5>, <var7>)
+        lessThan(<var6>, <var7>)
+    """
+
+    private const val IS_FURTHER_FROM_THAN_VAR_COUNT = 7
+    private const val IS_FURTHER_FROM_THAN_PATTERN = """
+        (<arg1> <numberPred> <var1>)
+        (<arg2> <numberPred> <var2>)
+        (<arg3> <numberPred> <var3>)
+        difference(<var2>, <var1>, <var4>)
+        difference(<var2>, <var3>, <var5>)
+        absoluteValue(<var4>, <var6>)
+        absoluteValue(<var5>, <var7>)
+        greaterThan(<var6>, <var7>)
+    """
 
     // +++++++++++++++++++++++++++++++++ Свойства ++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+    
     /**
      * Использованы ли отношения линейной шкалы
      */
-    private static boolean isLinerScaleUsed = false;
+    private var isLinerScaleUsed: Boolean = false
+
+    /**
+     * список отношений линейной шкалы
+     */
+    private val linerScaleRelationships = listOf("leftOf", "rightOf", "isBetween", "isCloserToThan", "isFurtherFromThan")
 
     /**
      * Вспомогательные правила для работы правил линейной шкалы
      */
-    private static String auxiliaryLinerScaleRules = "";
+    private var auxiliaryLinerScaleRules = ""
 
     /**
      * Отношения
-     *
      * key - имя отношения
      * val - список классов аргументов
      */
-    private static final Map<String, List<String>> relationships = new HashMap<>();
+    private val relationships: MutableMap<String, List<String>> = HashMap()
+
+    /**
+     * Имена отношений линейной шкалы
+     * key - First - общее имя отношения линейной шкалы, Second - имя предиката линейной шкалы
+     * val - конкретное имя отношения
+     */
+    private val linerRelationships: MutableMap<Pair<String, String>, String> = HashMap()
 
     /**
      * Шаблоны правил для отношений
-     *
      * row - Имя отношения
      * col - Количество вспомогательных переменных в шаблоне
      * val - First - шаблон правила, Second - вспомогательные правила
      */
-    private static final Map<String, Pair<Integer, Pair<String, String>>> patterns = new HashMap<>();
+    private val patterns: MutableMap<String, Pair<Int, Pair<String, String>>> = HashMap()
 
+    /**
+     * Названия предикатов, задающих нумерацию
+     * key - предикат линейной шкалы
+     * val - предикат нумерации
+     */
+    private val numberPreds: MutableMap<String, String> = HashMap()
+    
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    public static void init(String path) {
+    fun init(path: String) {
         // Очищаем старые значения
-        relationships.clear();
-        patterns.clear();
-        auxiliaryLinerScaleRules = "";
-        isLinerScaleUsed = false;
+        relationships.clear()
+        linerRelationships.clear()
+        patterns.clear()
+        numberPreds.clear()
+        auxiliaryLinerScaleRules = ""
+        isLinerScaleUsed = false
 
         // TODO: чтение из файла
+        // TODO?: проекция на линейную шкалу?
         // FIXME?: не считать классы линейной шкалой?
 
         // Подключаем "библиотеку"
-        isLinerScaleUsed = true;
+        isLinerScaleUsed = true
 
         // Добавляем свойства
-        relationships.put("hasToken", List.of("element", "token"));
-        relationships.put("isTokenOf", List.of("token", "element"));
-        relationships.put("directlyLeftOf", List.of("token", "token"));
-        relationships.put("directlyRightOf", List.of("token", "token"));
-        relationships.put("isOperandOf", List.of("element", "element"));
-        relationships.put("isOperatorTo", List.of("element", "element"));
+        relationships["has"] = listOf("element", "token")
+        relationships["belongsTo"] = listOf("token", "element")
+        relationships["directlyLeftOf"] = listOf("token", "token")
+        relationships["directlyRightOf"] = listOf("token", "token")
+        relationships["isOperandOf"] = listOf("element", "element")
+        relationships["isOperatorTo"] = listOf("element", "element")
 
-        relationships.put("token_leftOf", List.of("token", "token"));
-        relationships.put("token_rightOf", List.of("token", "token"));
-        relationships.put("token_isBetween", List.of("token", "token", "token"));
-        relationships.put("token_isCloserToThan", List.of("token", "token", "token"));
-        relationships.put("token_isFurtherFromThan", List.of("token", "token", "token"));
+        relationships["token_leftOf"] = listOf("token", "token")
+        relationships["token_rightOf"] = listOf("token", "token")
+        relationships["token_isBetween"] = listOf("token", "token", "token")
+        relationships["token_isCloserToThan"] = listOf("token", "token", "token")
+        relationships["token_isFurtherFromThan"] = listOf("token", "token", "token")
 
-        relationships.put("class_leftOf", List.of("class", "class"));
-        relationships.put("class_rightOf", List.of("class", "class"));
-        relationships.put("class_isBetween", List.of("class", "class", "class"));
-        relationships.put("class_isCloserToThan", List.of("class", "class", "class"));
-        relationships.put("class_isFurtherFromThan", List.of("class", "class", "class"));
+        relationships["class_leftOf"] = listOf("class", "class")
+        relationships["class_rightOf"] = listOf("class", "class")
+        relationships["class_isBetween"] = listOf("class", "class", "class")
+        relationships["class_isCloserToThan"] = listOf("class", "class", "class")
+        relationships["class_isFurtherFromThan"] = listOf("class", "class", "class")
+
+        relationships["state_leftOf"] = emptyList()
+        relationships["state_rightOf"] = emptyList()
+        relationships["state_isBetween"] = emptyList()
+        relationships["state_isCloserToThan"] = emptyList()
+        relationships["state_isFurtherFromThan"] = emptyList()
+
+        linerRelationships[Pair("leftOf", "directlyLeftOf")] = "token_leftOf"
+        linerRelationships[Pair("leftOf", "subClassOf")] = "class_leftOf"
+        linerRelationships[Pair("leftOf", "state_directlyLeftOf")] = "state_leftOf"
+
+        linerRelationships[Pair("rightOf", "directlyLeftOf")] = "token_rightOf"
+        linerRelationships[Pair("rightOf", "subClassOf")] = "class_rightOf"
+        linerRelationships[Pair("rightOf", "state_directlyLeftOf")] = "state_rightOf"
+
+        linerRelationships[Pair("isBetween", "directlyLeftOf")] = "token_isBetween"
+        linerRelationships[Pair("isBetween", "subClassOf")] = "class_isBetween"
+        linerRelationships[Pair("isBetween", "state_directlyLeftOf")] = "state_isBetween"
+
+        linerRelationships[Pair("isCloserToThan", "directlyLeftOf")] = "token_isCloserToThan"
+        linerRelationships[Pair("isCloserToThan", "subClassOf")] = "class_isCloserToThan"
+        linerRelationships[Pair("isCloserToThan", "state_directlyLeftOf")] = "state_isCloserToThan"
+
+        linerRelationships[Pair("isFurtherFromThan", "directlyLeftOf")] = "token_isFurtherFromThan"
+        linerRelationships[Pair("isFurtherFromThan", "subClassOf")] = "class_isFurtherFromThan"
+        linerRelationships[Pair("isFurtherFromThan", "state_directlyLeftOf")] = "state_isFurtherFromThan"
 
         // Добавляем вспомогательные правила
-        String token_numerationRules = NUMERATION_RULES_PATTERN;
+        var tokenNumerationRules = ASCENDING_NUMERATION_RULES_PATTERN
+        tokenNumerationRules = tokenNumerationRules.replace("<linerPred>", JenaUtil.genLink(POAS_PREF, "directlyLeftOf"))
+        tokenNumerationRules = tokenNumerationRules.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "__tokenNumber__"))
 
-        token_numerationRules = token_numerationRules.replace("<linerPred>", JenaUtil.genLink(POAS_PREF, "directlyLeftOf"));
-        token_numerationRules = token_numerationRules.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~tokenNumber~"));
+        var classNumerationRules = DESCENDING_NUMERATION_RULES_PATTERN
+        classNumerationRules = classNumerationRules.replace("<linerPred>", JenaUtil.genLink(RDF_PREF, "subClassOf"))
+        classNumerationRules = classNumerationRules.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "__classNumber__"))
 
-        String class_numerationRules = NUMERATION_RULES_PATTERN;
+        var stateNumerationRules = ASCENDING_NUMERATION_RULES_PATTERN
+        stateNumerationRules = stateNumerationRules.replace("<linerPred>", JenaUtil.genLink(RDF_PREF, "state_directlyLeftOf"))
+        stateNumerationRules = stateNumerationRules.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "__stateNumber__"))
 
-        class_numerationRules = class_numerationRules.replace("<linerPred>", JenaUtil.genLink(POAS_PREF, "subClassOf"));
-        class_numerationRules = class_numerationRules.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~classNumber~"));
+        auxiliaryLinerScaleRules += tokenNumerationRules + classNumerationRules + stateNumerationRules
 
-        auxiliaryLinerScaleRules += token_numerationRules + class_numerationRules;
+        // Сохраняем предикаты нумерации
+        numberPreds["directlyLeftOf"] = "__tokenNumber__"
+        numberPreds["subClassOf"] = "__classNumber__"
+        numberPreds["state_directlyLeftOf"] = "__stateNumber__"
 
         // Добавляем шаблоны
-        patterns.put("hasToken", new Pair<>(0, new Pair<>("(<arg1> poas:hasToken <arg2>)", "")));
-        patterns.put("isTokenOf", new Pair<>(0, new Pair<>("(<arg1> poas:isTokenOf <arg2>)", "")));
-        patterns.put("directlyLeftOf", new Pair<>(0, new Pair<>("(<arg1> poas:directlyLeftOf <arg2>)", "")));
-        patterns.put("directlyRightOf", new Pair<>(0, new Pair<>("(<arg1> poas:directlyRightOf <arg2>)", "")));
-        patterns.put("isOperandOf", new Pair<>(0, new Pair<>("(<arg1> poas:isOperandOf <arg2>)", "")));
-        patterns.put("isOperatorTo", new Pair<>(0, new Pair<>("(<arg1> poas:isOperatorTo <arg2>)", "")));
+        patterns["has"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "has")} <arg2>)\n", ""))
+        patterns["belongsTo"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "belongsTo")} <arg2>)\n", ""))
+        patterns["directlyLeftOf"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "directlyLeftOf")} <arg2>)\n", ""))
+        patterns["directlyRightOf"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "directlyRightOf")} <arg2>)\n", ""))
+        patterns["isOperandOf"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "isOperandOf")} <arg2>)\n", ""))
+        patterns["isOperatorTo"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "isOperatorTo")} <arg2>)\n", ""))
 
-        String token_leftOf = LEFT_OF_PATTERN.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~tokenNumber~"));
-        patterns.put("token_leftOf", new Pair<>(LEFT_OF_VAR_COUNT, new Pair<>(token_leftOf, "")));
-        String token_rightOf = RIGHT_OF_PATTERN.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~tokenNumber~"));
-        patterns.put("token_rightOf", new Pair<>(RIGHT_OF_VAR_COUNT, new Pair<>(token_rightOf, "")));
-        String token_isBetween = IS_BETWEEN_PATTERN.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~tokenNumber~"));
-        patterns.put("token_isBetween", new Pair<>(IS_BETWEEN_VAR_COUNT, new Pair<>(token_isBetween, "")));
-        String token_isCloserToThan = IS_CLOSER_TO_THAN_PATTERN.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~tokenNumber~"));
-        patterns.put("token_isCloserToThan", new Pair<>(IS_CLOSER_TO_THAN_VAR_COUNT, new Pair<>(token_isCloserToThan, "")));
-        String token_isFurtherFromThan = IS_FURTHER_FROM_THAN_PATTERN.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~tokenNumber~"));
-        patterns.put("token_isFurtherFromThan", new Pair<>(IS_FURTHER_FROM_THAN_VAR_COUNT, new Pair<>(token_isFurtherFromThan, "")));
-
-        String class_leftOf = LEFT_OF_PATTERN.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~classNumber~"));
-        patterns.put("class_leftOf", new Pair<>(LEFT_OF_VAR_COUNT, new Pair<>(class_leftOf, "")));
-        String class_rightOf = RIGHT_OF_PATTERN.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~classNumber~"));
-        patterns.put("class_rightOf", new Pair<>(RIGHT_OF_VAR_COUNT, new Pair<>(class_rightOf, "")));
-        String class_isBetween = IS_BETWEEN_PATTERN.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~classNumber~"));
-        patterns.put("class_isBetween", new Pair<>(IS_BETWEEN_VAR_COUNT, new Pair<>(class_isBetween, "")));
-        String class_isCloserToThan = IS_CLOSER_TO_THAN_PATTERN.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~classNumber~"));
-        patterns.put("class_isCloserToThan", new Pair<>(IS_CLOSER_TO_THAN_VAR_COUNT, new Pair<>(class_isCloserToThan, "")));
-        String class_isFurtherFromThan = IS_FURTHER_FROM_THAN_PATTERN.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "~classNumber~"));
-        patterns.put("class_isFurtherFromThan", new Pair<>(IS_FURTHER_FROM_THAN_VAR_COUNT, new Pair<>(class_isFurtherFromThan, "")));
+        patterns["leftOf"] = Pair(LEFT_OF_VAR_COUNT, Pair(LEFT_OF_PATTERN, ""))
+        patterns["rightOf"] = Pair(RIGHT_OF_VAR_COUNT, Pair(RIGHT_OF_PATTERN, ""))
+        patterns["isBetween"] = Pair(IS_BETWEEN_VAR_COUNT, Pair(IS_BETWEEN_PATTERN, ""))
+        patterns["isCloserToThan"] = Pair(IS_CLOSER_TO_THAN_VAR_COUNT, Pair(IS_CLOSER_TO_THAN_PATTERN, ""))
+        patterns["isFurtherFromThan"] = Pair(IS_FURTHER_FROM_THAN_VAR_COUNT, Pair(IS_FURTHER_FROM_THAN_PATTERN, ""))
     }
-
+    
     // ++++++++++++++++++++++++++++++++++++ Методы +++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+    
     /**
      * Использованы ли отношения линейной шкалы
      * @return true - если использованы, иначе - false
      */
-    public static boolean isLinerScaleUsed() { return isLinerScaleUsed; }
+    fun isLinerScaleUsed(): Boolean = isLinerScaleUsed
 
     /**
      * Получить вспомогательные правила для работы правил линейной шкалы
      * @return Вспомогательные правила для работы правил линейной шкалы
      */
-    public static String auxiliaryLinerScaleRules() { return auxiliaryLinerScaleRules; }
+    fun auxiliaryLinerScaleRules(): String = auxiliaryLinerScaleRules
+
+    /**
+     * Ялвяется ли отношение частью "библиотеки" линейной шкалы
+     */
+    fun isLinerScaleRelationship(relationshipName: String): Boolean = linerScaleRelationships.contains(relationshipName)
 
     /**
      * Существует ли отношение
      * @param relationshipName Имя отношения
      * @return true - если существует, иначе - false
      */
-    public static boolean exist(String relationshipName) {
-        return relationships.containsKey(relationshipName);
-    }
+    fun exist(relationshipName: String): Boolean = relationships.containsKey(relationshipName)
 
     /**
      * Получить список классов аргументов
      * @param relationshipName Имя отношения
+     * @param linerPred Предикат линейной шкалы
      * @return Список классов аргументов
      */
-    public static List<String> args(String relationshipName) {
-        return relationships.get(relationshipName);
+    fun args(relationshipName: String, linerPred: String? = null): List<String>? {
+        return if (isLinerScaleRelationship(relationshipName) && linerPred != null) {
+            relationships[linerRelationships[Pair(relationshipName, linerPred)]]
+        } else {
+            relationships[relationshipName]
+        }
     }
 
     /**
      * Получить количество переменных в шаблоне правила
      * @param relationshipName Имя отношения
+     * @param linerPred Предикат линейной шкалы
      * @return Количество переменных в шаблоне
      */
-    public static Integer varCount(String relationshipName) {
-        if (!exist(relationshipName)) return null;
-        return patterns.get(relationshipName).first();
+    fun varCount(relationshipName: String, linerPred: String? = null): Int? {
+        return if (isLinerScaleRelationship(relationshipName) && linerPred != null) {
+            patterns[linerRelationships[Pair(relationshipName, linerPred)]]?.first
+        } else {
+            if (!exist(relationshipName)) null else patterns[relationshipName]?.first
+        }
     }
 
     /**
      * Получить шаблон правила
      * @param relationshipName Имя отношения
+     * @param linerPred Предикат линейной шкалы
      * @return Шаблон правила
      */
-    public static Pair<String, String> pattern(String relationshipName) {
-        if (!exist(relationshipName)) return null;
-        return patterns.get(relationshipName).second();
+    fun pattern(relationshipName: String, linerPred: String? = null): Pair<String, String>? {
+        return if (isLinerScaleRelationship(relationshipName) && linerPred != null && numberPreds.containsKey(linerPred)) {
+            val pattern = pattern(relationshipName)!!
+
+            var ruleHead = pattern.first
+            ruleHead = ruleHead.replace("<numberPred>", numberPreds[linerPred]!!)
+
+            Pair(ruleHead, pattern.second)
+        } else {
+            patterns[relationshipName]?.second
+        }
     }
 }
