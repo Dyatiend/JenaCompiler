@@ -1,21 +1,14 @@
-package compiler.values;
+package compiler.values
 
-import compiler.Value;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
+import compiler.Value
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
 
-public class StringValue extends Value {
+class StringValue(value: String) : Value(value) {
 
-    public StringValue(String value) {
-        super(value);
-    }
+    override fun resultDataType(): DataType = DataType.String
 
-    @Override
-    public DataType resultDataType() { return DataType.STRING; }
-
-    @Override
-    public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genStingVal(value), "", "");
-    }
+    override fun compile(): List<CompilationResult> =
+        listOf(CompilationResult(JenaUtil.genStingVal(value), "", ""))
 }

@@ -1,27 +1,15 @@
-package compiler.values;
+package compiler.values
 
-import compiler.Value;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
+import compiler.Value
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
+import util.JenaUtil.POAS_PREF
 
-import java.util.List;
+class ObjectValue(value: String) : Value(value) {
 
-import static util.JenaUtil.POAS_PREF;
+    override fun resultDataType(): DataType = DataType.Object
 
-public class ObjectValue extends Value {
-
-    public ObjectValue(String value) {
-        super(value);
-    }
-
-    @Override
-    public DataType resultDataType() {
-        return DataType.OBJECT;
-    }
-
-    @Override
-    public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genLink(POAS_PREF, value), "", "");
-    }
+    override fun compile(): List<CompilationResult> =
+        listOf(CompilationResult(JenaUtil.genLink(POAS_PREF, value), "", ""))
 }

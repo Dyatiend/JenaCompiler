@@ -8,7 +8,6 @@ import compiler.operators.CheckPropertyValue
 import compiler.operators.LogicalNot
 import compiler.values.EnumValue
 import compiler.values.PropertyValue
-import util.DataType
 
 /**
  * Словарь классов
@@ -73,17 +72,17 @@ object ClassesDictionary {
         classes["parenthesis"] = "element"
 
         // Добавляем выражения для вычисления классов
-        var variable: Operator = Variable("obj", DataType.Object)
+        var variable: Operator = Variable("obj")
         var property: Operator = PropertyValue("state")
-        var value: Operator = EnumValue("unevaluated")
+        var value: Operator = EnumValue("unevaluated", true)
         var checkProperty: Operator = CheckPropertyValue(listOf(variable, property, value))
         val not: Operator = LogicalNot(listOf(checkProperty))
 
         calculations["operand"] = Pair("obj", not)
 
-        variable = Variable("obj", DataType.Object)
+        variable = Variable("obj")
         property = PropertyValue("state")
-        value = EnumValue("unevaluated")
+        value = EnumValue("unevaluated", true)
         checkProperty = CheckPropertyValue(listOf(variable, property, value))
 
         calculations["operator"] = Pair("obj", checkProperty)

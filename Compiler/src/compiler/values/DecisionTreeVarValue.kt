@@ -1,30 +1,24 @@
-package compiler.values;
+package compiler.values
 
-import compiler.Value;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
-import util.NamingManager;
+import compiler.Value
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
+import util.JenaUtil.POAS_PREF
+import util.JenaUtil.VAR_PRED
+import util.JenaUtil.genTriple
+import util.NamingManager
 
-import static util.JenaUtil.POAS_PREF;
-import static util.JenaUtil.VAR_PRED;
+class DecisionTreeVarValue(value: String) : Value(value) {
 
-public class DecisionTreeVarValue extends Value {
+    override fun resultDataType(): DataType = DataType.DecisionTreeVar
 
-    public DecisionTreeVarValue(String value) {
-        super(value);
-    }
-
-    @Override
-    public DataType resultDataType() {
-        return DataType.DECISION_TREE_VAR;
-    }
-
-    @Override
-    public CompilationResult compile() {
-        String resVarName = NamingManager.genVarName();
-        return new CompilationResult(resVarName,
-                JenaUtil.genTriple(resVarName, JenaUtil.genLink(POAS_PREF, VAR_PRED), JenaUtil.genStingVal(value)),
-                "");
+    override fun compile(): List<CompilationResult> {
+        val resVarName = NamingManager.genVarName()
+        return listOf(CompilationResult(
+            resVarName,
+            genTriple(resVarName, JenaUtil.genLink(POAS_PREF, VAR_PRED), JenaUtil.genStingVal(value)),
+            ""
+        ))
     }
 }

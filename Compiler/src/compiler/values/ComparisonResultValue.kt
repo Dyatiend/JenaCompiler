@@ -1,24 +1,15 @@
-package compiler.values;
+package compiler.values
 
-import compiler.Value;
-import util.ComparisonResult;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
+import compiler.Value
+import util.ComparisonResult
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
 
-public class ComparisonResultValue extends Value {
+class ComparisonResultValue(value: ComparisonResult) : Value(value.toString()) {
 
-    public ComparisonResultValue(ComparisonResult value) {
-        super(ComparisonResult.toString(value));
-    }
+    override fun resultDataType(): DataType = DataType.ComparisonResult
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.COMPARISON_RESULT;
-    }
-
-    @Override
-    public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genStingVal(value), "", "");
-    }
+    override fun compile(): List<CompilationResult> =
+        listOf(CompilationResult(JenaUtil.genStingVal(value), "", ""))
 }

@@ -1,23 +1,14 @@
-package compiler.values;
+package compiler.values
 
-import compiler.Value;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
+import compiler.Value
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
 
-public class IntegerValue extends Value {
+class IntegerValue(value: Int) : Value(value.toString()) {
 
-    public IntegerValue(Integer value) {
-        super(Integer.toString(value));
-    }
+    override fun resultDataType(): DataType = DataType.Integer
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.INTEGER;
-    }
-
-    @Override
-    public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genIntegerVal(value), "", "");
-    }
+    override fun compile(): List<CompilationResult> =
+        listOf(CompilationResult(JenaUtil.genIntegerVal(value), "", ""))
 }

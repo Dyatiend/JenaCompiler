@@ -1,27 +1,20 @@
-package compiler.values;
+package compiler.values
 
-import compiler.Value;
-import dictionaries.PropertiesDictionary;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
+import compiler.Value
+import dictionaries.PropertiesDictionary
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
+import util.JenaUtil.POAS_PREF
 
-import static util.JenaUtil.POAS_PREF;
+class PropertyValue(value: String) : Value(value) {
 
-public class PropertyValue extends Value {
-
-    public PropertyValue(String value) {
-        super(value);
-        if(!PropertiesDictionary.exist(value)) throw new IllegalArgumentException("Указанного свойства не существует");
+    init {
+        require(PropertiesDictionary.exist(value)) { "Указанного свойства не существует" }
     }
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.PROPERTY;
-    }
+    override fun resultDataType(): DataType = DataType.Property
 
-    @Override
-    public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genLink(POAS_PREF, value), "", "");
-    }
+    override fun compile(): List<CompilationResult> =
+        listOf(CompilationResult(JenaUtil.genLink(POAS_PREF, value), "", ""))
 }

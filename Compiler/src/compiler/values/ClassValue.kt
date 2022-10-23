@@ -1,27 +1,20 @@
-package compiler.values;
+package compiler.values
 
-import compiler.Value;
-import dictionaries.ClassesDictionary;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
+import compiler.Value
+import dictionaries.ClassesDictionary
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
+import util.JenaUtil.POAS_PREF
 
-import static util.JenaUtil.POAS_PREF;
+class ClassValue(value: String) : Value(value) {
 
-public class ClassValue extends Value {
-
-    public ClassValue(String value) {
-        super(value);
-        if(!ClassesDictionary.exist(value)) throw new IllegalArgumentException("Указанного класса не существует");
+    init {
+        require(ClassesDictionary.exist(value)) { "Указанного класса не существует" }
     }
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.CLASS;
-    }
+    override fun resultDataType(): DataType = DataType.Class
 
-    @Override
-    public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genLink(POAS_PREF, value), "", "");
-    }
+    override fun compile(): List<CompilationResult> =
+        listOf(CompilationResult(JenaUtil.genLink(POAS_PREF, value), "", ""))
 }

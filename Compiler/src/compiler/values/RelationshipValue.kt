@@ -1,27 +1,20 @@
-package compiler.values;
+package compiler.values
 
-import compiler.Value;
-import dictionaries.RelationshipsDictionary;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
+import compiler.Value
+import dictionaries.RelationshipsDictionary
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
+import util.JenaUtil.POAS_PREF
 
-import static util.JenaUtil.POAS_PREF;
+class RelationshipValue(value: String) : Value(value) {
 
-public class RelationshipValue extends Value {
-
-    public RelationshipValue(String value) {
-        super(value);
-        if(!RelationshipsDictionary.exist(value)) throw new IllegalArgumentException("Указанного отношения не существует");
+    init {
+        require(RelationshipsDictionary.exist(value)) { "Указанного отношения не существует" }
     }
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.RELATIONSHIP;
-    }
+    override fun resultDataType(): DataType = DataType.Relationship
 
-    @Override
-    public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genLink(POAS_PREF, value), "", "");
-    }
+    override fun compile(): List<CompilationResult> =
+        listOf(CompilationResult(JenaUtil.genLink(POAS_PREF, value), "", ""))
 }

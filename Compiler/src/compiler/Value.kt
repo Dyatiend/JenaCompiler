@@ -1,38 +1,13 @@
-package compiler;
+package compiler
 
-import util.DataType;
-
-import java.util.ArrayList;
-import java.util.List;
+import util.DataType
 
 /**
  * Значение в выражении
  */
-public abstract class Value implements Operator {
+abstract class Value (
+    val value: String
+) : Operator {
 
-    /**
-     * Значение
-     */
-    protected final String value;
-
-    /**
-     * Конструктор
-     * @param value Значение
-     */
-    public Value(String value) {
-        this.value = value;
-    }
-
-    /**
-     * Получить значение
-     * @return Значение
-     */
-    public String value() {
-        return value;
-    }
-
-    @Override
-    public List<List<DataType>> argsDataTypes() {
-        return new ArrayList<>();
-    }
+    override fun argsDataTypes(): List<List<DataType>> = ArrayList()
 }

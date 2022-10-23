@@ -1,49 +1,20 @@
-package compiler;
+package compiler
 
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
-
-import java.util.ArrayList;
-import java.util.List;
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
 
 /**
  * Переменная, вводимая некоторыми операторами
  */
-public class Variable implements Operator {
+class Variable(
+    private val name: String
+) : Operator {
 
-    /**
-     * Имя переменной
-     */
-    private final String name;
+    override fun argsDataTypes(): List<List<DataType>> = ArrayList()
 
-    /**
-     * Тип данных переменной
-     */
-    private final DataType dataType;
+    override fun resultDataType(): DataType = DataType.Object
 
-    /**
-     * Конструктор
-     * @param name Имя переменной
-     * @param dataType Тип данных переменной
-     */
-    public Variable(String name, DataType dataType) {
-        this.name = name;
-        this.dataType = dataType;
-    }
-
-    @Override
-    public List<List<DataType>> argsDataTypes() {
-        return new ArrayList<>();
-    }
-
-    @Override
-    public DataType resultDataType() {
-        return dataType;
-    }
-
-    @Override
-    public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genVar(name), "", "");
-    }
+    override fun compile(): List<CompilationResult> =
+        listOf(CompilationResult(JenaUtil.genVar(name), "", ""))
 }

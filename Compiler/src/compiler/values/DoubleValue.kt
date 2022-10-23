@@ -1,23 +1,14 @@
-package compiler.values;
+package compiler.values
 
-import compiler.Value;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
+import compiler.Value
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
 
-public class DoubleValue extends Value {
+class DoubleValue(value: Double) : Value(value.toString()) {
 
-    public DoubleValue(Double value) {
-        super(Double.toString(value));
-    }
+    override fun resultDataType(): DataType = DataType.Double
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.DOUBLE;
-    }
-
-    @Override
-    public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genDoubleVal(value), "", "");
-    }
+    override fun compile(): List<CompilationResult> =
+        listOf(CompilationResult(JenaUtil.genDoubleVal(value), "", ""))
 }

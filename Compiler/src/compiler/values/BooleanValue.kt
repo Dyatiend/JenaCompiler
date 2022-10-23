@@ -1,23 +1,14 @@
-package compiler.values;
+package compiler.values
 
-import compiler.Value;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
+import compiler.Value
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
 
-public class BooleanValue extends Value {
+class BooleanValue(value: Boolean) : Value(value.toString()) {
 
-    public BooleanValue(Boolean value) {
-        super(Boolean.toString(value));
-    }
+    override fun resultDataType(): DataType = DataType.Boolean
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.BOOLEAN;
-    }
-
-    @Override
-    public CompilationResult compile() {
-        return new CompilationResult(JenaUtil.genBooleanVal(value), "", "");
-    }
+    override fun compile(): List<CompilationResult> =
+        listOf(CompilationResult(JenaUtil.genBooleanVal(value), "", ""))
 }
