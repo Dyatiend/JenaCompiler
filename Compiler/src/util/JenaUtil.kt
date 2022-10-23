@@ -1,9 +1,9 @@
-package util;
+package util
 
 /**
  * Содержит различные утилитарные методы и переменные, используемые при генерации правил
  */
-public class JenaUtil {
+object JenaUtil {
 
     // +++++++++++++++++++++++++++++++++ Префиксы ++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -13,32 +13,17 @@ public class JenaUtil {
     /**
      * POAS префикс
      */
-    public static final String POAS_PREF = "poas";
+    const val POAS_PREF = "http://www.vstu.ru/poas/code#"
 
     /**
      * XSD префикс
      */
-    public static final String XSD_PREF = "xsd";
+    const val XSD_PREF = "http://www.w3.org/2001/XMLSchema#"
 
     /**
      * RDF префикс
      */
-    public static final String RDF_PREF = "rdf";
-
-    /**
-     * URL POAS префикса
-     */
-    public static final String POAS_PREF_URL = "http://www.vstu.ru/poas/code#";
-
-    /**
-     * URL XSD префикса
-     */
-    public static final String XSD_PREF_URL = "http://www.w3.org/2001/XMLSchema#";
-
-    /**
-     * URL RDF префикса
-     */
-    public static final String RDF_PREF_URL = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    const val RDF_PREF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
     // ++++++++++++++++++++++++++++ Постоянные элементы ++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -46,12 +31,12 @@ public class JenaUtil {
     /**
      * Предикат переменной
      */
-    public static final String VAR_PRED = POAS_PREF + ":" + "~var~";
+    const val VAR_PRED = "__var__"
 
     /**
      * Маркировка паузы
      */
-    public static final String PAUSE_MARK = "<pause>";
+    const val PAUSE_MARK = "<pause>"
 
     // +++++++++++++++++++++++++++++++++ Шаблоны +++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -59,19 +44,17 @@ public class JenaUtil {
     /**
      * Шаблон триплета правила
      */
-    public static final String TRIPLE_PATTERN = "(<subj> <pred> <obj>)";
+    private const val TRIPLE_PATTERN = "(<subj> <pred> <obj>)\n"
 
     /**
      * Основной шаблон правила с возвращаемым значением
      */
-    public static final String MAIN_RULE_PATTERN =
-            "[<ruleHead>makeSkolem(<skolemArgs>)->(<skolemName> <resPredName> <resVarName>)]";
+    private const val MAIN_RULE_PATTERN = "[\n<ruleHead>\nmakeSkolem(<skolemName>)\n->\n(<skolemName> <resPredName> <resVarName>)\n]\n"
 
     /**
      * Шаблон для boolean правила
      */
-    public static final String BOOLEAN_RULE_PATTERN =
-            "[<ruleHead>makeSkolem(<skolemArgs>)->(<skolemName> <resPredName> 1)]";
+    private const val BOOLEAN_RULE_PATTERN = "[\n<ruleHead>\nmakeSkolem(<skolemName>)\n->\n(<skolemName> <resPredName> \"true\"^^xsd:boolean)\n]\n"
 
     // ++++++++++++++++++++++++++++ Методы для генерации +++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -81,36 +64,29 @@ public class JenaUtil {
      * @param value Строковая константа
      * @return Запись строковой константы для правила
      */
-    public static String genStingVal(String value) {
-        return "\"" + value + "\"^^" + XSD_PREF + ":string";
-    }
+    fun genStingVal(value: String): String = "\"$value\"^^${XSD_PREF}string"
 
     /**
      * Сгенерировать булеву константу
      * @param value Булева константа
      * @return Запись булевой константы для правила
      */
-    public static String genBooleanVal(String value) {
-        return "\"" + value + "\"^^" + XSD_PREF + ":boolean";
-    }
+    fun genBooleanVal(value: String): String = "\"$value\"^^${XSD_PREF}boolean"
 
     /**
      * Сгенерировать целочисленную константу
      * @param value Целочисленная константа
      * @return Запись целочисленной константы для правила
      */
-    public static String genIntegerVal(String value) {
-        return "\"" + value + "\"^^" + XSD_PREF + ":integer";
-    }
+    @JvmStatic
+    fun genIntegerVal(value: String): String = "\"$value\"^^${XSD_PREF}integer"
 
     /**
      * Сгенерировать дробную константу
      * @param value Дробная константа
      * @return Запись дробной константы для правила
      */
-    public static String genDoubleVal(String value) {
-        return "\"" + value + "\"^^" + XSD_PREF + ":double";
-    }
+    fun genDoubleVal(value: String): String = "\"$value\"^^${XSD_PREF}double"
 
     /**
      * Сгенерировать ссылку в правиле
@@ -118,14 +94,15 @@ public class JenaUtil {
      * @param obj Имя
      * @return Ссылка в правиле
      */
-    public static String genLink(String pref, String obj) { return pref + ":" + obj; }
+    @JvmStatic
+    fun genLink(pref: String, obj: String): String = "$pref$obj"
 
     /**
      * Сгенерировать переменную
      * @param name Имя переменной
      * @return Имя переменной для правила
      */
-    public static String genVar(String name) { return "?" + name; }
+    fun genVar(name: String): String = "?$name"
 
     /**
      * Сгенерировать примитив, проверяющий эквивалентность
@@ -133,9 +110,7 @@ public class JenaUtil {
      * @param second Второй операнд
      * @return Примитив, проверяющий эквивалентность
      */
-    public static String genEqualPrim(String first, String second) {
-        return "equal(" + first + "," + second + ")";
-    }
+    fun genEqualPrim(first: String, second: String): String = "equal($first,$second)\n"
 
     /**
      * Сгенерировать примитив, проверяющий неэквивалентность
@@ -143,9 +118,7 @@ public class JenaUtil {
      * @param second Второй операнд
      * @return Примитив, проверяющий неэквивалентность
      */
-    public static String genNotEqualPrim(String first, String second) {
-        return "notEqual(" + first + "," + second + ")";
-    }
+    fun genNotEqualPrim(first: String, second: String): String = "notEqual($first,$second)\n"
 
     /**
      * Сгенерировать примитив, проверяющий, что первый операнд меньше второго
@@ -153,9 +126,7 @@ public class JenaUtil {
      * @param second Второй операнд
      * @return Примитив, проверяющий, что первый операнд меньше второго
      */
-    public static String genLessThanPrim(String first, String second) {
-        return "lessThan(" + first + "," + second + ")";
-    }
+    fun genLessThanPrim(first: String, second: String): String = "lessThan($first,$second)\n"
 
     /**
      * Сгенерировать примитив, проверяющий, что первый операнд больше второго
@@ -163,9 +134,23 @@ public class JenaUtil {
      * @param second Второй операнд
      * @return Примитив, проверяющий, что первый операнд больше второго
      */
-    public static String genGreaterThanPrim(String first, String second) {
-        return "greaterThan(" + first + "," + second + ")";
-    }
+    fun genGreaterThanPrim(first: String, second: String): String = "greaterThan($first,$second)\n"
+
+    /**
+     * Сгенерировать примитив, проверяющий, что первый операнд меньше или равен второму
+     * @param first Первый операнд
+     * @param second Второй операнд
+     * @return Примитив, проверяющий, что первый операнд меньше или равен второму
+     */
+    fun genLessEqualPrim(first: String, second: String): String = "le($first,$second)\n"
+
+    /**
+     * Сгенерировать примитив, проверяющий, что первый операнд больше или равен второму
+     * @param first Первый операнд
+     * @param second Второй операнд
+     * @return Примитив, проверяющий, что первый операнд больше или равен второму
+     */
+    fun genGreaterEqualPrim(first: String, second: String): String = "ge($first,$second)\n"
 
     /**
      * Сгенерировать примитив, проверяющий отсутствие у объекта указанного предиката
@@ -173,18 +158,14 @@ public class JenaUtil {
      * @param pred Предикат
      * @return Примитив, проверяющий отсутствие у объекта указанной предиката
      */
-    public static String genNoValuePrim(String subj, String pred) {
-        return "noValue(" + subj + "," + pred + ")";
-    }
+    fun genNoValuePrim(subj: String, pred: String): String = "noValue($subj,$pred)\n"
 
     /**
-     * Сгенерировать примитив, создающий сколем с указанными аргументами
-     * @param skolemArgs Аргументы
-     * @return Примитив, создающий сколем с указанными аргументами
+     * Сгенерировать примитив, создающий сколем с указанным именем
+     * @param skolemName Имя
+     * @return Примитив, создающий сколем с указанным именем
      */
-    public static String genMakeSkolemPrim(String skolemArgs) {
-        return "makeSkolem(" + skolemArgs+ ")";
-    }
+    fun genMakeSkolemPrim(skolemName: String): String = "makeSkolem($skolemName)\n"
 
     /**
      * Сгенерировать примитив, записывающий значение одно переменной в другую
@@ -192,9 +173,7 @@ public class JenaUtil {
      * @param to Имя переменной, в которую записывается значение
      * @return Примитив, записывающий значение одно переменной в другую
      */
-    public static String genBindPrim(String from, String to) {
-        return "bind(" + from + "," + to + ")";
-    }
+    fun genBindPrim(from: String, to: String): String = "bind($from,$to)\n"
 
     /**
      * Сгенерировать триплет правила
@@ -203,54 +182,43 @@ public class JenaUtil {
      * @param obj Объект
      * @return Триплет правила
      */
-    public static String genTriple(String subj, String pred, String obj) {
-        String res = TRIPLE_PATTERN;
-
-        res = res.replace("<subj>", subj);
-        res = res.replace("<pred>", pred);
-        res = res.replace("<obj>", obj);
-
-        return res;
+    fun genTriple(subj: String, pred: String, obj: String): String {
+        var res = TRIPLE_PATTERN
+        res = res.replace("<subj>", subj)
+        res = res.replace("<pred>", pred)
+        res = res.replace("<obj>", obj)
+        return res
     }
 
     /**
      * Сгенерировать правило с возвращаемым значением
      * @param ruleHead Голова правила
-     * @param skolemArgs Аргументы сколема
      * @param skolemName Имя сколема
      * @param resPredName Предикат, указывающий на результат
      * @param resVarName Переменная, содержащая результат
      * @return Правило
      */
-    public static String genRule(String ruleHead, String skolemArgs, String skolemName, String resPredName, String resVarName) {
-        String rule = MAIN_RULE_PATTERN;
-
-        rule = rule.replace("<ruleHead>", ruleHead);
-        rule = rule.replace("<skolemArgs>", skolemArgs);
-        rule = rule.replace("<skolemName>", skolemName);
-        rule = rule.replace("resPredName", resPredName);
-        rule = rule.replace("<resVarName>", resVarName);
-
-        return rule;
+    fun genRule(ruleHead: String, skolemName: String, resPredName: String, resVarName: String): String {
+        var rule = MAIN_RULE_PATTERN
+        rule = rule.replace("<ruleHead>", ruleHead)
+        rule = rule.replace("<skolemName>", skolemName)
+        rule = rule.replace("resPredName", resPredName)
+        rule = rule.replace("<resVarName>", resVarName)
+        return rule
     }
 
-    // FIXME: Придумать способ, чтобы в skolemArgs не надо было добавлять skolemName
     /**
      * Сгенерировать булево правило
      * @param ruleHead Голова правила
-     * @param skolemArgs Аргументы сколема
      * @param skolemName Имя сколема
      * @param resPredName Предикат, являющийся флагом результата
      * @return Правило
      */
-    public static String genBooleanRule(String ruleHead, String skolemArgs, String skolemName, String resPredName) {
-        String rule = BOOLEAN_RULE_PATTERN;
-
-        rule = rule.replace("<ruleHead>", ruleHead);
-        rule = rule.replace("<skolemArgs>", skolemArgs);
-        rule = rule.replace("<skolemName>", skolemName);
-        rule = rule.replace("<resPredName>", resPredName);
-
-        return rule;
+    fun genBooleanRule(ruleHead: String, skolemName: String, resPredName: String): String {
+        var rule = BOOLEAN_RULE_PATTERN
+        rule = rule.replace("<ruleHead>", ruleHead)
+        rule = rule.replace("<skolemName>", skolemName)
+        rule = rule.replace("<resPredName>", resPredName)
+        return rule
     }
 }

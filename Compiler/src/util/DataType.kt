@@ -1,91 +1,127 @@
-package util;
+package util
 
-// FIXME: заглушка. Типы данных используются только для валидации, поэтому пока достаточно ENUM
-// TODO?: тип данных ENUM?
 /**
  * Типы данных
  */
-public enum DataType {
+sealed class DataType {
 
     /**
      * Переменная дерева мысли
      */
-    DECISION_TREE_VAR,
+    object DecisionTreeVar : DataType()
 
     /**
      * Класс
      */
-    CLASS,
+    object Class : DataType()
 
     /**
      * Объект
      */
-    OBJECT,
+    object Object : DataType()
 
     /**
      * Свойство
      */
-    PROPERTY,
+    object Property : DataType()
 
     /**
      * Отношение
      */
-    RELATIONSHIP,
+    object Relationship : DataType()
 
     /**
      * Строка
      */
-    STRING,
+    object String : DataType()
 
     /**
      * Булево значение
      */
-    BOOLEAN,
+    object Boolean : DataType()
 
     /**
      * Целое число
      */
-    INTEGER,
+    object Integer : DataType()
 
     /**
      * Дробное число
      */
-    DOUBLE,
+    object Double : DataType()
 
     /**
      * Результат сравнения
      */
-    COMPARISON_RESULT,
+    object ComparisonResult : DataType()
 
     /**
-     * Литерал (Строка | Булево значение | Целое число | Дробное число)
+     * Литерал (Строка | Булево значение | Целое число | Дробное число | Enum)
      */
-    LITERAL;
+    object Literal : DataType()
+
+    /**
+     * Enum
+     */
+    object Enum : DataType()
+
+    /**
+     * Линейный Enum
+     */
+    object LinerEnum : DataType()
 
     /**
      * Может ли один тип быть преобразован в другой
-     * @param from Тип, который преобразовываем
      * @param to Тип, в который преобразовываем
      * @return Может ли один тип быть преобразован в другой
      */
-    public static boolean canCast(DataType from, DataType to) {
-        return from == DECISION_TREE_VAR && to == OBJECT ||
-                from == STRING && to == LITERAL ||
-                from == BOOLEAN && to == LITERAL ||
-                from == INTEGER && to == LITERAL ||
-                from == DOUBLE && to == LITERAL;
+    fun canCast(to: DataType): kotlin.Boolean {
+        return this == DecisionTreeVar && to == Object
+                || this == String && to == Literal
+                || this == Boolean && to == Literal
+                || this == Integer && to == Literal
+                || this == Double && to == Literal
+                || this == Enum && to == Literal
+                || this == LinerEnum && to == Literal
+                || this == LinerEnum && to == Enum
     }
 
-    /**
-     * Может ли этот тип быть преобразован в другой
-     * @param to Тип, в который преобразовываем
-     * @return Может ли этот тип быть преобразован в другой
-     */
-    public boolean canCast(DataType to) {
-        return this == DECISION_TREE_VAR && to == OBJECT ||
-                this == STRING && to == LITERAL ||
-                this == BOOLEAN && to == LITERAL ||
-                this == INTEGER && to == LITERAL ||
-                this == DOUBLE && to == LITERAL;
+    companion object {
+
+        /**
+         * Может ли один тип быть преобразован в другой
+         * @param from Тип, который преобразовываем
+         * @param to Тип, в который преобразовываем
+         * @return Может ли один тип быть преобразован в другой
+         */
+        fun canCast(from: DataType, to: DataType): kotlin.Boolean {
+            return from == DecisionTreeVar && to == Object
+                    || from == String && to == Literal
+                    || from == Boolean && to == Literal
+                    || from == Integer && to == Literal
+                    || from == Double && to == Literal
+                    || from == Enum && to == Literal
+                    || from == LinerEnum && to == Literal
+                    || from == LinerEnum && to == Enum
+        }
+
+        fun values(): Array<DataType> = arrayOf(DecisionTreeVar, Class, Object, Property, Relationship, String, Boolean, Integer, Double, ComparisonResult, Literal, Enum, LinerEnum)
+
+        fun valueOf(value: kotlin.String): DataType = when (value) {
+                "DECISION_TREE_VAR" -> DecisionTreeVar
+                "CLASS" -> Class
+                "OBJECT" -> Object
+                "PROPERTY" -> Property
+                "RELATIONSHIP" -> Relationship
+                "STRING" -> String
+                "BOOLEAN" -> Boolean
+                "INTEGER" -> Integer
+                "DOUBLE" -> Double
+                "COMPARISON_RESULT" -> ComparisonResult
+                "LITERAL" -> Literal
+                "ENUM" -> Enum
+                "LINER_ENUM" -> LinerEnum
+                else -> throw IllegalArgumentException("No object util.DataType.$value")
+        }
     }
 }
