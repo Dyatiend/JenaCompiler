@@ -86,6 +86,22 @@ sealed class DataType {
                 || this == LinerEnum && to == Enum
     }
 
+    override fun toString(): kotlin.String = when (this) {
+        Boolean -> "BOOLEAN"
+        Class -> "CLASS"
+        ComparisonResult -> "COMPARISON_RESULT"
+        DecisionTreeVar -> "DECISION_TREE_VAR"
+        Double -> "DOUBLE"
+        Enum -> "ENUM"
+        Integer -> "INTEGER"
+        LinerEnum -> "LINER_ENUM"
+        Literal -> "LITERAL"
+        Object -> "OBJECT"
+        Property -> "PROPERTY"
+        Relationship -> "RELATIONSHIP"
+        String -> "STRING"
+    }
+
     companion object {
 
         /**

@@ -25,6 +25,13 @@ sealed class ComparisonResult {
      */
     object Undetermined : ComparisonResult()
 
+    override fun toString(): String = when (this) {
+        Equal -> "EQUAL"
+        Greater -> "GREATER"
+        Less -> "LESS"
+        Undetermined -> "UNDETERMINED"
+    }
+    
     companion object {
 
         fun values(): Array<ComparisonResult> = arrayOf(Greater, Less, Equal, Undetermined)

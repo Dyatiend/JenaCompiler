@@ -11,5 +11,5 @@ class ComparisonResultValue(value: ComparisonResult) : Value(value.toString()) {
     override fun resultDataType(): DataType = DataType.ComparisonResult
 
     override fun compile(): List<CompilationResult> =
-        listOf(CompilationResult(JenaUtil.genStingVal(value), "", ""))
+        listOf(CompilationResult(JenaUtil.genLink(JenaUtil.POAS_PREF, value), "", ""))
 }
