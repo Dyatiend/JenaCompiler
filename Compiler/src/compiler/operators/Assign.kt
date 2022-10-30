@@ -17,10 +17,10 @@ import util.NamingManager
 class Assign(args: List<Operator>) : BaseOperator(args) {
 
     override fun argsDataTypes(): List<List<DataType>> {
-        val result: MutableList<List<DataType>> = ArrayList()
-        result.add(listOf(DataType.Object, DataType.Property, DataType.Literal))
-        result.add(listOf(DataType.DecisionTreeVar, DataType.Object))
-        return result
+        return listOf(
+            listOf(DataType.Object, DataType.Property, DataType.Literal),
+            listOf(DataType.DecisionTreeVar, DataType.Object)
+        )
     }
 
     override fun resultDataType(): DataType? {
@@ -52,6 +52,11 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             val compiledArg1 = arg1.compile()
             val compiledArg2 = arg2.compile()
 
+            // Передаем завершенные правила дальше
+            completedRules += compiledArg0.completedRules +
+                    compiledArg1.completedRules +
+                    compiledArg2.completedRules
+
             // Для всех результатов компиляции
             compiledArg0.ruleHeads.forEach { head0 ->
                 compiledArg1.ruleHeads.forEach { head1 ->
@@ -69,14 +74,8 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
                         rule = rule.replace("<propName>", compiledArg1.value)
                         rule = rule.replace("<value>", compiledArg2.value)
 
-                        // Добавляем правило в набор правил
-                        val rules = compiledArg0.completedRules +
-                                compiledArg1.completedRules +
-                                compiledArg2.completedRules +
-                                rule
-
                         // Добавляем в результат
-                        completedRules += rules
+                        completedRules += rule
                     }
                 }
             }
@@ -92,6 +91,10 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             val compiledArg0 = arg0.compile()
             val compiledArg1 = arg1.compile()
 
+            // Передаем завершенные правила дальше
+            completedRules += compiledArg0.completedRules +
+                    compiledArg1.completedRules
+
             // Для всех результатов компиляции
             compiledArg0.ruleHeads.forEach { head0 ->
                 compiledArg1.ruleHeads.forEach { head1 ->
@@ -105,13 +108,8 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
                     rule = rule.replace("<varPredicate>", JenaUtil.genLink(POAS_PREF, VAR_PREDICATE))
                     rule = rule.replace("<varName>", varName)
 
-                    // Добавляем правило в набор правил
-                    val rules = compiledArg0.completedRules +
-                            compiledArg1.completedRules +
-                            rule
-
                     // Добавляем в результат
-                    completedRules += rules
+                    completedRules += rule
                 }
             }
         }
