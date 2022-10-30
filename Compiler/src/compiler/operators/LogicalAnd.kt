@@ -37,54 +37,59 @@ class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
                 compiledArg1.completedRules
 
         // Если операторы - булевы значения
-        if (arg0 is BooleanValue && arg1 is BooleanValue) {
-            // Добавляем выражение, равное значению
-            val head = if (arg0.value.toBoolean() && arg1.value.toBoolean()) {
-                genEqualPrim("1", "1")
-            } else {
-                genEqualPrim("0", "1")
-            }
-
-            // Добавляем в массив
-            heads.add(head)
-        } else if (arg0 is BooleanValue) {
-            // Добавляем выражение, равное значению
-            val head0 = if (arg0.value.toBoolean()) {
-                genEqualPrim("1", "1")
-            } else {
-                genEqualPrim("0", "1")
-            }
-
-            // Для всех результатов компиляции
-            compiledArg1.ruleHeads.forEach { head1 ->
-                val head = head0 + head1
+        when {
+            arg0 is BooleanValue && arg1 is BooleanValue -> {
+                // Добавляем выражение, равное значению
+                val head = if (arg0.value.toBoolean() && arg1.value.toBoolean()) {
+                    genEqualPrim("1", "1")
+                } else {
+                    genEqualPrim("0", "1")
+                }
 
                 // Добавляем в массив
                 heads.add(head)
             }
-        } else if (arg1 is BooleanValue) {
-            // Добавляем выражение, равное значению
-            val head1 = if (arg1.value.toBoolean()) {
-                genEqualPrim("1", "1")
-            } else {
-                genEqualPrim("0", "1")
-            }
+            arg0 is BooleanValue -> {
+                // Добавляем выражение, равное значению
+                val head0 = if (arg0.value.toBoolean()) {
+                    genEqualPrim("1", "1")
+                } else {
+                    genEqualPrim("0", "1")
+                }
 
-            // Для всех результатов компиляции
-            compiledArg0.ruleHeads.forEach { head0 ->
-                val head = head0 + head1
-
-                // Добавляем в массив
-                heads.add(head)
-            }
-        } else {
-            // Для всех результатов компиляции
-            compiledArg0.ruleHeads.forEach { head0 ->
+                // Для всех результатов компиляции
                 compiledArg1.ruleHeads.forEach { head1 ->
                     val head = head0 + head1
 
                     // Добавляем в массив
                     heads.add(head)
+                }
+            }
+            arg1 is BooleanValue -> {
+                // Добавляем выражение, равное значению
+                val head1 = if (arg1.value.toBoolean()) {
+                    genEqualPrim("1", "1")
+                } else {
+                    genEqualPrim("0", "1")
+                }
+
+                // Для всех результатов компиляции
+                compiledArg0.ruleHeads.forEach { head0 ->
+                    val head = head0 + head1
+
+                    // Добавляем в массив
+                    heads.add(head)
+                }
+            }
+            else -> {
+                // Для всех результатов компиляции
+                compiledArg0.ruleHeads.forEach { head0 ->
+                    compiledArg1.ruleHeads.forEach { head1 ->
+                        val head = head0 + head1
+
+                        // Добавляем в массив
+                        heads.add(head)
+                    }
                 }
             }
         }

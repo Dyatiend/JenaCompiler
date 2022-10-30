@@ -161,6 +161,15 @@ object JenaUtil {
     fun genNoValuePrim(subj: String, predicate: String): String = "noValue($subj,$predicate)\n"
 
     /**
+     * Сгенерировать примитив, проверяющий отсутствие у объекта указанного предиката с указанным значением
+     * @param subj Субъект
+     * @param predicate Предикат
+     * @param obj Объект
+     * @return Примитив, проверяющий отсутствие у объекта указанной предиката с указанным значением
+     */
+    fun genNoValuePrim(subj: String, predicate: String, obj: String): String = "noValue($subj,$predicate,$obj)\n"
+
+    /**
      * Сгенерировать примитив, создающий сколем с указанным именем
      * @param skolemName Имя
      * @return Примитив, создающий сколем с указанным именем
