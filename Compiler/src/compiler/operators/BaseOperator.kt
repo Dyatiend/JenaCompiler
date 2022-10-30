@@ -1,99 +1,85 @@
-package compiler.operators;
+package compiler.operators
 
-import compiler.Operator;
-import util.CompilationResult;
-import util.DataType;
-
-import java.util.ArrayList;
-import java.util.List;
+import compiler.Operator
+import util.DataType
 
 /**
  * Базовый оператор
  */
-public abstract class BaseOperator implements Operator {
+abstract class BaseOperator(args: List<Operator>) : Operator {
 
     /**
      * Аргументы
      */
-    private final List<Operator> args;
+    private val args: List<Operator>
 
-    /**
-     * Объекты, использованные в правиле
-     */
-    protected List<String> usedObjects = new ArrayList<>();
-
-    @Override
-    public List<String> objectsUsedInRule() {
-        return usedObjects;
-    }
-
-    /**
-     * Конструктор
-     * @param args Аргументы
-     */
-    public BaseOperator(List<Operator> args) {
+    init {
         // Проверяем аргументы перед сохранением
-        checkArgs(args);
-        this.args = args;
+        checkArgs(args)
+        this.args = args
     }
 
     /**
      * Проверка аргументов
      * @param args Аргументы
      */
-    private void checkArgs(List<Operator> args) {
+    private fun checkArgs(args: List<Operator>) {
         // Получаем список типов данных
-        List<DataType> actualArgsDataTypes = new ArrayList<>();
-        for (Operator operator : args) {
-            if(operator.resultDataType() == null) throw new IllegalArgumentException("Аргумент без возвращаемого значения");
-            actualArgsDataTypes.add(operator.resultDataType());
+        val actual: MutableList<DataType> = ArrayList()
+        args.forEach {arg ->
+            val resDataType = arg.resultDataType()
+
+            // Проверяем, что все операторы имеют возвращаемое значение
+            requireNotNull(resDataType) { "Аргумент без возвращаемого значения" }
+
+            actual.add(resDataType)
         }
 
-        // TODO?: упростить?
-        boolean success = false;
+        var success = false
         // Для каждого набора типа данных
-        for (List<DataType> expectedArgsDataTypes : argsDataTypes()) {
+        argsDataTypes().forEach { expected ->
             // Если количество аргументов неограниченно
-            if(isArgsCountUnlimited()) {
+            if (isArgsCountUnlimited) {
                 // Проверяем, что кол-во полученных аргументов больше или равно ожидаемым
-                if(expectedArgsDataTypes.size() <= actualArgsDataTypes.size()) {
-                    boolean equals = true;
+                if (expected.size <= actual.size) {
+                    var equals = true
                     // Сравниваем аргументы
-                    for (int i = 0, j = 0; i < actualArgsDataTypes.size(); ++i, ++j) {
+                    var i = 0
+                    var j = 0
+                    while (i < actual.size) {
+
                         // Если дошли до последнего аргумента - сравниваем все полученные с последним ожидаемым
-                        if (j > expectedArgsDataTypes.size() - 1) {
-                            j = expectedArgsDataTypes.size() - 1;
+                        if (j > expected.size - 1) {
+                            j = expected.size - 1
                         }
                         // Аргументы совпадают - если типы данных равны или могут быть преобразованы
-                        equals &= actualArgsDataTypes.get(i).equals(expectedArgsDataTypes.get(j)) ||
-                                actualArgsDataTypes.get(i).canCast(expectedArgsDataTypes.get(j));
+                        equals = equals && (actual[i] == expected[j]
+                                || actual[i].canCast(expected[j]))
+                        ++i
+                        ++j
                     }
-                    success |= equals;
+                    success = success || equals
                 }
-            }
-            else {
+            } else {
                 // Проверяем, что кол-во полученных аргументов равно ожидаемым
-                if(expectedArgsDataTypes.size() == actualArgsDataTypes.size()) {
-                    boolean equals = true;
+                if (expected.size == actual.size) {
+                    var equals = true
                     // Сравниваем аргументы
-                    for (int i = 0; i < actualArgsDataTypes.size(); ++i) {
+                    for (i in actual.indices) {
                         // Аргументы совпадают - если типы данных равны или могут быть преобразованы
-                        equals &= actualArgsDataTypes.get(i).equals(expectedArgsDataTypes.get(i)) ||
-                                actualArgsDataTypes.get(i).canCast(expectedArgsDataTypes.get(i));
+                        equals = equals && (actual[i] == expected[i]
+                                || actual[i].canCast(expected[i]))
                     }
-                    success |= equals;
+                    success = success || equals
                 }
             }
         }
 
         // Если аргументы не совпали ни с одним набором - выбрасываем исключение
-        if(!success) {
-            throw new IllegalArgumentException("Набор аргументов не соответствует ни одной из вариаций оператора");
-        }
+        require(success) { "Набор аргументов не соответствует ни одной из вариаций оператора" }
     }
 
-    @Override
-    public List<Operator> args() {
-        return args;
+    override fun args(): List<Operator> {
+        return args
     }
 }
