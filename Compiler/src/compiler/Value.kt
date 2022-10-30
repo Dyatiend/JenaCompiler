@@ -6,7 +6,7 @@ import util.DataType
  * Значение в выражении
  */
 abstract class Value (
-    val value: String
+    open val value: String
 ) : Operator {
 
     override fun argsDataTypes(): List<List<DataType>> = ArrayList()
