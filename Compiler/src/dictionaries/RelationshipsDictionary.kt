@@ -14,66 +14,66 @@ object RelationshipsDictionary {
 
     private const val ASCENDING_NUMERATION_RULES_PATTERN = """
         [
-        (?var1 <linerPred> ?var2)
-        noValue(?var3, <linerPred>, ?var1)
+        (?var1 <linerPredicate> ?var2)
+        noValue(?var3, <linerPredicate>, ?var1)
         ->
-        (?var1 <numberPred> "1"^^xsd:integer)
+        (?var1 <numberPredicate> "1"^^xsd:integer)
         ]
         [
-        (?var1 <linerPred> ?var2)
-        noValue(?var2, <numberPred>)
-        (?var1 <numberPred> ?var3)
+        (?var1 <linerPredicate> ?var2)
+        noValue(?var2, <numberPredicate>)
+        (?var1 <numberPredicate> ?var3)
         addOne(?var3, ?var4)
         ->
-        (?var2 <numberPred> ?var4)
+        (?var2 <numberPredicate> ?var4)
         ]
     """
 
     private const val DESCENDING_NUMERATION_RULES_PATTERN = """
         [
-        (?var1 <linerPred> ?var2)
-        noValue(?var2, <linerPred>, ?var3)
+        (?var1 <linerPredicate> ?var2)
+        noValue(?var2, <linerPredicate>, ?var3)
         ->
-        (?var1 <numberPred> "1"^^xsd:integer)
+        (?var1 <numberPredicate> "1"^^xsd:integer)
         ]
         [
-        (?var1 <linerPred> ?var2)
-        noValue(?var1, <numberPred>)
-        (?var2 <numberPred> ?var3)
+        (?var1 <linerPredicate> ?var2)
+        noValue(?var1, <numberPredicate>)
+        (?var2 <numberPredicate> ?var3)
         addOne(?var3, ?var4)
         ->
-        (?var1 <numberPred> ?var4)
+        (?var1 <numberPredicate> ?var4)
         ]
     """
 
     private const val LEFT_OF_VAR_COUNT = 2
     private const val LEFT_OF_PATTERN = """
-        (<arg1> <numberPred> <var1>)
-        (<arg2> <numberPred> <var2>)
+        (<arg1> <numberPredicate> <var1>)
+        (<arg2> <numberPredicate> <var2>)
         lessThan(<var1>, <var2>)
     """
 
     private const val RIGHT_OF_VAR_COUNT = 2
     private const val RIGHT_OF_PATTERN = """
-        (<arg1> <numberPred> <var1>)
-        (<arg2> <numberPred> <var2>)
+        (<arg1> <numberPredicate> <var1>)
+        (<arg2> <numberPredicate> <var2>)
         greaterThan(<var1>, <var2>)
     """
 
     private const val IS_BETWEEN_VAR_COUNT = 3
     private const val IS_BETWEEN_PATTERN = """
-        (<arg1> <numberPred> <var1>)
-        (<arg2> <numberPred> <var2>)
-        (<arg3> <numberPred> <var3>)
+        (<arg1> <numberPredicate> <var1>)
+        (<arg2> <numberPredicate> <var2>)
+        (<arg3> <numberPredicate> <var3>)
         greaterThan(<var1>, <var2>)
         lessThan(<var1>, <var3>)
     """
 
     private const val IS_CLOSER_TO_THAN_VAR_COUNT = 7
     private const val IS_CLOSER_TO_THAN_PATTERN = """
-        (<arg1> <numberPred> <var1>)
-        (<arg2> <numberPred> <var2>)
-        (<arg3> <numberPred> <var3>)
+        (<arg1> <numberPredicate> <var1>)
+        (<arg2> <numberPredicate> <var2>)
+        (<arg3> <numberPredicate> <var3>)
         difference(<var2>, <var1>, <var4>)
         difference(<var2>, <var3>, <var5>)
         absoluteValue(<var4>, <var6>)
@@ -83,9 +83,9 @@ object RelationshipsDictionary {
 
     private const val IS_FURTHER_FROM_THAN_VAR_COUNT = 7
     private const val IS_FURTHER_FROM_THAN_PATTERN = """
-        (<arg1> <numberPred> <var1>)
-        (<arg2> <numberPred> <var2>)
-        (<arg3> <numberPred> <var3>)
+        (<arg1> <numberPredicate> <var1>)
+        (<arg2> <numberPredicate> <var2>)
+        (<arg3> <numberPredicate> <var3>)
         difference(<var2>, <var1>, <var4>)
         difference(<var2>, <var3>, <var5>)
         absoluteValue(<var4>, <var6>)
@@ -138,7 +138,7 @@ object RelationshipsDictionary {
      * key - предикат линейной шкалы
      * val - предикат нумерации
      */
-    private val numberPreds: MutableMap<String, String> = HashMap()
+    private val numberPredicates: MutableMap<String, String> = HashMap()
     
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -148,7 +148,7 @@ object RelationshipsDictionary {
         relationships.clear()
         linerRelationships.clear()
         patterns.clear()
-        numberPreds.clear()
+        numberPredicates.clear()
         auxiliaryLinerScaleRules = ""
         isLinerScaleUsed = false
 
@@ -207,23 +207,23 @@ object RelationshipsDictionary {
 
         // Добавляем вспомогательные правила
         var tokenNumerationRules = ASCENDING_NUMERATION_RULES_PATTERN
-        tokenNumerationRules = tokenNumerationRules.replace("<linerPred>", JenaUtil.genLink(POAS_PREF, "directlyLeftOf"))
-        tokenNumerationRules = tokenNumerationRules.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "__tokenNumber__"))
+        tokenNumerationRules = tokenNumerationRules.replace("<linerPredicate>", JenaUtil.genLink(POAS_PREF, "directlyLeftOf"))
+        tokenNumerationRules = tokenNumerationRules.replace("<numberPredicate>", JenaUtil.genLink(POAS_PREF, "__tokenNumber__"))
 
         var classNumerationRules = DESCENDING_NUMERATION_RULES_PATTERN
-        classNumerationRules = classNumerationRules.replace("<linerPred>", JenaUtil.genLink(RDF_PREF, "subClassOf"))
-        classNumerationRules = classNumerationRules.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "__classNumber__"))
+        classNumerationRules = classNumerationRules.replace("<linerPredicate>", JenaUtil.genLink(RDF_PREF, "subClassOf"))
+        classNumerationRules = classNumerationRules.replace("<numberPredicate>", JenaUtil.genLink(POAS_PREF, "__classNumber__"))
 
         var stateNumerationRules = ASCENDING_NUMERATION_RULES_PATTERN
-        stateNumerationRules = stateNumerationRules.replace("<linerPred>", JenaUtil.genLink(RDF_PREF, "state_directlyLeftOf"))
-        stateNumerationRules = stateNumerationRules.replace("<numberPred>", JenaUtil.genLink(POAS_PREF, "__stateNumber__"))
+        stateNumerationRules = stateNumerationRules.replace("<linerPredicate>", JenaUtil.genLink(RDF_PREF, "state_directlyLeftOf"))
+        stateNumerationRules = stateNumerationRules.replace("<numberPredicate>", JenaUtil.genLink(POAS_PREF, "__stateNumber__"))
 
         auxiliaryLinerScaleRules += tokenNumerationRules + classNumerationRules + stateNumerationRules
 
         // Сохраняем предикаты нумерации
-        numberPreds["directlyLeftOf"] = "__tokenNumber__"
-        numberPreds["subClassOf"] = "__classNumber__"
-        numberPreds["state_directlyLeftOf"] = "__stateNumber__"
+        numberPredicates["directlyLeftOf"] = "__tokenNumber__"
+        numberPredicates["subClassOf"] = "__classNumber__"
+        numberPredicates["state_directlyLeftOf"] = "__stateNumber__"
 
         // Добавляем шаблоны
         patterns["has"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "has")} <arg2>)\n", ""))
@@ -270,12 +270,12 @@ object RelationshipsDictionary {
     /**
      * Получить список классов аргументов
      * @param relationshipName Имя отношения
-     * @param linerPred Предикат линейной шкалы
+     * @param linerPredicate Предикат линейной шкалы
      * @return Список классов аргументов
      */
-    fun args(relationshipName: String, linerPred: String? = null): List<String>? {
-        return if (isLinerScaleRelationship(relationshipName) && linerPred != null) {
-            relationships[linerRelationships[Pair(relationshipName, linerPred)]]
+    fun args(relationshipName: String, linerPredicate: String? = null): List<String>? {
+        return if (isLinerScaleRelationship(relationshipName) && linerPredicate != null) {
+            relationships[linerRelationships[Pair(relationshipName, linerPredicate)]]
         } else {
             relationships[relationshipName]
         }
@@ -284,12 +284,12 @@ object RelationshipsDictionary {
     /**
      * Получить количество переменных в шаблоне правила
      * @param relationshipName Имя отношения
-     * @param linerPred Предикат линейной шкалы
+     * @param linerPredicate Предикат линейной шкалы
      * @return Количество переменных в шаблоне
      */
-    fun varCount(relationshipName: String, linerPred: String? = null): Int? {
-        return if (isLinerScaleRelationship(relationshipName) && linerPred != null) {
-            patterns[linerRelationships[Pair(relationshipName, linerPred)]]?.first
+    fun varCount(relationshipName: String, linerPredicate: String? = null): Int? {
+        return if (isLinerScaleRelationship(relationshipName) && linerPredicate != null) {
+            patterns[linerRelationships[Pair(relationshipName, linerPredicate)]]?.first
         } else {
             if (!exist(relationshipName)) null else patterns[relationshipName]?.first
         }
@@ -298,15 +298,15 @@ object RelationshipsDictionary {
     /**
      * Получить шаблон правила
      * @param relationshipName Имя отношения
-     * @param linerPred Предикат линейной шкалы
+     * @param linerPredicate Предикат линейной шкалы
      * @return Шаблон правила
      */
-    fun pattern(relationshipName: String, linerPred: String? = null): Pair<String, String>? {
-        return if (isLinerScaleRelationship(relationshipName) && linerPred != null && numberPreds.containsKey(linerPred)) {
+    fun pattern(relationshipName: String, linerPredicate: String? = null): Pair<String, String>? {
+        return if (isLinerScaleRelationship(relationshipName) && linerPredicate != null && numberPredicates.containsKey(linerPredicate)) {
             val pattern = pattern(relationshipName)!!
 
             var ruleHead = pattern.first
-            ruleHead = ruleHead.replace("<numberPred>", numberPreds[linerPred]!!)
+            ruleHead = ruleHead.replace("<numberPredicate>", numberPredicates[linerPredicate]!!)
 
             Pair(ruleHead, pattern.second)
         } else {

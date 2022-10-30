@@ -5,7 +5,7 @@ import util.CompilationResult
 import util.DataType
 import util.JenaUtil
 import util.JenaUtil.POAS_PREF
-import util.JenaUtil.VAR_PRED
+import util.JenaUtil.VAR_PREDICATE
 import util.JenaUtil.genTriple
 import util.NamingManager
 
@@ -19,7 +19,7 @@ class DecisionTreeVarValue(value: String) : Value(value) {
             resVarName,
             listOf(genTriple(
                 resVarName,
-                JenaUtil.genLink(POAS_PREF, VAR_PRED),
+                JenaUtil.genLink(POAS_PREF, VAR_PREDICATE),
                 JenaUtil.genStingVal(value)
             )),
             ""

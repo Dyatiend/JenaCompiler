@@ -58,7 +58,7 @@ interface Operator {
         // TODO?: оптимизация правил? (удаление одинаковых строк)
 
         // Добавляем пустой триплет в граф, чтобы он никогда небыл пустым
-        var rules = JenaUtil.genBooleanRule("", NamingManager.genVarName(), NamingManager.genPredName())
+        var rules = JenaUtil.genBooleanRule("", NamingManager.genVarName(), NamingManager.genPredicateName())
 
         // Добавляем вспомогательные правила, если нужно
         rules += if (RelationshipsDictionary.isLinerScaleUsed())
@@ -77,7 +77,7 @@ interface Operator {
 
         // Генерируем имена
         val skolemName = NamingManager.genVarName()
-        val resPredName = NamingManager.genPredName()
+        val resPredicateName = NamingManager.genPredicateName()
 
         // Для всех незаконченных правил
         result.ruleHeads.forEach { head ->
@@ -85,14 +85,14 @@ interface Operator {
             if (head.isNotEmpty() && resultDataType() != null) {
                 // Генерируем правило и добавляем правило к остальным
                 rules += if (resultDataType() == DataType.Boolean) {
-                    JenaUtil.genBooleanRule(head, skolemName, resPredName)
+                    JenaUtil.genBooleanRule(head, skolemName, resPredicateName)
                 } else {
-                    JenaUtil.genRule(head, skolemName, resPredName, result.value)
+                    JenaUtil.genRule(head, skolemName, resPredicateName, result.value)
                 }
             }
         }
 
-        return CompilationResult(resPredName, emptyList(), rules)
+        return CompilationResult(resPredicateName, emptyList(), rules)
     }
 
     /**

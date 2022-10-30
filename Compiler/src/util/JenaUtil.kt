@@ -31,7 +31,7 @@ object JenaUtil {
     /**
      * Предикат переменной
      */
-    const val VAR_PRED = "__var__"
+    const val VAR_PREDICATE = "__var__"
 
     /**
      * Маркировка паузы
@@ -44,17 +44,17 @@ object JenaUtil {
     /**
      * Шаблон триплета правила
      */
-    private const val TRIPLE_PATTERN = "(<subj> <pred> <obj>)\n"
+    private const val TRIPLE_PATTERN = "(<subj> <predicate> <obj>)\n"
 
     /**
      * Основной шаблон правила с возвращаемым значением
      */
-    private const val MAIN_RULE_PATTERN = "[\n<ruleHead>\nmakeSkolem(<skolemName>)\n->\n(<skolemName> <resPredName> <resVarName>)\n]\n"
+    private const val MAIN_RULE_PATTERN = "[\n<ruleHead>\nmakeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> <resVarName>)\n]\n"
 
     /**
      * Шаблон для boolean правила
      */
-    private const val BOOLEAN_RULE_PATTERN = "[\n<ruleHead>\nmakeSkolem(<skolemName>)\n->\n(<skolemName> <resPredName> \"true\"^^xsd:boolean)\n]\n"
+    private const val BOOLEAN_RULE_PATTERN = "[\n<ruleHead>\nmakeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> \"true\"^^xsd:boolean)\n]\n"
 
     // ++++++++++++++++++++++++++++ Методы для генерации +++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -155,10 +155,10 @@ object JenaUtil {
     /**
      * Сгенерировать примитив, проверяющий отсутствие у объекта указанного предиката
      * @param subj Субъект
-     * @param pred Предикат
+     * @param predicate Предикат
      * @return Примитив, проверяющий отсутствие у объекта указанной предиката
      */
-    fun genNoValuePrim(subj: String, pred: String): String = "noValue($subj,$pred)\n"
+    fun genNoValuePrim(subj: String, predicate: String): String = "noValue($subj,$predicate)\n"
 
     /**
      * Сгенерировать примитив, создающий сколем с указанным именем
@@ -178,14 +178,14 @@ object JenaUtil {
     /**
      * Сгенерировать триплет правила
      * @param subj Субъект
-     * @param pred Предикат
+     * @param predicate Предикат
      * @param obj Объект
      * @return Триплет правила
      */
-    fun genTriple(subj: String, pred: String, obj: String): String {
+    fun genTriple(subj: String, predicate: String, obj: String): String {
         var res = TRIPLE_PATTERN
         res = res.replace("<subj>", subj)
-        res = res.replace("<pred>", pred)
+        res = res.replace("<predicate>", predicate)
         res = res.replace("<obj>", obj)
         return res
     }
@@ -194,15 +194,15 @@ object JenaUtil {
      * Сгенерировать правило с возвращаемым значением
      * @param ruleHead Голова правила
      * @param skolemName Имя сколема
-     * @param resPredName Предикат, указывающий на результат
+     * @param resPredicateName Предикат, указывающий на результат
      * @param resVarName Переменная, содержащая результат
      * @return Правило
      */
-    fun genRule(ruleHead: String, skolemName: String, resPredName: String, resVarName: String): String {
+    fun genRule(ruleHead: String, skolemName: String, resPredicateName: String, resVarName: String): String {
         var rule = MAIN_RULE_PATTERN
         rule = rule.replace("<ruleHead>", ruleHead)
         rule = rule.replace("<skolemName>", skolemName)
-        rule = rule.replace("resPredName", resPredName)
+        rule = rule.replace("resPredicateName", resPredicateName)
         rule = rule.replace("<resVarName>", resVarName)
         return rule
     }
@@ -211,14 +211,14 @@ object JenaUtil {
      * Сгенерировать булево правило
      * @param ruleHead Голова правила
      * @param skolemName Имя сколема
-     * @param resPredName Предикат, являющийся флагом результата
+     * @param resPredicateName Предикат, являющийся флагом результата
      * @return Правило
      */
-    fun genBooleanRule(ruleHead: String, skolemName: String, resPredName: String): String {
+    fun genBooleanRule(ruleHead: String, skolemName: String, resPredicateName: String): String {
         var rule = BOOLEAN_RULE_PATTERN
         rule = rule.replace("<ruleHead>", ruleHead)
         rule = rule.replace("<skolemName>", skolemName)
-        rule = rule.replace("<resPredName>", resPredName)
+        rule = rule.replace("<resPredicateName>", resPredicateName)
         return rule
     }
 }

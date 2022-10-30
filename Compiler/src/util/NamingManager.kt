@@ -13,7 +13,7 @@ object NamingManager {
     /**
      * Индекс для предикатов
      */
-    private var predIndex = 0
+    private var predicateIndex = 0
 
     /**
      * Генерирует уникальное имя для переменной, не совпадающее с пользовательскими именами переменных
@@ -25,5 +25,5 @@ object NamingManager {
      * Генерирует уникальное имя для предиката, не совпадающее с пользовательскими именами предикатов
      * @return Имя предиката
      */
-    fun genPredName(): String = JenaUtil.genLink(JenaUtil.POAS_PREF, "__${predIndex++}__")
+    fun genPredicateName(): String = JenaUtil.genLink(JenaUtil.POAS_PREF, "__${predicateIndex++}__")
 }

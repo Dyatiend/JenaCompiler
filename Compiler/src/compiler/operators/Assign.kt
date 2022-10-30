@@ -8,7 +8,7 @@ import util.CompilationResult
 import util.DataType
 import util.JenaUtil
 import util.JenaUtil.POAS_PREF
-import util.JenaUtil.VAR_PRED
+import util.JenaUtil.VAR_PREDICATE
 import util.NamingManager
 
 /**
@@ -102,7 +102,7 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
                     var rule = DECISION_TREE_VAR_ASSIGN_PATTERN
                     rule = rule.replace("<ruleHead>", head)
                     rule = rule.replace("<newObj>", compiledArg1.value)
-                    rule = rule.replace("<varPred>", JenaUtil.genLink(POAS_PREF, VAR_PRED))
+                    rule = rule.replace("<varPredicate>", JenaUtil.genLink(POAS_PREF, VAR_PREDICATE))
                     rule = rule.replace("<varName>", varName)
 
                     // Добавляем правило в набор правил
@@ -129,6 +129,6 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
         /**
          * Шаблон правила присваивания значения переменной дерева мысли
          */
-        private const val DECISION_TREE_VAR_ASSIGN_PATTERN = "[\n<ruleHead>\n->\ndrop(0)\n(<newObj> <varPred> <varName>)\n]\n"
+        private const val DECISION_TREE_VAR_ASSIGN_PATTERN = "[\n<ruleHead>\n->\ndrop(0)\n(<newObj> <varPredicate> <varName>)\n]\n"
     }
 }
