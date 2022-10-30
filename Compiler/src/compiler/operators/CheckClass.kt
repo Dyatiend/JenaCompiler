@@ -1,99 +1,129 @@
-package compiler.operators;
+package compiler.operators
 
-import compiler.Operator;
-import compiler.values.ClassValue;
-import dictionaries.ClassesDictionary;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
-import util.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
+import compiler.Operator
+import compiler.values.ClassValue
+import dictionaries.ClassesDictionary.howToCalculate
+import dictionaries.ClassesDictionary.isComputable
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
+import util.JenaUtil.genBindPrim
+import util.JenaUtil.genLink
+import util.JenaUtil.genNoValuePrim
+import util.JenaUtil.genTriple
+import util.JenaUtil.genVar
 
 /**
  * Оператор проверки класса объекта
  */
-public class CheckClass extends BaseOperator {
+class CheckClass(args: List<Operator>) : BaseOperator(args) {
 
     /**
-     * Имя предиката, используемое при компиляции
+     * Является ли оператор негативным (т.е. нужно ли отрицание при компиляции)
      */
-    private static final String CLASS_PRED_NAME = "type";
+    internal var isNegative = false
 
-    /**
-     * Конструктор
-     * @param args Аргументы
-     */
-    public CheckClass(List<Operator> args) {
-        super(args);
+    override fun argsDataTypes(): List<List<DataType>> {
+        return listOf(listOf(DataType.Object, DataType.Class))
     }
 
-    @Override
-    public List<List<DataType>> argsDataTypes() {
-        List<List<DataType>> result = new ArrayList<>();
-
-        result.add(List.of(DataType.OBJECT, DataType.CLASS));
-
-        return result;
+    override fun resultDataType(): DataType {
+        return DataType.Boolean
     }
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.BOOLEAN;
-    }
-
-    @Override
-    public CompilationResult compile() {
+    override fun compile(): CompilationResult {
         // Объявляем переменные
-        String value = "";
-        String ruleHead = "";
-        String completedRules = "";
+        val heads = ArrayList<String>()
+        var completedRules = ""
 
         // Получаем аргументы
-        Operator arg0 = arg(0);
-        Operator arg1 = arg(1);
+        val arg0 = arg(0)
+        val arg1 = arg(1)
 
         // Компилируем аргументы
-        CompilationResult compiledArg0 = arg0.compile();
-        CompilationResult compiledArg1 = arg1.compile();
+        val compiledArg0 = arg0.compile()
+        val compiledArg1 = arg1.compile()
 
         // Если класс можно вычислить (вычисляемый класс можно получить только указав его имя т.е. через ClassValue)
-        if(arg1 instanceof ClassValue &&
-                ClassesDictionary.isComputable(((ClassValue) arg1).value())) {
+        if (isComputable((arg1 as ClassValue).value)) {
             // Получаем выражение для вычисления
-            Pair<String, Operator> calculation = ClassesDictionary.howToCalculate(((ClassValue) arg1).value());
-            String varName = calculation.first();
-            Operator expression = calculation.second();
+            val calculation = howToCalculate(arg1.value)
 
-            CompilationResult compiledCalculation = expression.compile(); // Выражение для вычисления
+            // Проверям корректность словаря
+            requireNotNull(calculation) { "Для класса ${arg1.value} в словаре нет выражения" }
 
-            // Собираем правило
-            ruleHead = compiledArg0.ruleHead() + compiledArg1.ruleHead(); // Собираем части первого и второго аргументов
-            ruleHead += JenaUtil.genBindPrim(compiledArg0.value(), varName); // Инициализируем переменную
-            ruleHead += compiledCalculation.ruleHead(); // Добавляем результат компиляции вычисления
+            val varName = calculation.first
+            var expression = calculation.second
 
-            // Передаем завершенные правила дальше
-            completedRules = compiledArg0.completedRules() +
-                    compiledArg1.completedRules() +
-                    compiledCalculation.completedRules();
-        }
-        else {
-            // Собираем правило
-            ruleHead = compiledArg0.ruleHead() + compiledArg1.ruleHead(); // Собираем части первого и второго аргументов
+            // Если негативная форма - добавляем отрицание
+            if (isNegative) {
+                expression = LogicalNot(listOf(expression))
+            }
 
-            // Добавляем проверку класса
-            ruleHead += JenaUtil.genTriple(
-                    compiledArg0.value(),
-                    JenaUtil.genLink(JenaUtil.RDF_PREF, CLASS_PRED_NAME),
-                    compiledArg1.value());
+            // Компилируем выражение для вычисления TODO: упрощение выражения для вычисления
+            val compiledCalculation = expression.compile()
 
             // Передаем завершенные правила дальше
-            completedRules = compiledArg0.completedRules() + compiledArg1.completedRules();
+            completedRules += compiledArg0.completedRules +
+                    compiledArg1.completedRules +
+                    compiledCalculation.completedRules
+
+            // Для всех результатов компиляции
+            compiledArg0.ruleHeads.forEach { head0 ->
+                compiledArg1.ruleHeads.forEach { head1 ->
+                    compiledCalculation.ruleHeads.forEach { calculationHead ->
+                        // Собираем правило
+                        var head = head0 + head1 // Собираем части первого и второго аргументов
+                        head += genBindPrim(compiledArg0.value, genVar(varName)) // Инициализируем переменную
+                        head += calculationHead // Добавляем результат компиляции вычисления
+
+                        // Добавляем в массив
+                        heads.add(head)
+                    }
+                }
+            }
+        } else {
+            // Передаем завершенные правила дальше
+            completedRules += compiledArg0.completedRules +
+                    compiledArg1.completedRules
+
+            // Для всех результатов компиляции
+            compiledArg0.ruleHeads.forEach { head0 ->
+                compiledArg1.ruleHeads.forEach { head1 ->
+                    // Собираем правило
+                    var head = head0 + head1 // Собираем части первого и второго аргументов
+
+                    // Добавляем проверку класса
+                    head += if (isNegative) {
+                        // Если форма негативная - проверяем отсутствие класса
+                        genNoValuePrim(
+                            compiledArg0.value,
+                            genLink(JenaUtil.RDF_PREF, CLASS_PREDICATE_NAME),
+                            compiledArg1.value
+                        )
+                    } else {
+                        // Проверяем наличие класса
+                        genTriple(
+                            compiledArg0.value,
+                            genLink(JenaUtil.RDF_PREF, CLASS_PREDICATE_NAME),
+                            compiledArg1.value
+                        )
+                    }
+
+                    // Добавляем в массив
+                    heads.add(head)
+                }
+            }
         }
 
-        usedObjects = List.of(compiledArg0.value());
+        return CompilationResult("", heads, completedRules)
+    }
 
-        return new CompilationResult(value, ruleHead, completedRules);
+    companion object {
+
+        /**
+         * Имя предиката, используемое при компиляции
+         */
+        private const val CLASS_PREDICATE_NAME = "type"
     }
 }
