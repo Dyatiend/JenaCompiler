@@ -60,8 +60,8 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
                 expression = LogicalNot(listOf(expression))
             }
 
-            // Компилируем выражение для вычисления TODO: упрощение выражения для вычисления
-            val compiledCalculation = expression.compile()
+            // Компилируем выражение для вычисления
+            val compiledCalculation = expression.simplify().compile()
 
             // Передаем завершенные правила дальше
             completedRules += compiledArg0.completedRules +
