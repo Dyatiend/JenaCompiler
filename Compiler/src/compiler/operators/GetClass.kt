@@ -1,76 +1,71 @@
-package compiler.operators;
+package compiler.operators
 
-import compiler.Operator;
-import util.*;
+import compiler.Operator
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
+import util.JenaUtil.genLink
+import util.JenaUtil.genNoValuePrim
+import util.JenaUtil.genTriple
+import util.NamingManager.genVarName
 
-import java.util.ArrayList;
-import java.util.List;
-
-// FIXME?: а этот оператор нужен вообще?
 /**
  * Получить класс объекта
  */
-public class GetClass extends BaseOperator {
+class GetClass(args: List<Operator>) : BaseOperator(args) {
 
-    /**
-     * Имя предиката, используемое при компиляции
-     */
-    private static final String CLASS_PRED_NAME = "type";
-
-    /**
-     * Имя предиката, используемое при компиляции
-     */
-    private static final String SUBCLASS_PRED_NAME = "subClassOf";
-
-    /**
-     * Конструктор
-     * @param args Аргументы
-     */
-    public GetClass(List<Operator> args) {
-        super(args);
+    override fun argsDataTypes(): List<List<DataType>> {
+        return listOf(listOf(DataType.Object))
     }
 
-    @Override
-    public List<List<DataType>> argsDataTypes() {
-        List<List<DataType>> result = new ArrayList<>();
-
-        result.add(List.of(DataType.OBJECT));
-
-        return result;
+    override fun resultDataType(): DataType {
+        return DataType.Object
     }
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.CLASS;
-    }
-
-    @Override
-    public CompilationResult compile() {
+    override fun compile(): CompilationResult {
         // Объявляем переменные
-        String value = "";
-        String rulePart = "";
-        String completedRules = "";
+        val value = genVarName()
+        val heads = ArrayList<String>()
+        var completedRules = ""
 
         // Получаем аргументы
-        Operator arg0 = arg(0);
+        val arg0 = arg(0)
 
         // Компилируем аргументы
-        CompilationResult compiledArg0 = arg0.compile();
+        val compiledArg0 = arg0.compile()
 
-        value = NamingManager.genVarName();
+        // Передаем завершенные правила дальше
+        completedRules += compiledArg0.completedRules
 
-        rulePart = compiledArg0.ruleHead();
+        // Для всех результатов компиляции
+        compiledArg0.ruleHeads.forEach { head0 ->
+            var head = head0
+            head += genTriple(
+                compiledArg0.value,
+                genLink(JenaUtil.RDF_PREF, CLASS_PREDICATE_NAME),
+                value
+            ) + genNoValuePrim(
+                value,
+                genLink(JenaUtil.RDF_PREF, SUBCLASS_PREDICATE_NAME)
+            )
 
-        rulePart += JenaUtil.genTriple(
-                compiledArg0.value(),
-                JenaUtil.genLink(JenaUtil.RDF_PREF, CLASS_PRED_NAME),
-                value) +
-                JenaUtil.genNoValuePrim(value, JenaUtil.genLink(JenaUtil.RDF_PREF, SUBCLASS_PRED_NAME));
+            // Добавляем в массив
+            heads.add(head)
+        }
 
-        completedRules = compiledArg0.completedRules();
+        return CompilationResult(value, heads, completedRules)
+    }
 
-        usedObjects = List.of(compiledArg0.value());
+    companion object {
 
-        return new CompilationResult(value, rulePart, completedRules);
+        /**
+         * Имя предиката, используемое при компиляции
+         */
+        private const val CLASS_PREDICATE_NAME = "type"
+
+        /**
+         * Имя предиката, используемое при компиляции
+         */
+        private const val SUBCLASS_PREDICATE_NAME = "subClassOf"
     }
 }
