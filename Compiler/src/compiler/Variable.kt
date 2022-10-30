@@ -15,6 +15,6 @@ class Variable(
 
     override fun resultDataType(): DataType = DataType.Object
 
-    override fun compile(): List<CompilationResult> =
-        listOf(CompilationResult(JenaUtil.genVar(name), "", ""))
+    override fun compile(): CompilationResult =
+        CompilationResult(JenaUtil.genVar(name), emptyList(), "")
 }

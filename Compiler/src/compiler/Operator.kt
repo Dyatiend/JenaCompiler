@@ -70,33 +70,36 @@ interface Operator {
         rules += JenaUtil.PAUSE_MARK
 
         // Компилируем оператор
-        val results = compile()
+        val result = compile()
+
+        // Добавляем скомпилированныее правила в результат
+        rules += result.completedRules
 
         // Генерируем имена
         val skolemName = NamingManager.genVarName()
-        val resPredName = if (resultDataType() != null) NamingManager.genPredName() else ""
+        val resPredName = NamingManager.genPredName()
 
-        // Для всех результатов
-        results.forEach { res ->
+        // Для всех незаконченных правил
+        result.ruleHeads.forEach { head ->
             // Если есть незаконченное правило
-            if (res.ruleHead.isNotEmpty() && resultDataType() != null) {
+            if (head.isNotEmpty() && resultDataType() != null) {
                 // Генерируем правило и добавляем правило к остальным
                 rules += if (resultDataType() == DataType.Boolean) {
-                    JenaUtil.genBooleanRule(res.ruleHead, skolemName, resPredName)
+                    JenaUtil.genBooleanRule(head, skolemName, resPredName)
                 } else {
-                    JenaUtil.genRule(res.ruleHead, skolemName, resPredName, res.value)
+                    JenaUtil.genRule(head, skolemName, resPredName, result.value)
                 }
             }
         }
 
-        return CompilationResult(resPredName, "", rules)
+        return CompilationResult(resPredName, emptyList(), rules)
     }
 
     /**
      * Скомпилировать оператор
-     * @return Список правил для вычисления выражения, части правил для проверки и имена предикатов для чтения результата (если есть)
+     * @return Список правил для вычисления выражения, части правил для проверки и имя предикатов для чтения результата (если есть)
      */
-    fun compile(): List<CompilationResult>
+    fun compile(): CompilationResult
 
     companion object {
 

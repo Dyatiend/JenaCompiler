@@ -27,8 +27,9 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
         return null
     }
 
-    override fun compile(): List<CompilationResult> {
-        val result: MutableList<CompilationResult> = ArrayList()
+    override fun compile(): CompilationResult {
+        // Объявляем переменные
+        var completedRules = ""
 
         if (args().size == 3) {
             // Получаем аргументы
@@ -52,11 +53,11 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             val compiledArg2 = arg2.compile()
 
             // Для всех результатов компиляции
-            compiledArg0.forEach { argRes0 ->
-                compiledArg1.forEach { argRes1 ->
-                    compiledArg2.forEach { argRes2 ->
+            compiledArg0.ruleHeads.forEach { head0 ->
+                compiledArg1.ruleHeads.forEach { head1 ->
+                    compiledArg2.ruleHeads.forEach { head2 ->
                         // Собираем правила для аргументов
-                        val head = argRes0.ruleHead + argRes1.ruleHead + argRes2.ruleHead
+                        val head = head0 + head1 + head2
 
                         // Заполняем шаблон
                         var rule = PROPERTY_ASSIGN_PATTERN
@@ -64,18 +65,18 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
                         rule = rule.replace("<tmp1>", NamingManager.genVarName())
 
                         rule = rule.replace("<ruleHead>", head)
-                        rule = rule.replace("<subjName>", argRes0.value)
-                        rule = rule.replace("<propName>", argRes1.value)
-                        rule = rule.replace("<value>", argRes2.value)
+                        rule = rule.replace("<subjName>", compiledArg0.value)
+                        rule = rule.replace("<propName>", compiledArg1.value)
+                        rule = rule.replace("<value>", compiledArg2.value)
 
                         // Добавляем правило в набор правил
-                        val completedRules = argRes0.completedRules +
-                                argRes1.completedRules +
-                                argRes2.completedRules +
+                        val rules = compiledArg0.completedRules +
+                                compiledArg1.completedRules +
+                                compiledArg2.completedRules +
                                 rule
 
                         // Добавляем в результат
-                        result.add(CompilationResult("", "", completedRules))
+                        completedRules += rules
                     }
                 }
             }
@@ -92,30 +93,30 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             val compiledArg1 = arg1.compile()
 
             // Для всех результатов компиляции
-            compiledArg0.forEach { argRes0 ->
-                compiledArg1.forEach { argRes1 ->
+            compiledArg0.ruleHeads.forEach { head0 ->
+                compiledArg1.ruleHeads.forEach { head1 ->
                     // Собираем правила для аргументов
-                    val head = argRes0.ruleHead + argRes1.ruleHead
+                    val head = head0 + head1
 
                     // Заполняем шаблон
                     var rule = DECISION_TREE_VAR_ASSIGN_PATTERN
                     rule = rule.replace("<ruleHead>", head)
-                    rule = rule.replace("<newObj>", argRes1.value)
+                    rule = rule.replace("<newObj>", compiledArg1.value)
                     rule = rule.replace("<varPred>", JenaUtil.genLink(POAS_PREF, VAR_PRED))
                     rule = rule.replace("<varName>", varName)
 
                     // Добавляем правило в набор правил
-                    val completedRules = argRes0.completedRules +
-                            argRes1.completedRules +
+                    val rules = compiledArg0.completedRules +
+                            compiledArg1.completedRules +
                             rule
 
                     // Добавляем в результат
-                    result.add(CompilationResult("", "", completedRules))
+                    completedRules += rules
                 }
             }
         }
 
-        return result
+        return CompilationResult("", emptyList(), completedRules)
     }
 
     companion object {

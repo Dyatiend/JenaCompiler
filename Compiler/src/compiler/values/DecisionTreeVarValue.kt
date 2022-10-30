@@ -13,12 +13,16 @@ class DecisionTreeVarValue(value: String) : Value(value) {
 
     override fun resultDataType(): DataType = DataType.DecisionTreeVar
 
-    override fun compile(): List<CompilationResult> {
+    override fun compile(): CompilationResult {
         val resVarName = NamingManager.genVarName()
-        return listOf(CompilationResult(
+        return CompilationResult(
             resVarName,
-            genTriple(resVarName, JenaUtil.genLink(POAS_PREF, VAR_PRED), JenaUtil.genStingVal(value)),
+            listOf(genTriple(
+                resVarName,
+                JenaUtil.genLink(POAS_PREF, VAR_PRED),
+                JenaUtil.genStingVal(value)
+            )),
             ""
-        ))
+        )
     }
 }

@@ -9,6 +9,6 @@ class StringValue(value: String) : Value(value) {
 
     override fun resultDataType(): DataType = DataType.String
 
-    override fun compile(): List<CompilationResult> =
-        listOf(CompilationResult(JenaUtil.genStingVal(value), "", ""))
+    override fun compile(): CompilationResult =
+        CompilationResult(JenaUtil.genStingVal(value), emptyList(), "")
 }

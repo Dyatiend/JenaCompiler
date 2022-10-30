@@ -10,6 +10,6 @@ class ObjectValue(value: String) : Value(value) {
 
     override fun resultDataType(): DataType = DataType.Object
 
-    override fun compile(): List<CompilationResult> =
-        listOf(CompilationResult(JenaUtil.genLink(POAS_PREF, value), "", ""))
+    override fun compile(): CompilationResult =
+        CompilationResult(JenaUtil.genLink(POAS_PREF, value), emptyList(), "")
 }
