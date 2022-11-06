@@ -27,9 +27,9 @@ class LogicalOr(args: List<Operator>): BaseOperator(args) {
         val arg1 = arg(1)
 
         // Раскрываем через And
-        val expr0 = LogicalAnd(listOf(arg0, arg1)).simplify()
-        val expr1 = LogicalAnd(listOf(LogicalNot(listOf(arg0)), arg1)).simplify()
-        val expr2 = LogicalAnd(listOf(arg0, LogicalNot(listOf(arg1)))).simplify()
+        val expr0 = LogicalAnd(listOf(arg0, arg1)).doSemantic()
+        val expr1 = LogicalAnd(listOf(LogicalNot(listOf(arg0)), arg1)).doSemantic()
+        val expr2 = LogicalAnd(listOf(arg0, LogicalNot(listOf(arg1)))).doSemantic()
 
         // Компилируем правила
         val compiledExpr0 = expr0.compile()

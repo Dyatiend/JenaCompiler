@@ -102,17 +102,24 @@ interface Operator {
     fun compile(): CompilationResult
 
     /**
+     * Семантический анализ дерева
+     */
+    fun doSemantic():Operator {
+        TODO()
+    }
+
+    /**
      * Упрощает выражение, удаляя из него отрицания
      * @return Упрощенное выражение
      */
-    fun simplify(): Operator {
+    private fun simplify(): Operator {
         TODO()
     }
 
     /**
      * Заполняет таблицу переменных
      */
-    fun fillVarsTable() {
+    private fun fillVarsTable() {
         TODO()
     }
 

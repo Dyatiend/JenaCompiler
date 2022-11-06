@@ -61,7 +61,7 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
             }
 
             // Компилируем выражение для вычисления
-            val compiledCalculation = expression.simplify().compile()
+            val compiledCalculation = expression.doSemantic().compile()
 
             // Передаем завершенные правила дальше
             completedRules += compiledArg0.completedRules +
