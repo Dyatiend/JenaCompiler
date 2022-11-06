@@ -1,6 +1,7 @@
 package compiler.operators
 
 import compiler.Operator
+import compiler.values.BooleanValue
 import util.CompilationResult
 import util.DataType
 import util.JenaUtil
@@ -69,8 +70,23 @@ class GetExtreme(
 
                 // ---------------- Генерируем правило, помечающее объекты множества --------------
 
+                // Инициализируем переменную FIXME?: сюда не попадут объекты без связей
+                var tmpHead0 = genTriple(genVar(varName), genVarName(), genVarName())
+
+                tmpHead0 += head0
+
+                // Если оператор булево значение
+                if (arg0 is BooleanValue) {
+                    // Добавляем выражение, равное значению
+                    tmpHead0 += if (arg0.value.toBoolean()) {
+                        genEqualPrim("1", "1")
+                    } else {
+                        genEqualPrim("0", "1")
+                    }
+                }
+
                 // Добавляем в рзультат
-                completedRules += genRule(head0, skolemName, flag, genVar(varName))
+                completedRules += genRule(tmpHead0, skolemName, flag, genVar(varName))
 
                 // ---------------- Генерируем правило, помечающее потенциальный экстремум --------------
 
@@ -83,8 +99,20 @@ class GetExtreme(
 
                 // ---------------- Генерируем правило, проверяющее экстремум --------------
 
+                var tmpHead1 = head1
+
+                // Если оператор булево значение
+                if (arg1 is BooleanValue) {
+                    // Добавляем выражение, равное значению
+                    tmpHead1 += if (arg1.value.toBoolean()) {
+                        genEqualPrim("1", "1")
+                    } else {
+                        genEqualPrim("0", "1")
+                    }
+                }
+
                 // Собираем фильтрующее правило
-                val filterHead = genTriple(empty0, cycleFlag, genVar(extremeVarName)) + head1
+                val filterHead = genTriple(empty0, cycleFlag, genVar(extremeVarName)) + tmpHead1
 
                 var filterRule = EXTREME_PATTERN
                 filterRule = filterRule.replace("<ruleHead>", filterHead)
