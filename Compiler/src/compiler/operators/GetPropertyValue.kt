@@ -104,13 +104,6 @@ class GetPropertyValue(args: List<Operator>) : BaseOperator(args) {
 
                     var head = head0 + head1
 
-                    // Собираем правило, помечающее классы
-                    head += genTriple(
-                        compiledArg0.value,
-                        genLink(JenaUtil.RDF_PREF, CLASS_PREDICATE_NAME),
-                        classVar
-                    )
-
                     // Получаем класс
                     head += genTriple(
                         compiledArg0.value,
