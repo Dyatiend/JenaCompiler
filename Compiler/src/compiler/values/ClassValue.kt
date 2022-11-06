@@ -16,5 +16,5 @@ class ClassValue(value: String) : Value(value) {
     override fun resultDataType(): DataType = DataType.Class
 
     override fun compile(): CompilationResult =
-        CompilationResult(JenaUtil.genLink(POAS_PREF, value), emptyList(), "")
+        CompilationResult(JenaUtil.genLink(POAS_PREF, value), listOf(""), "")
 }

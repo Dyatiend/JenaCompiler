@@ -16,5 +16,5 @@ class BooleanValue(value: Boolean) : Value(value.toString()) {
     override fun resultDataType(): DataType = DataType.Boolean
 
     override fun compile(): CompilationResult =
-        CompilationResult(JenaUtil.genBooleanVal(value), emptyList(), "")
+        CompilationResult(JenaUtil.genBooleanVal(value), listOf(""), "")
 }

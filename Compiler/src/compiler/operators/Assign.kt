@@ -114,7 +114,7 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             }
         }
 
-        return CompilationResult("", emptyList(), completedRules)
+        return CompilationResult("", listOf(""), completedRules)
     }
 
     companion object {

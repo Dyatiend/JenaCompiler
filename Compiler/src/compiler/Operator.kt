@@ -92,7 +92,7 @@ interface Operator {
             }
         }
 
-        return CompilationResult(resPredicateName, emptyList(), rules)
+        return CompilationResult(resPredicateName, listOf(""), rules)
     }
 
     /**
@@ -101,7 +101,29 @@ interface Operator {
      */
     fun compile(): CompilationResult
 
+    /**
+     * Упрощает выражение, удаляя из него отрицания
+     * @return Упрощенное выражение
+     */
+    fun simplify(): Operator {
+        TODO()
+    }
+
+    /**
+     * Заполняет таблицу переменных
+     */
+    fun fillVarsTable() {
+        TODO()
+    }
+
     companion object {
+
+        /**
+         * Таблица переменных
+         * key - Имя
+         * val - Список известных классов
+         */
+        val varsTable: MutableMap<String, MutableList<String>> = HashMap()
 
         /**
          * Создает дерево из XML файла
@@ -154,191 +176,192 @@ interface Operator {
          * @param node XML узел
          * @return Оператор
          */
-        private fun build(node: Node): Operator? {
-            var operator: Operator
-            if (node.nodeName == "block") {
-                when (node.attributes.getNamedItem("type").nodeValue) {
-                    "object" -> {
-                        val name = node.firstChild.textContent
-                        return ObjectValue(name)
-                    }
+        private fun build(node: Node): Operator {
+            require(node.nodeName == "block") { "Неподходящий тип узла" }
 
-                    "variable" -> {
-                        val name = node.firstChild.textContent
-                        return Variable(name)
-                    }
+            when (node.attributes.getNamedItem("type").nodeValue) {
+                "object" -> {
+                    val name = node.firstChild.textContent
+                    return ObjectValue(name)
+                }
 
-                    "class" -> {
-                        val name = node.firstChild.textContent
-                        return ClassValue(name)
-                    }
+                "variable" -> {
+                    val name = node.firstChild.textContent
+                    return Variable(name)
+                }
 
-                    "property" -> {
-                        val name = node.firstChild.textContent
-                        return PropertyValue(name)
-                    }
+                "class" -> {
+                    val name = node.firstChild.textContent
+                    return ClassValue(name)
+                }
 
-                    "relationship" -> {
-                        val name = node.firstChild.textContent
-                        return RelationshipValue(name)
-                    }
+                "property" -> {
+                    val name = node.firstChild.textContent
+                    return PropertyValue(name)
+                }
 
-                    "boolean" -> {
-                        val `val` = node.firstChild.textContent
-                        return BooleanValue(`val` == "TRUE")
-                    }
+                "relationship" -> {
+                    val name = node.firstChild.textContent
+                    return RelationshipValue(name)
+                }
 
-                    "integer" -> {
-                        val `val` = node.firstChild.textContent
-                        return IntegerValue(Integer.valueOf(`val`))
-                    }
+                "boolean" -> {
+                    val `val` = node.firstChild.textContent
+                    return BooleanValue(`val` == "TRUE")
+                }
 
-                    "double" -> {
-                        val `val` = node.firstChild.textContent
-                        return DoubleValue(java.lang.Double.valueOf(`val`))
-                    }
+                "integer" -> {
+                    val `val` = node.firstChild.textContent
+                    return IntegerValue(Integer.valueOf(`val`))
+                }
 
-                    "string" -> {
-                        val `val` = node.firstChild.textContent
-                        return StringValue(`val`)
-                    }
+                "double" -> {
+                    val `val` = node.firstChild.textContent
+                    return DoubleValue(java.lang.Double.valueOf(`val`))
+                }
 
-                    "comparison_result" -> {
-                        val `val` = node.firstChild.textContent
-                        return ComparisonResultValue(ComparisonResult.valueOf(`val`.uppercase(Locale.getDefault())))
-                    }
+                "string" -> {
+                    val `val` = node.firstChild.textContent
+                    return StringValue(`val`)
+                }
 
-                    "ref_to_decision_tree_var" -> {
-                        val name = node.firstChild.textContent
-                        return DecisionTreeVarValue(name)
-                    }
+                "comparison_result" -> {
+                    val `val` = node.firstChild.textContent
+                    return ComparisonResultValue(ComparisonResult.valueOf(`val`.uppercase(Locale.getDefault())))
+                }
 
-                    "get_class" -> {
-                        return GetClass(java.util.List.of(build(node.firstChild.firstChild)))
-                    }
+                "ref_to_decision_tree_var" -> {
+                    val name = node.firstChild.textContent
+                    return DecisionTreeVarValue(name)
+                }
 
-                    "get_property_value" -> {
-                        return GetPropertyValue(java.util.List.of(
-                                build(node.firstChild.firstChild),
-                                build(node.lastChild.firstChild)
-                        ))
-                    }
+                "get_class" -> {
+                    return GetClass(listOf(build(node.firstChild.firstChild)))
+                }
 
-                    "get_relationship_object" -> {
-                        return GetByRelationship(java.util.List.of(
-                                build(node.firstChild.firstChild),
-                                build(node.lastChild.firstChild)
-                        ))
-                    }
+                "get_property_value" -> {
+                    return GetPropertyValue(listOf(
+                        build(node.firstChild.firstChild),
+                        build(node.lastChild.firstChild)
+                    ))
+                }
 
-                    "get_condition_object" -> {
-                        return GetByCondition(java.util.List.of(
-                                build(node.lastChild.firstChild)),
-                                node.firstChild.textContent
+                "get_relationship_object" -> {
+                    return GetByRelationship(listOf(
+                        build(node.firstChild.firstChild),
+                        build(node.lastChild.firstChild)
+                    ))
+                }
+
+                "get_condition_object" -> {
+                    return GetByCondition(listOf(
+                        build(node.lastChild.firstChild)),
+                        node.firstChild.textContent
+                    )
+                }
+
+                "get_extr_object_condition_and_relation" -> {
+                    // TODO
+                }
+
+                "assign_value_to_property" -> {
+                    return Assign(listOf(
+                        build(node.childNodes.item(0).firstChild),
+                        build(node.childNodes.item(1).firstChild),
+                        build(node.childNodes.item(2).firstChild)
+                    ))
+                }
+
+                "assign_value_to_variable_decision_tree" -> {
+                    return Assign(listOf(
+                        build(node.firstChild.firstChild),
+                        build(node.lastChild.firstChild)
+                    ))
+                }
+
+                "check_object_class" -> {
+                    return CheckClass(listOf(
+                        build(node.firstChild.firstChild),
+                        build(node.lastChild.firstChild)
+                    ))
+                }
+
+                "check_value_of_property" -> {
+                    return CheckPropertyValue(
+                        listOf(
+                            build(node.childNodes.item(0).firstChild),
+                            build(node.childNodes.item(1).firstChild),
+                            build(node.childNodes.item(2).firstChild)
                         )
-                    }
+                    )
+                }
 
-                    "get_extr_object_condition_and_relation" -> {
-                        // TODO
-                    }
-
-                    "assign_value_to_property" -> {
-                        return Assign(java.util.List.of(
-                                build(node.childNodes.item(0).firstChild),
-                                build(node.childNodes.item(1).firstChild),
-                                build(node.childNodes.item(2).firstChild)
-                        ))
-                    }
-
-                    "assign_value_to_variable_decision_tree" -> {
-                        return Assign(java.util.List.of(
-                                build(node.firstChild.firstChild),
-                                build(node.lastChild.firstChild)
-                        ))
-                    }
-
-                    "check_object_class" -> {
-                        return CheckClass(java.util.List.of(
-                                build(node.firstChild.firstChild),
-                                build(node.lastChild.firstChild)
-                        ))
-                    }
-
-                    "check_value_of_property" -> {
-                        return CheckPropertyValue(java.util.List.of(
-                                build(node.childNodes.item(0).firstChild),
-                                build(node.childNodes.item(1).firstChild),
-                                build(node.childNodes.item(2).firstChild)
-                        ))
-                    }
-
-                    "check_relationship" -> {
-                        val args = ArrayList<Operator?>()
-                        val childNodes = node.childNodes
-                        for (i in 0 until childNodes.length) {
-                            val child = childNodes.item(i)
-                            if (child.nodeType == Node.ELEMENT_NODE && child.nodeName != "mutation") {
-                                args.add(build(child.firstChild))
-                            }
+                "check_relationship" -> {
+                    val args = ArrayList<Operator?>()
+                    val childNodes = node.childNodes
+                    for (i in 0 until childNodes.length) {
+                        val child = childNodes.item(i)
+                        if (child.nodeType == Node.ELEMENT_NODE && child.nodeName != "mutation") {
+                            args.add(build(child.firstChild))
                         }
-                        val tmp = args[0]
-                        args[0] = args[1]
-                        args[1] = tmp
-                        return CheckRelationship(args)
                     }
+                    val tmp = args[0]
+                    args[0] = args[1]
+                    args[1] = tmp
+                    return CheckRelationship(args)
+                }
 
-                    "and" -> {
-                        return LogicalAnd(java.util.List.of(
-                                build(node.firstChild.firstChild),
-                                build(node.lastChild.firstChild)
-                        ))
-                    }
+                "and" -> {
+                    return LogicalAnd(listOf(
+                        build(node.firstChild.firstChild),
+                        build(node.lastChild.firstChild)
+                    ))
+                }
 
-                    "or" -> {
-                        return LogicalOr(java.util.List.of(
-                                build(node.firstChild.firstChild),
-                                build(node.lastChild.firstChild)
-                        ))
-                    }
+                "or" -> {
+                    return LogicalOr(listOf(
+                        build(node.firstChild.firstChild),
+                        build(node.lastChild.firstChild)
+                    ))
+                }
 
-                    "not" -> {
-                        return LogicalNot(java.util.List.of(
-                                build(node.firstChild.firstChild)
-                        ))
-                    }
+                "not" -> {
+                    return LogicalNot(listOf(
+                        build(node.firstChild.firstChild)
+                    ))
+                }
 
-                    "comparison" -> {
-                        return CompareWithComparisonOperator(java.util.List.of(
-                                build(node.childNodes.item(1).firstChild),
-                                build(node.childNodes.item(2).firstChild)),
-                                CompareWithComparisonOperator.ComparisonOperator.valueOf(node.childNodes.item(0).textContent)
-                        )
-                    }
+                "comparison" -> {
+                    return CompareWithComparisonOperator(listOf(
+                        build(node.childNodes.item(1).firstChild),
+                        build(node.childNodes.item(2).firstChild)),
+                        CompareWithComparisonOperator.ComparisonOperator.valueOf(node.childNodes.item(0).textContent)
+                    )
+                }
 
-                    "three_digit_comparison" -> {
-                        return Compare(java.util.List.of(
-                                build(node.firstChild.firstChild),
-                                build(node.lastChild.firstChild)
-                        ))
-                    }
+                "three_digit_comparison" -> {
+                    return Compare(listOf(
+                        build(node.firstChild.firstChild),
+                        build(node.lastChild.firstChild)
+                    ))
+                }
 
-                    "quantifier_of_existence" -> {
-                        return ExistenceQuantifier(java.util.List.of(
-                                build(node.lastChild.firstChild)),
-                                node.firstChild.textContent
-                        )
-                    }
+                "quantifier_of_existence" -> {
+                    return ExistenceQuantifier(listOf(
+                        build(node.lastChild.firstChild)),
+                        node.firstChild.textContent
+                    )
+                }
 
-                    "quantifier_of_generality" -> {
-                        return ForAllQuantifier(java.util.List.of(
-                                build(node.childNodes.item(1).firstChild),
-                                build(node.childNodes.item(2).firstChild)),
-                                node.childNodes.item(0).textContent
-                        )
-                    }
+                "quantifier_of_generality" -> {
+                    return ForAllQuantifier(listOf(
+                        build(node.childNodes.item(1).firstChild),
+                        build(node.childNodes.item(2).firstChild)),
+                        node.childNodes.item(0).textContent
+                    )
                 }
             }
-            return null
+            throw IllegalArgumentException("Неизвестный тип узла")
         }
     }
 }

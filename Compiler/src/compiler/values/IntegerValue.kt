@@ -10,5 +10,5 @@ class IntegerValue(value: Int) : Value(value.toString()) {
     override fun resultDataType(): DataType = DataType.Integer
 
     override fun compile(): CompilationResult =
-        CompilationResult(JenaUtil.genIntegerVal(value), emptyList(), "")
+        CompilationResult(JenaUtil.genIntegerVal(value), listOf(""), "")
 }
