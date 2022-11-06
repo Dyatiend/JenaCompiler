@@ -1,85 +1,99 @@
-package compiler.operators;
+package compiler.operators
 
-import compiler.Operator;
-import compiler.values.RelationshipValue;
-import dictionaries.RelationshipsDictionary;
-import util.CompilationResult;
-import util.DataType;
-import util.NamingManager;
+import compiler.Operator
+import compiler.Value
+import dictionaries.RelationshipsDictionary.args
+import dictionaries.RelationshipsDictionary.pattern
+import dictionaries.RelationshipsDictionary.varCount
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
+import util.JenaUtil.genCountValuesPrim
+import util.JenaUtil.genEqualPrim
+import util.JenaUtil.genIntegerVal
+import util.JenaUtil.genRule
+import util.JenaUtil.genTriple
+import util.NamingManager
+import util.NamingManager.genVarName
 
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * Получить объект по отношению
+ */
+class GetByRelationship(args: List<Operator>) : BaseOperator(args) {
 
-public class GetByRelationship extends BaseOperator {
-
-    /**
-     * Конструктор
-     * @param args Аргументы
-     */
-    public GetByRelationship(List<Operator> args) {
-        super(args);
+    override fun argsDataTypes(): List<List<DataType>> {
+        return listOf(listOf(DataType.Object, DataType.Relationship))
     }
 
-    @Override
-    public List<List<DataType>> argsDataTypes() {
-        List<List<DataType>> result = new ArrayList<>();
-
-        result.add(List.of(DataType.OBJECT, DataType.RELATIONSHIP));
-
-        return result;
+    override fun resultDataType(): DataType {
+        return DataType.Object
     }
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.OBJECT;
-    }
-
-    @Override
-    public CompilationResult compile() {
-        // TODO: возвращать false, если несколько объектов
-
-        // FIXME?: сейчас отношение можно получить только из value, если это изменится, тогда придется фиксить
-        // Проверяем бинарность отношения
-        RelationshipValue relValue = (RelationshipValue) arg(1);
-        String relName = relValue.value();
-        if(RelationshipsDictionary.args(relName).size() != 2) {
-            throw new IllegalArgumentException("Отношение не является бинарным");
-        }
-
+    override fun compile(): CompilationResult {
         // Объявляем переменные
-        String value = "";
-        String rulePart = "";
-        String completedRules = "";
+        val value = genVarName()
+        val heads = ArrayList<String>()
+        var completedRules = ""
 
         // Получаем аргументы
-        Operator arg0 = arg(0);
-        Operator arg1 = arg(1);
+        val arg0 = arg(0)
+        val arg1 = arg(1)
+
+        // Проверяем бинарность отношения
+        val relName = (arg0 as Value).value
+        require(args(relName)!!.size == 2) { "Отношение не является бинарным" }
 
         // Компилируем аргументы
-        CompilationResult compiledArg0 = arg0.compile();
-        CompilationResult compiledArg1 = arg1.compile();
+        val compiledArg0 = arg0.compile()
+        val compiledArg1 = arg1.compile()
 
-        // Собираем правило
-        value = NamingManager.genVarName();
-        rulePart = compiledArg0.ruleHead() + compiledArg1.ruleHead();
-        completedRules = compiledArg0.completedRules() + compiledArg1.completedRules();
+        // Передаем завершенные правила дальше
+        completedRules += compiledArg0.completedRules +
+                compiledArg1.completedRules + pattern(relName)!!.second
 
-        // Получаем шаблон отношения и заполняем его
-        String relPattern = RelationshipsDictionary.pattern(relName).first();
+        // Флаг, указывающий на объекты множества
+        val flag = NamingManager.genPredicateName()
+        // Skolem name
+        val skolemName = genVarName()
 
-        relPattern = relPattern.replace("<arg1>", compiledArg0.value());
-        relPattern = relPattern.replace("<arg2>", value);
+        // Вспомогательные переменные
+        val empty0 = genVarName()
+        val empty1 = genVarName()
 
-        int varCount = RelationshipsDictionary.varCount(relName);
-        for (int i = 1; i <= varCount; ++i) {
-            relPattern = relPattern.replace("<var" + i + ">", NamingManager.genVarName());
+        // Для всех результатов компиляции
+        compiledArg0.ruleHeads.forEach { head0 ->
+            compiledArg1.ruleHeads.forEach { head1 ->
+                var head = head0 + head1
+
+                // Получаем шаблон отношения и заполняем его
+                var patternHead = pattern(relName)!!.first
+                patternHead = patternHead.replace("<arg1>", compiledArg0.value)
+                patternHead = patternHead.replace("<arg2>", value)
+
+                val varCount = varCount(relName)!!
+                for (i in 1..varCount) {
+                    patternHead = patternHead.replace("<var$i>", genVarName())
+                }
+
+                head += patternHead
+
+                // Собираем правило, помачающее найденные объекты
+                val rule = genRule(head, skolemName, flag, value)
+
+                // Добавляем в основное правило
+                val mainHead = genTriple(empty0, flag, value) +
+                        genCountValuesPrim(empty0, flag, empty1) +
+                        genEqualPrim(empty1, genIntegerVal("1"))
+
+                // Добавляем в рзультат
+                heads.add(mainHead)
+                completedRules += rule
+            }
         }
 
-        rulePart += relPattern;
-        completedRules += RelationshipsDictionary.pattern(relName).second();
+        // Добавляем паузу
+        completedRules += JenaUtil.PAUSE_MARK
 
-        usedObjects = List.of(compiledArg0.value(), value);
-
-        return new CompilationResult(value, rulePart, completedRules);
+        return CompilationResult(value, heads, completedRules)
     }
 }
