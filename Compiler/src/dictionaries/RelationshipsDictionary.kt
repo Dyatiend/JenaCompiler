@@ -1,8 +1,8 @@
 package dictionaries
 
-import util.JenaUtil
 import util.JenaUtil.POAS_PREF
 import util.JenaUtil.RDF_PREF
+import util.JenaUtil.genLink
 
 /**
  * Словарь свойств
@@ -207,16 +207,16 @@ object RelationshipsDictionary {
 
         // Добавляем вспомогательные правила
         var tokenNumerationRules = ASCENDING_NUMERATION_RULES_PATTERN
-        tokenNumerationRules = tokenNumerationRules.replace("<linerPredicate>", JenaUtil.genLink(POAS_PREF, "directlyLeftOf"))
-        tokenNumerationRules = tokenNumerationRules.replace("<numberPredicate>", JenaUtil.genLink(POAS_PREF, "__tokenNumber__"))
+        tokenNumerationRules = tokenNumerationRules.replace("<linerPredicate>", genLink(POAS_PREF, "directlyLeftOf"))
+        tokenNumerationRules = tokenNumerationRules.replace("<numberPredicate>", genLink(POAS_PREF, "__tokenNumber__"))
 
         var classNumerationRules = DESCENDING_NUMERATION_RULES_PATTERN
-        classNumerationRules = classNumerationRules.replace("<linerPredicate>", JenaUtil.genLink(RDF_PREF, "subClassOf"))
-        classNumerationRules = classNumerationRules.replace("<numberPredicate>", JenaUtil.genLink(POAS_PREF, "__classNumber__"))
+        classNumerationRules = classNumerationRules.replace("<linerPredicate>", genLink(RDF_PREF, "subClassOf"))
+        classNumerationRules = classNumerationRules.replace("<numberPredicate>", genLink(POAS_PREF, "__classNumber__"))
 
         var stateNumerationRules = ASCENDING_NUMERATION_RULES_PATTERN
-        stateNumerationRules = stateNumerationRules.replace("<linerPredicate>", JenaUtil.genLink(RDF_PREF, "state_directlyLeftOf"))
-        stateNumerationRules = stateNumerationRules.replace("<numberPredicate>", JenaUtil.genLink(POAS_PREF, "__stateNumber__"))
+        stateNumerationRules = stateNumerationRules.replace("<linerPredicate>", genLink(RDF_PREF, "state_directlyLeftOf"))
+        stateNumerationRules = stateNumerationRules.replace("<numberPredicate>", genLink(POAS_PREF, "__stateNumber__"))
 
         auxiliaryLinerScaleRules += tokenNumerationRules + classNumerationRules + stateNumerationRules
 
@@ -226,12 +226,12 @@ object RelationshipsDictionary {
         numberPredicates["state_directlyLeftOf"] = "__stateNumber__"
 
         // Добавляем шаблоны
-        patterns["has"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "has")} <arg2>)\n", ""))
-        patterns["belongsTo"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "belongsTo")} <arg2>)\n", ""))
-        patterns["directlyLeftOf"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "directlyLeftOf")} <arg2>)\n", ""))
-        patterns["directlyRightOf"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "directlyRightOf")} <arg2>)\n", ""))
-        patterns["isOperandOf"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "isOperandOf")} <arg2>)\n", ""))
-        patterns["isOperatorTo"] = Pair(0, Pair("(<arg1> ${JenaUtil.genLink(POAS_PREF, "isOperatorTo")} <arg2>)\n", ""))
+        patterns["has"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "has")} <arg2>)\n", ""))
+        patterns["belongsTo"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "belongsTo")} <arg2>)\n", ""))
+        patterns["directlyLeftOf"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "directlyLeftOf")} <arg2>)\n", ""))
+        patterns["directlyRightOf"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "directlyRightOf")} <arg2>)\n", ""))
+        patterns["isOperandOf"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "isOperandOf")} <arg2>)\n", ""))
+        patterns["isOperatorTo"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "isOperatorTo")} <arg2>)\n", ""))
 
         patterns["leftOf"] = Pair(LEFT_OF_VAR_COUNT, Pair(LEFT_OF_PATTERN, ""))
         patterns["rightOf"] = Pair(RIGHT_OF_VAR_COUNT, Pair(RIGHT_OF_PATTERN, ""))
@@ -306,7 +306,7 @@ object RelationshipsDictionary {
             val pattern = pattern(relationshipName)!!
 
             var ruleHead = pattern.first
-            ruleHead = ruleHead.replace("<numberPredicate>", numberPredicates[linerPredicate]!!)
+            ruleHead = ruleHead.replace("<numberPredicate>", genLink(POAS_PREF, numberPredicates[linerPredicate]!!))
 
             Pair(ruleHead, pattern.second)
         } else {
