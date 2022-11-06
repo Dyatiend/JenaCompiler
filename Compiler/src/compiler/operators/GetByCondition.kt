@@ -1,77 +1,89 @@
-package compiler.operators;
+package compiler.operators
 
-import compiler.Operator;
-import compiler.values.BooleanValue;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
-import util.NamingManager;
+import compiler.Operator
+import compiler.values.BooleanValue
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil
+import util.JenaUtil.genCountValuesPrim
+import util.JenaUtil.genEqualPrim
+import util.JenaUtil.genIntegerVal
+import util.JenaUtil.genRule
+import util.JenaUtil.genTriple
+import util.JenaUtil.genVar
+import util.NamingManager.genPredicateName
+import util.NamingManager.genVarName
 
-import java.util.ArrayList;
-import java.util.List;
+class GetByCondition(
+    args: List<Operator>,
+    val varName: String
+) : BaseOperator(args) {
 
-public class GetByCondition extends BaseOperator {
-
-    private final String varName;
-
-    /**
-     * Конструктор
-     * @param args Аргументы
-     */
-    public GetByCondition(List<Operator> args, String varName) {
-        super(args);
-        this.varName = varName;
+    override fun argsDataTypes(): List<List<DataType>> {
+        return listOf(listOf(DataType.Boolean))
     }
 
-    @Override
-    public List<List<DataType>> argsDataTypes() {
-        List<List<DataType>> result = new ArrayList<>();
-
-        result.add(List.of(DataType.BOOLEAN));
-
-        return result;
+    override fun resultDataType(): DataType {
+        return DataType.Boolean
     }
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.OBJECT;
-    }
-
-    @Override
-    public CompilationResult compile() {
-        // TODO: возвращать false, если несколько объектов
-
+    override fun compile(): CompilationResult {
         // Объявляем переменные
-        String value = "";
-        String rulePart = "";
-        String completedRules = "";
+        val value = genVar(varName)
+        val heads = ArrayList<String>()
+        var completedRules = ""
 
         // Получаем аргументы
-        Operator arg0 = arg(0);
+        val arg0 = arg(0)
 
         // Компилируем аргументы
-        CompilationResult compiledArg0 = arg0.compile();
+        val compiledArg0 = arg0.compile()
 
-        // Инициализация переменной
-        rulePart = "(" + JenaUtil.genVar(varName) + " " + NamingManager.genVarName() + " " + NamingManager.genVarName() + ")";
+        // Передаем завершенные правила дальше
+        completedRules += compiledArg0.completedRules
 
-        // Если оператор булево значение
-        if(arg0 instanceof BooleanValue) {
-            // Добавляем выражение, равное значению
-            if(Boolean.parseBoolean(((BooleanValue) arg0).value())) {
-                rulePart += JenaUtil.genEqualPrim("1", "1");
+        // Флаг, указывающий на объекты множества
+        val flag = genPredicateName()
+        // Skolem name
+        val skolemName = genVarName()
+
+        // Вспомогательные переменные
+        val empty0 = genVarName()
+        val empty1 = genVarName()
+
+        // Для всех результатов компиляции
+        compiledArg0.ruleHeads.forEach { head0 ->
+            // Инициализируем переменную FIXME?: сюда не попадут объекты без связей
+            var head = genTriple(value, genVarName(), genVarName())
+
+            head += head0
+
+            // Если оператор булево значение
+            if (arg0 is BooleanValue) {
+                // Добавляем выражение, равное значению
+                head += if (arg0.value.toBoolean()) {
+                    genEqualPrim("1", "1")
+                } else {
+                    genEqualPrim("0", "1")
+                }
             }
-            else {
-                rulePart += JenaUtil.genEqualPrim("0", "1");
-            }
+
+            // Собираем правило, помачающее найденные объекты
+            val rule = genRule(head, skolemName, flag, value)
+
+            // Добавляем в основное правило
+            val mainHead = genTriple(empty0, flag, value) +
+                    genCountValuesPrim(empty0, flag, empty1) +
+                    genEqualPrim(empty1, genIntegerVal("1"))
+
+            // Добавляем в рзультат
+            heads.add(mainHead)
+            completedRules += rule
         }
 
-        value = JenaUtil.genVar(varName);
-        rulePart += compiledArg0.ruleHead();
-        completedRules = compiledArg0.completedRules();
+        // Добавляем паузу
+        completedRules += JenaUtil.PAUSE_MARK
 
-        usedObjects = List.of(value);
-
-        return new CompilationResult(value, rulePart, completedRules);
+        return CompilationResult(value, heads, completedRules)
     }
 }
