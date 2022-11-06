@@ -185,6 +185,15 @@ object JenaUtil {
     fun genBindPrim(from: String, to: String): String = "bind($from,$to)\n"
 
     /**
+     * Сгенерировать примитив, подсчитывающий количество связанных объектов
+     * @param obj Объект
+     * @param predicate Предикат
+     * @param res Результат
+     * @return Примитив, подсчитывающий количество связанных объектов
+     */
+    fun genCountValuesPrim(obj: String, predicate: String, res: String): String = "countValues($obj,$predicate,$res)\n"
+
+    /**
      * Сгенерировать триплет правила
      * @param subj Субъект
      * @param predicate Предикат

@@ -177,9 +177,12 @@ class GetPropertyValue(args: List<Operator>) : BaseOperator(args) {
 
                     // Добавляем в рзультат
                     heads.add(mainHead)
-                    completedRules += relPattern.second + filterRule + JenaUtil.PAUSE_MARK
+                    completedRules += filterRule
                 }
             }
+
+            // Добавляем паузу
+            completedRules += JenaUtil.PAUSE_MARK
         }
         else {
             // Передаем завершенные правила дальше
