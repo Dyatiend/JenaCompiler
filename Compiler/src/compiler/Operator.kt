@@ -70,7 +70,7 @@ interface Operator {
         rules += JenaUtil.PAUSE_MARK
 
         // Компилируем оператор
-        val result = compile()
+        val result = this.doSemantic().compile()
 
         // Добавляем скомпилированныее правила в результат
         rules += result.completedRules
@@ -105,7 +105,9 @@ interface Operator {
      * Семантический анализ дерева
      */
     fun doSemantic():Operator {
-        TODO()
+        val result = simplify()
+//        result.fillVarsTable() TODO
+        return result
     }
 
     /**
@@ -252,72 +254,72 @@ interface Operator {
                         build(node.lastChild.firstChild)
                     ))
                 }
-
-                "get_relationship_object" -> {
-                    return GetByRelationship(listOf(
-                        build(node.firstChild.firstChild),
-                        build(node.lastChild.firstChild)
-                    ))
-                }
-
-                "get_condition_object" -> {
-                    return GetByCondition(listOf(
-                        build(node.lastChild.firstChild)),
-                        node.firstChild.textContent
-                    )
-                }
-
-                "get_extr_object_condition_and_relation" -> {
-                    // TODO
-                }
-
-                "assign_value_to_property" -> {
-                    return Assign(listOf(
-                        build(node.childNodes.item(0).firstChild),
-                        build(node.childNodes.item(1).firstChild),
-                        build(node.childNodes.item(2).firstChild)
-                    ))
-                }
-
-                "assign_value_to_variable_decision_tree" -> {
-                    return Assign(listOf(
-                        build(node.firstChild.firstChild),
-                        build(node.lastChild.firstChild)
-                    ))
-                }
-
-                "check_object_class" -> {
-                    return CheckClass(listOf(
-                        build(node.firstChild.firstChild),
-                        build(node.lastChild.firstChild)
-                    ))
-                }
-
-                "check_value_of_property" -> {
-                    return CheckPropertyValue(
-                        listOf(
-                            build(node.childNodes.item(0).firstChild),
-                            build(node.childNodes.item(1).firstChild),
-                            build(node.childNodes.item(2).firstChild)
-                        )
-                    )
-                }
-
-                "check_relationship" -> {
-                    val args = ArrayList<Operator?>()
-                    val childNodes = node.childNodes
-                    for (i in 0 until childNodes.length) {
-                        val child = childNodes.item(i)
-                        if (child.nodeType == Node.ELEMENT_NODE && child.nodeName != "mutation") {
-                            args.add(build(child.firstChild))
-                        }
-                    }
-                    val tmp = args[0]
-                    args[0] = args[1]
-                    args[1] = tmp
-                    return CheckRelationship(args)
-                }
-
+//
+//                "get_relationship_object" -> {
+//                    return GetByRelationship(listOf(
+//                        build(node.firstChild.firstChild),
+//                        build(node.lastChild.firstChild)
+//                    ))
+//                }
+//
+//                "get_condition_object" -> {
+//                    return GetByCondition(listOf(
+//                        build(node.lastChild.firstChild)),
+//                        node.firstChild.textContent
+//                    )
+//                }
+//
+//                "get_extr_object_condition_and_relation" -> {
+//                    // TODO
+//                }
+//
+//                "assign_value_to_property" -> {
+//                    return Assign(listOf(
+//                        build(node.childNodes.item(0).firstChild),
+//                        build(node.childNodes.item(1).firstChild),
+//                        build(node.childNodes.item(2).firstChild)
+//                    ))
+//                }
+//
+//                "assign_value_to_variable_decision_tree" -> {
+//                    return Assign(listOf(
+//                        build(node.firstChild.firstChild),
+//                        build(node.lastChild.firstChild)
+//                    ))
+//                }
+//
+//                "check_object_class" -> {
+//                    return CheckClass(listOf(
+//                        build(node.firstChild.firstChild),
+//                        build(node.lastChild.firstChild)
+//                    ))
+//                }
+//
+//                "check_value_of_property" -> {
+//                    return CheckPropertyValue(
+//                        listOf(
+//                            build(node.childNodes.item(0).firstChild),
+//                            build(node.childNodes.item(1).firstChild),
+//                            build(node.childNodes.item(2).firstChild)
+//                        )
+//                    )
+//                }
+//
+//                "check_relationship" -> {
+//                    val args = ArrayList<Operator?>()
+//                    val childNodes = node.childNodes
+//                    for (i in 0 until childNodes.length) {
+//                        val child = childNodes.item(i)
+//                        if (child.nodeType == Node.ELEMENT_NODE && child.nodeName != "mutation") {
+//                            args.add(build(child.firstChild))
+//                        }
+//                    }
+//                    val tmp = args[0]
+//                    args[0] = args[1]
+//                    args[1] = tmp
+//                    return CheckRelationship(args)
+//                }
+//
                 "and" -> {
                     return LogicalAnd(listOf(
                         build(node.firstChild.firstChild),
@@ -337,36 +339,36 @@ interface Operator {
                         build(node.firstChild.firstChild)
                     ))
                 }
-
-                "comparison" -> {
-                    return CompareWithComparisonOperator(listOf(
-                        build(node.childNodes.item(1).firstChild),
-                        build(node.childNodes.item(2).firstChild)),
-                        CompareWithComparisonOperator.ComparisonOperator.valueOf(node.childNodes.item(0).textContent)
-                    )
-                }
-
-                "three_digit_comparison" -> {
-                    return Compare(listOf(
-                        build(node.firstChild.firstChild),
-                        build(node.lastChild.firstChild)
-                    ))
-                }
-
-                "quantifier_of_existence" -> {
-                    return ExistenceQuantifier(listOf(
-                        build(node.lastChild.firstChild)),
-                        node.firstChild.textContent
-                    )
-                }
-
-                "quantifier_of_generality" -> {
-                    return ForAllQuantifier(listOf(
-                        build(node.childNodes.item(1).firstChild),
-                        build(node.childNodes.item(2).firstChild)),
-                        node.childNodes.item(0).textContent
-                    )
-                }
+//
+//                "comparison" -> {
+//                    return CompareWithComparisonOperator(listOf(
+//                        build(node.childNodes.item(1).firstChild),
+//                        build(node.childNodes.item(2).firstChild)),
+//                        CompareWithComparisonOperator.ComparisonOperator.valueOf(node.childNodes.item(0).textContent)
+//                    )
+//                }
+//
+//                "three_digit_comparison" -> {
+//                    return Compare(listOf(
+//                        build(node.firstChild.firstChild),
+//                        build(node.lastChild.firstChild)
+//                    ))
+//                }
+//
+//                "quantifier_of_existence" -> {
+//                    return ExistenceQuantifier(listOf(
+//                        build(node.lastChild.firstChild)),
+//                        node.firstChild.textContent
+//                    )
+//                }
+//
+//                "quantifier_of_generality" -> {
+//                    return ForAllQuantifier(listOf(
+//                        build(node.childNodes.item(1).firstChild),
+//                        build(node.childNodes.item(2).firstChild)),
+//                        node.childNodes.item(0).textContent
+//                    )
+//                }
             }
             throw IllegalArgumentException("Неизвестный тип узла")
         }

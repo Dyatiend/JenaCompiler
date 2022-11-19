@@ -1,716 +1,288 @@
-<?xml version="1.0"?>
-<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
-     xml:base="http://www.w3.org/2002/07/owl"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:xml="http://www.w3.org/XML/1998/namespace"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:code="http://www.vstu.ru/poas/code#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-    <Ontology/>
-    
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:ns0="http://www.vstu.ru/poas/code#">
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#operator">
+    <rdf:type rdf:resource="http://www.vstu.ru/poas/code#element"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#operand">
+    <rdf:type rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:tokenCount>
+  </rdf:Description>
+
+  <ns0:element rdf:about="http://www.vstu.ru/poas/code#parenthesis">
+    <ns0:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:tokenCount>
+  </ns0:element>
+
+  <ns0:operator rdf:about="http://www.vstu.ru/poas/code#plus">
+    <ns0:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:tokenCount>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:strictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:strictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </ns0:operator>
+
+  <ns0:operator rdf:about="http://www.vstu.ru/poas/code#minus">
+    <ns0:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:tokenCount>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:strictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:strictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </ns0:operator>
+
+  <ns0:operator rdf:about="http://www.vstu.ru/poas/code#multiplication">
+    <ns0:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:tokenCount>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:strictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:strictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </ns0:operator>
+
+  <ns0:operator rdf:about="http://www.vstu.ru/poas/code#division">
+    <ns0:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:tokenCount>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:strictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:strictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </ns0:operator>
+
+  <ns0:operator rdf:about="http://www.vstu.ru/poas/code#squareParenthesis">
+    <ns0:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:tokenCount>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#around"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:strictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:strictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsInnerOperand>
+  </ns0:operator>
+
+  <ns0:parenthesis rdf:about="http://www.vstu.ru/poas/code#element_parenthesis_1">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:number>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_1_1"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_1_2"/>
+  </ns0:parenthesis>
+
+  <ns0:operand rdf:about="http://www.vstu.ru/poas/code#element_x_2">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">evaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_2"/>
+  </ns0:operand>
+
+  <ns0:plus rdf:about="http://www.vstu.ru/poas/code#element_plus_3">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">unevaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_3"/>
+  </ns0:plus>
+
+  <ns0:operand rdf:about="http://www.vstu.ru/poas/code#element_y_4">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">evaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_4"/>
+  </ns0:operand>
+
+  <ns0:division rdf:about="http://www.vstu.ru/poas/code#element_division_5">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">unevaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_5"/>
+  </ns0:division>
+
+  <ns0:parenthesis rdf:about="http://www.vstu.ru/poas/code#element_parenthesis_6">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ns0:number>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_6_1"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_6_2"/>
+  </ns0:parenthesis>
+
+  <ns0:operand rdf:about="http://www.vstu.ru/poas/code#element_x_7">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">evaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_7"/>
+  </ns0:operand>
+
+  <ns0:multiplication rdf:about="http://www.vstu.ru/poas/code#element_multiplication_8">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">unevaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_8"/>
+  </ns0:multiplication>
+
+  <ns0:operand rdf:about="http://www.vstu.ru/poas/code#element_y_9">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">evaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_9"/>
+  </ns0:operand>
+
+  <ns0:minus rdf:about="http://www.vstu.ru/poas/code#element_minus_10">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">unevaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_10"/>
+  </ns0:minus>
+
+  <ns0:operand rdf:about="http://www.vstu.ru/poas/code#element_x_11">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">evaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_11"/>
+  </ns0:operand>
+
+  <ns0:squareParenthesis rdf:about="http://www.vstu.ru/poas/code#element_squareParenthesis_12">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">12</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">unevaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_12_1"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_12_2"/>
+  </ns0:squareParenthesis>
+
+  <ns0:operand rdf:about="http://www.vstu.ru/poas/code#element_i_13">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">13</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">evaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_13"/>
+  </ns0:operand>
+
+  <ns0:plus rdf:about="http://www.vstu.ru/poas/code#element_plus_14">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">14</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">unevaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_14"/>
+  </ns0:plus>
+
+  <ns0:operand rdf:about="http://www.vstu.ru/poas/code#element_j_15">
+    <ns0:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</ns0:number>
+    <ns0:state rdf:datatype="http://www.w3.org/2001/XMLSchema#string">evaluated</ns0:state>
+    <ns0:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
+    <ns0:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_15"/>
+  </ns0:operand>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_1_1">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_parenthesis_1"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_2"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_1_2">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_parenthesis_1"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_5"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_4"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_2">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_x_2"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_3"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_1_1"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_3">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_plus_3"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_4"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_2"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_4">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_y_4"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_1_2"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_3"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_5">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_division_5"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_6_1"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_1_2"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_6_1">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_parenthesis_6"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_7"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_5"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_6_2">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_parenthesis_6"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_10"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_9"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_7">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_x_7"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_8"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_6_1"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_8">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_multiplication_8"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_9"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_7"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_9">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_y_9"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_6_2"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_8"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_10">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_minus_10"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_11"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_9"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_11">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_x_11"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_12_1"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_10"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_12_1">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_squareParenthesis_12"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_13"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_11"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_12_2">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_squareParenthesis_12"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_15"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_13">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_i_13"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_14"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_12_1"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_14">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_plus_14"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_15"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_13"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_15">
+    <ns0:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_j_15"/>
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_12_2"/>
+    <ns0:directlyRightOf rdf:resource="http://www.vstu.ru/poas/code#token_14"/>
+  </ns0:token>
 
-
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Annotation properties
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#arity -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#arity"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#associativity -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#associativity"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#evaluatesTo -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#evaluatesTo"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#hasToken -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#hasToken"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#isTokenOf -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#isTokenOf"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#leftOf -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#leftOf"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#needsInnerOperand -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#needsInnerOperand"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#needsLeftOperand -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#needsLeftOperand"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#needsRightOperand -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#needsRightOperand"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#number -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#number"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#place -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#place"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#precedence -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#precedence"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#rightOf -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#rightOf"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#state -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#state"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#strictOperandOrder -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#strictOperandOrder"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#tokenCount -->
-
-    <AnnotationProperty rdf:about="http://www.vstu.ru/poas/code#tokenCount"/>
-    
-
-
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Classes
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#division -->
-
-    <Class rdf:about="http://www.vstu.ru/poas/code#division"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element -->
-
-    <Class rdf:about="http://www.vstu.ru/poas/code#element"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#minus -->
-
-    <Class rdf:about="http://www.vstu.ru/poas/code#minus"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#multiplication -->
-
-    <Class rdf:about="http://www.vstu.ru/poas/code#multiplication"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#operand -->
-
-    <Class rdf:about="http://www.vstu.ru/poas/code#operand"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#operator -->
-
-    <Class rdf:about="http://www.vstu.ru/poas/code#operator"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#parenthesis -->
-
-    <Class rdf:about="http://www.vstu.ru/poas/code#parenthesis"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#plus -->
-
-    <Class rdf:about="http://www.vstu.ru/poas/code#plus"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#squareParenthesis -->
-
-    <Class rdf:about="http://www.vstu.ru/poas/code#squareParenthesis"/>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token -->
-
-    <Class rdf:about="http://www.vstu.ru/poas/code#token"/>
-    
-
-
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Individuals
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#division -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#division">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operator"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_division_5 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_division_5">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#division"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_5"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#unevaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_i_13 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_i_13">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operand"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_13"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">13</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#evaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_j_15 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_j_15">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operand"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_15"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#evaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_minus_10 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_minus_10">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#minus"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_10"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#unevaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_multiplication_8 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_multiplication_8">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#multiplication"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_8"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#unevaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_parenthesis_1 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_parenthesis_1">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#parenthesis"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_1_1"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_1_2"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</code:number>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_parenthesis_6 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_parenthesis_6">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#parenthesis"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_6_1"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_6_2"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</code:number>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_plus_14 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_plus_14">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#plus"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_14"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">14</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#unevaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_plus_3 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_plus_3">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#plus"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_3"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#unevaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_squareParenthesis_12 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_squareParenthesis_12">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#squareParenthesis"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_12_1"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_12_2"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">12</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#unevaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_x_11 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_x_11">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operand"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_11"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#evaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_x_2 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_x_2">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operand"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_2"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#evaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_x_7 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_x_7">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operand"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_7"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#evaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_y_4 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_y_4">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operand"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_4"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#evaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#element_y_9 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#element_y_9">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operand"/>
-        <code:evaluatesTo rdf:resource="http://www.vstu.ru/poas/code#none"/>
-        <code:hasToken rdf:resource="http://www.vstu.ru/poas/code#token_9"/>
-        <code:number rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</code:number>
-        <code:state rdf:resource="http://www.vstu.ru/poas/code#evaluated"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#minus -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#minus">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operator"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#multiplication -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#multiplication">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operator"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#operand -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#operand">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#element"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#operator -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#operator">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#element"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#parenthesis -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#parenthesis">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#element"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#plus -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#plus">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operator"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#squareParenthesis -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#squareParenthesis">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#operator"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_10 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_10">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_minus_10"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_11"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_9"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_11 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_11">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_x_11"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_12_1"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_10"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_12_1 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_12_1">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_squareParenthesis_12"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_13"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_11"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_12_2 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_12_2">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_squareParenthesis_12"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_15"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_13 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_13">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_i_13"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_14"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_12_1"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_14 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_14">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_plus_14"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_15"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_13"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_15 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_15">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_j_15"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_12_2"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_14"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_1_1 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_1_1">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_parenthesis_1"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_2"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_1_2 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_1_2">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_parenthesis_1"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_5"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_4"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_2 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_2">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_x_2"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_3"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_1_1"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_3 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_3">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_plus_3"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_4"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_2"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_4 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_4">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_y_4"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_1_2"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_3"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_5 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_5">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_division_5"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_6_1"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_1_2"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_6_1 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_6_1">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_parenthesis_6"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_7"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_5"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_6_2 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_6_2">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_parenthesis_6"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_10"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_9"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_7 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_7">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_x_7"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_8"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_6_1"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_8 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_8">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_multiplication_8"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_9"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_7"/>
-    </NamedIndividual>
-    
-
-
-    <!-- http://www.vstu.ru/poas/code#token_9 -->
-
-    <NamedIndividual rdf:about="http://www.vstu.ru/poas/code#token_9">
-        <rdf:type rdf:resource="http://www.vstu.ru/poas/code#token"/>
-        <code:isTokenOf rdf:resource="http://www.vstu.ru/poas/code#element_y_9"/>
-        <code:leftOf rdf:resource="http://www.vstu.ru/poas/code#token_6_2"/>
-        <code:rightOf rdf:resource="http://www.vstu.ru/poas/code#token_8"/>
-    </NamedIndividual>
-    
-
-
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Annotations
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#division">
-        <code:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</code:precedence>
-        <code:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</code:needsLeftOperand>
-        <code:strictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</code:strictOperandOrder>
-        <code:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
-        <code:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</code:needsRightOperand>
-        <code:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
-        <code:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</code:tokenCount>
-        <code:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
-        <code:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</code:needsInnerOperand>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#minus">
-        <code:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
-        <code:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</code:needsRightOperand>
-        <code:strictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</code:strictOperandOrder>
-        <code:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</code:precedence>
-        <code:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</code:needsLeftOperand>
-        <code:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</code:tokenCount>
-        <code:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</code:needsInnerOperand>
-        <code:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
-        <code:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#multiplication">
-        <code:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</code:tokenCount>
-        <code:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</code:needsLeftOperand>
-        <code:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
-        <code:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
-        <code:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</code:needsInnerOperand>
-        <code:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
-        <code:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</code:precedence>
-        <code:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</code:needsRightOperand>
-        <code:strictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</code:strictOperandOrder>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#operand">
-        <code:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</code:tokenCount>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#parenthesis">
-        <code:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</code:tokenCount>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#plus">
-        <code:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</code:needsRightOperand>
-        <code:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</code:precedence>
-        <code:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
-        <code:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
-        <code:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
-        <code:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</code:tokenCount>
-        <code:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</code:needsInnerOperand>
-        <code:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</code:needsLeftOperand>
-        <code:strictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</code:strictOperandOrder>
-    </rdf:Description>
-    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#squareParenthesis">
-        <code:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</code:needsRightOperand>
-        <code:place rdf:resource="http://www.vstu.ru/poas/code#around"/>
-        <code:strictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</code:strictOperandOrder>
-        <code:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
-        <code:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
-        <code:tokenCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</code:tokenCount>
-        <code:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</code:needsLeftOperand>
-        <code:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</code:precedence>
-        <code:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</code:needsInnerOperand>
-    </rdf:Description>
 </rdf:RDF>
-
-
-
-<!-- Generated by the OWL API (version 4.5.13) https://github.com/owlcs/owlapi -->
-

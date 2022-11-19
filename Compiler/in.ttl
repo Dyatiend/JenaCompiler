@@ -87,28 +87,28 @@
 <#element_x_2>
     a <#operand> ;
 	<#number> "2"^^xsd:integer ; 
-	<#state> <#evaluated> ;
+	<#state> "evaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_2> .
 
 <#element_plus_3>
     a <#plus> ;
 	<#number> "3"^^xsd:integer ; 
-	<#state> <#unevaluated> ;
+	<#state> "unevaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_3> .
 
 <#element_y_4>
     a <#operand> ;
 	<#number> "4"^^xsd:integer ; 
-	<#state> <#evaluated> ;
+	<#state> "evaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_4> .
 
 <#element_division_5>
     a <#division> ;
 	<#number> "5"^^xsd:integer ; 
-	<#state> <#unevaluated> ;
+	<#state> "unevaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_5> .
 
@@ -121,42 +121,42 @@
 <#element_x_7>
     a <#operand> ;
 	<#number> "7"^^xsd:integer ; 
-	<#state> <#evaluated> ;
+	<#state> "evaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_7> .
 
 <#element_multiplication_8>
     a <#multiplication> ;
 	<#number> "8"^^xsd:integer ; 
-	<#state> <#unevaluated> ;
+	<#state> "unevaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_8> .
 
 <#element_y_9>
     a <#operand> ;
 	<#number> "9"^^xsd:integer ; 
-	<#state> <#evaluated> ;
+	<#state> "evaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_9> .
 
 <#element_minus_10>
     a <#minus> ;
 	<#number> "10"^^xsd:integer ; 
-	<#state> <#unevaluated> ;
+	<#state> "unevaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_10> .
 
 <#element_x_11>
     a <#operand> ;
 	<#number> "11"^^xsd:integer ; 
-	<#state> <#evaluated> ;
+	<#state> "evaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_11> .
 
 <#element_squareParenthesis_12>
     a <#squareParenthesis> ;
 	<#number> "12"^^xsd:integer ; 
-	<#state> <#unevaluated> ;
+	<#state> "unevaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_12_1> ;
 	<#hasToken> <#token_12_2> .
@@ -164,21 +164,21 @@
 <#element_i_13>
     a <#operand> ;
 	<#number> "13"^^xsd:integer ; 
-	<#state> <#evaluated> ;
+	<#state> "evaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_13> .
 	
 <#element_plus_14>
     a <#plus> ;
 	<#number> "14"^^xsd:integer ; 
-	<#state> <#unevaluated> ;
+	<#state> "unevaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_14> .
 	
 <#element_j_15>
     a <#operand> ;
 	<#number> "15"^^xsd:integer ; 
-	<#state> <#evaluated> ;
+	<#state> "evaluated"^^xsd:string ;
     <#evaluatesTo> <#none> ;
 	<#hasToken> <#token_15> .
 
@@ -187,105 +187,106 @@
 <#token_1_1>
 	a <#token> ;
 	<#isTokenOf> <#element_parenthesis_1> ;
-    <#leftOf> <#token_2> .
+    <#directlyLeftOf> <#token_2> .
 
 <#token_1_2>
 	a <#token> ;
 	<#isTokenOf> <#element_parenthesis_1> ;
-	<#leftOf> <#token_5> ;
-    <#rightOf> <#token_4> .
+	<#directlyLeftOf> <#token_5> ;
+    <#directlyRightOf> <#token_4> .
 
 <#token_2>
 	a <#token> ;
 	<#isTokenOf> <#element_x_2> ;
-	<#leftOf> <#token_3> ;
-    <#rightOf> <#token_1_1> .
+	<#directlyLeftOf> <#token_3> ;
+    <#directlyRightOf> <#token_1_1> .
 
 <#token_3>
 	a <#token> ;
 	<#isTokenOf> <#element_plus_3> ;
-	<#leftOf> <#token_4> ;
-    <#rightOf> <#token_2> .
+	<#directlyLeftOf> <#token_4> ;
+    <#directlyRightOf> <#token_2> .
 
 <#token_4>
 	a <#token> ;
 	<#isTokenOf> <#element_y_4> ;
-	<#leftOf> <#token_1_2> ;
-    <#rightOf> <#token_3> .
+	<#directlyLeftOf> <#token_1_2> ;
+    <#directlyRightOf> <#token_3> .
 
 <#token_5>
 	a <#token> ;
 	<#isTokenOf> <#element_division_5> ;
-	<#leftOf> <#token_6_1> ;
-    <#rightOf> <#token_1_2> .
+	<#directlyLeftOf> <#token_6_1> ;
+    <#directlyRightOf> <#token_1_2> .
 
 <#token_6_1>
 	a <#token> ;
 	<#isTokenOf> <#element_parenthesis_6> ;
-    <#leftOf> <#token_7> ;
-	<#rightOf> <#token_5> .
+    <#directlyLeftOf> <#token_7> ;
+	<#directlyRightOf> <#token_5> .
 
 <#token_6_2>
 	a <#token> ;
 	<#isTokenOf> <#element_parenthesis_6> ;
-	<#leftOf> <#token_10> ;
-    <#rightOf> <#token_9> .
+	<#directlyLeftOf> <#token_10> ;
+    <#directlyRightOf> <#token_9> .
 
 <#token_7>
 	a <#token> ;
 	<#isTokenOf> <#element_x_7> ;
-	<#leftOf> <#token_8> ;
-    <#rightOf> <#token_6_1> .
+	<#directlyLeftOf> <#token_8> ;
+    <#directlyRightOf> <#token_6_1> .
 
 <#token_8>
 	a <#token> ;
 	<#isTokenOf> <#element_multiplication_8> ;
-	<#leftOf> <#token_9> ;
-    <#rightOf> <#token_7> .
+	<#directlyLeftOf> <#token_9> ;
+    <#directlyRightOf> <#token_7> .
 
 <#token_9>
 	a <#token> ;
 	<#isTokenOf> <#element_y_9> ;
-	<#leftOf> <#token_6_2> ;
-    <#rightOf> <#token_8> .
+	<#directlyLeftOf> <#token_6_2> ;
+    <#directlyRightOf> <#token_8> .
 
 <#token_10>
 	a <#token> ;
 	<#isTokenOf> <#element_minus_10> ;
-	<#leftOf> <#token_11> ;
-    <#rightOf> <#token_9> .
+	<#directlyLeftOf> <#token_11> ;
+    <#directlyRightOf> <#token_9> ;
+    <#~var~> "A1"^^xsd:string .
 
 <#token_11>
 	a <#token> ;
 	<#isTokenOf> <#element_x_11> ;
-	<#leftOf> <#token_12_1> ;
-    <#rightOf> <#token_10> .
+	<#directlyLeftOf> <#token_12_1> ;
+    <#directlyRightOf> <#token_10> .
 
 <#token_12_1>
 	a <#token> ;
 	<#isTokenOf> <#element_squareParenthesis_12> ;
-	<#leftOf> <#token_13> ;
-    <#rightOf> <#token_11> .
+	<#directlyLeftOf> <#token_13> ;
+    <#directlyRightOf> <#token_11> .
 
 <#token_12_2>
 	a <#token> ;
 	<#isTokenOf> <#element_squareParenthesis_12> ;
-    <#rightOf> <#token_15> .
+    <#directlyRightOf> <#token_15> .
 
 <#token_13>
 	a <#token> ;
 	<#isTokenOf> <#element_i_13> ;
-	<#leftOf> <#token_14> ;
-    <#rightOf> <#token_12_1> .
+	<#directlyLeftOf> <#token_14> ;
+    <#directlyRightOf> <#token_12_1> .
 
 <#token_14>
 	a <#token> ;
 	<#isTokenOf> <#element_plus_14> ;
-	<#leftOf> <#token_15> ;
-    <#rightOf> <#token_13> .
+	<#directlyLeftOf> <#token_15> ;
+    <#directlyRightOf> <#token_13> .
 
 <#token_15>
 	a <#token> ;
 	<#isTokenOf> <#element_j_15> ;
-	<#leftOf> <#token_12_2> ;
-    <#rightOf> <#token_14> .
+	<#directlyLeftOf> <#token_12_2> ;
+    <#directlyRightOf> <#token_14> .
