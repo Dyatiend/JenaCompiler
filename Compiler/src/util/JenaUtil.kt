@@ -34,6 +34,11 @@ object JenaUtil {
     const val VAR_PREDICATE = "__var__"
 
     /**
+     * Предикат результата сравнения
+     */
+    const val COMPARE_RESULT_PREDICATE = "__compare_result__"
+
+    /**
      * Маркировка паузы
      */
     const val PAUSE_MARK = "<pause>"
