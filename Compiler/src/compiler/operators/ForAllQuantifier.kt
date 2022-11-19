@@ -1,51 +1,43 @@
-package compiler.operators;
+package compiler.operators
 
-import compiler.Operator;
-import util.CompilationResult;
-import util.DataType;
+import compiler.Operator
+import util.CompilationResult
+import util.DataType
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ForAllQuantifier extends BaseOperator {
-
-    private final String varName;
+/**
+ * Квантор общности
+ */
+class ForAllQuantifier(
+    args: List<Operator>, 
+    private val varName: String
+) : BaseOperator(args) {
 
     /**
-     * Конструктор
-     * @param args Аргументы
+     * Является ли оператор негативным (т.е. нужно ли отрицание при компиляции)
      */
-    public ForAllQuantifier(List<Operator> args, String varName) {
-        super(args);
-        this.varName = varName;
+    internal var isNegative = false
+    
+    override fun argsDataTypes(): List<List<DataType>> {
+        return listOf(listOf(DataType.Boolean, DataType.Boolean))
     }
 
-    @Override
-    public List<List<DataType>> argsDataTypes() {
-        List<List<DataType>> result = new ArrayList<>();
-
-        result.add(List.of(DataType.BOOLEAN, DataType.BOOLEAN));
-
-        return result;
+    override fun resultDataType(): DataType {
+        return DataType.Boolean
     }
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.BOOLEAN;
-    }
-
-    @Override
-    public CompilationResult compile() {
+    override fun compile(): CompilationResult {
         // Компилируем через другие операторы
-        Operator not = new LogicalNot(List.of(arg(1)));
-        Operator and = new LogicalAnd(List.of(arg(0), not));
-        Operator existence = new ExistenceQuantifier(List.of(and), varName);
-        Operator res = new LogicalNot(List.of(existence));
+        val not = LogicalNot(listOf(arg(1)))
+        val and = LogicalAnd(listOf(arg(0), not))
 
-        CompilationResult compilationResult = res.compile();
+        val existence = ExistenceQuantifier(listOf(and), varName)
 
-        usedObjects = new ArrayList<>(res.objectsUsedInRule());
+        val res = if (isNegative) {
+            LogicalNot(listOf(existence))
+        } else {
+            existence
+        }
 
-        return compilationResult;
+        return res.doSemantic().compile()
     }
 }
