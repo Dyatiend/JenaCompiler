@@ -1,89 +1,167 @@
-package compiler.operators;
+package compiler.operators
 
-import compiler.Operator;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
+import compiler.Operator
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil.genEqualPrim
+import util.JenaUtil.genGreaterEqualPrim
+import util.JenaUtil.genGreaterThanPrim
+import util.JenaUtil.genLessEqualPrim
+import util.JenaUtil.genLessThanPrim
+import util.JenaUtil.genNotEqualPrim
 
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * Сравнение с явным указанием оператора
+ * TODO?: сравнение объектов на больше/меньше?
+ */
+class CompareWithComparisonOperator(
+    args: List<Operator>,
+    private var operator: ComparisonOperator
+) : BaseOperator(args) {
 
-public class CompareWithComparisonOperator extends BaseOperator {
+    sealed class ComparisonOperator {
 
-    public enum ComparisonOperator {
-        LESS,
-        GREATER,
-        EQUAL
+        /**
+         * Меньше
+         */
+        object Less : ComparisonOperator()
+
+        /**
+         * Больше
+         */
+        object Greater : ComparisonOperator()
+
+        /**
+         * Равно
+         */
+        object Equal : ComparisonOperator()
+
+        /**
+         * Меньше или равно
+         */
+        object LessEqual : ComparisonOperator()
+
+        /**
+         * Больше или равно
+         */
+        object GreaterEqual : ComparisonOperator()
+
+        /**
+         * Не равно
+         */
+        object NotEqual : ComparisonOperator()
+
+        companion object {
+
+            fun values(): Array<ComparisonOperator> {
+                return arrayOf(Less, Greater, Equal, LessEqual, GreaterEqual, NotEqual)
+            }
+
+            fun valueOf(value: String): ComparisonOperator {
+                return when (value) {
+                    "LESS" -> Less
+                    "GREATER" -> Greater
+                    "EQUAL" -> Equal
+                    "LESS_EQUAL" -> LessEqual
+                    "GREATER_EQUAL" -> Greater
+                    "NOT_EQUAL" -> NotEqual
+                    else -> throw IllegalArgumentException("No object compiler.operators.CompareWithComparisonOperator.ComparisonOperator.$value")
+                }
+            }
+        }
     }
-
-    private final ComparisonOperator operator;
 
     /**
-     * Конструктор
-     * @param args Аргументы
+     * Является ли оператор негативным (т.е. нужно ли отрицание при компиляции)
      */
-    public CompareWithComparisonOperator(List<Operator> args, ComparisonOperator operator) {
-        super(args);
-        if(arg(0).resultDataType() == DataType.STRING && operator != ComparisonOperator.EQUAL)
-            throw new IllegalArgumentException("Указанный оператор не совместим с этими типам данных");
+    internal var isNegative = false
 
-        this.operator = operator;
+    init {
+        require(!(
+                (arg(0).resultDataType() == DataType.String
+                        || arg(0).resultDataType() == DataType.Object )
+                && (operator != ComparisonOperator.Equal
+                        || operator != ComparisonOperator.NotEqual)
+        )) { "Указанный оператор не совместим с этими типам данных" }
     }
 
-    @Override
-    public List<List<DataType>> argsDataTypes() {
-        List<List<DataType>> result = new ArrayList<>();
-
-        result.add(List.of(DataType.INTEGER, DataType.DOUBLE));
-        result.add(List.of(DataType.DOUBLE, DataType.INTEGER));
-        result.add(List.of(DataType.INTEGER, DataType.INTEGER));
-        result.add(List.of(DataType.DOUBLE, DataType.DOUBLE));
-        result.add(List.of(DataType.STRING, DataType.STRING));
-
-        return result;
+    override fun argsDataTypes(): List<List<DataType>> {
+        return listOf(
+            listOf(DataType.Integer, DataType.Double),
+            listOf(DataType.Double, DataType.Integer),
+            listOf(DataType.Integer, DataType.Integer),
+            listOf(DataType.Double, DataType.Double),
+            listOf(DataType.String, DataType.String),
+            listOf(DataType.Object, DataType.Object)
+        )
     }
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.BOOLEAN;
+    override fun resultDataType(): DataType {
+        return DataType.Boolean
     }
 
-    @Override
-    public CompilationResult compile() {
+    override fun compile(): CompilationResult {
         // Объявляем переменные
-        String value = "";
-        String ruleHead = "";
-        String completedRules = "";
+        val heads = ArrayList<String>()
+        var completedRules = ""
 
         // Получаем аргументы
-        Operator arg0 = arg(0);
-        Operator arg1 = arg(1);
+        val arg0 = arg(0)
+        val arg1 = arg(1)
 
         // Компилируем аргументы
-        CompilationResult compiledArg0 = arg0.compile();
-        CompilationResult compiledArg1 = arg1.compile();
+        val compiledArg0 = arg0.compile()
+        val compiledArg1 = arg1.compile()
 
-        ruleHead = compiledArg0.ruleHead() + compiledArg1.ruleHead();
-        completedRules = compiledArg0.completedRules() + compiledArg1.completedRules();
+        // Передаем завершенные правила дальше
+        completedRules += compiledArg0.completedRules +
+                compiledArg1.completedRules
 
-        switch (operator) {
-            case LESS -> {
-                // Правило для проверки меньше
-                ruleHead += JenaUtil.genLessThanPrim(compiledArg0.value(), compiledArg1.value());
-            }
-            case GREATER -> {
-                // Правило для проверки больше
-                ruleHead += JenaUtil.genGreaterThanPrim(compiledArg0.value(), compiledArg1.value());
-            }
-            case EQUAL -> {
-                // Правило для проверки эквивалентности
-                ruleHead += JenaUtil.genEqualPrim(compiledArg0.value(), compiledArg1.value());
+        // Если нужно отрицание
+        if (isNegative) {
+            // Меням оператор на противоположный
+            operator = when (operator) {
+                ComparisonOperator.Equal -> ComparisonOperator.NotEqual
+                ComparisonOperator.Greater -> ComparisonOperator.LessEqual
+                ComparisonOperator.GreaterEqual -> ComparisonOperator.Less
+                ComparisonOperator.Less -> ComparisonOperator.GreaterEqual
+                ComparisonOperator.LessEqual -> ComparisonOperator.Greater
+                ComparisonOperator.NotEqual -> ComparisonOperator.Equal
             }
         }
 
-        usedObjects = new ArrayList<>(arg0.objectsUsedInRule());
-        usedObjects.addAll(new ArrayList<>(arg1.objectsUsedInRule()));
+        // Для всех результатов компиляции
+        compiledArg0.ruleHeads.forEach { head0 ->
+            compiledArg1.ruleHeads.forEach { head1 ->
+                var head = head0 + head1
 
-        return new CompilationResult(value, ruleHead, completedRules);
+                // Добавляем проверку соответствующего оператору примитива
+                head += when (operator) {
+                    ComparisonOperator.Equal -> {
+                        genEqualPrim(compiledArg0.value, compiledArg1.value)
+                    }
+                    ComparisonOperator.Greater -> {
+                        genGreaterThanPrim(compiledArg0.value, compiledArg1.value)
+                    }
+                    ComparisonOperator.GreaterEqual -> {
+                        genGreaterEqualPrim(compiledArg0.value, compiledArg1.value)
+                    }
+                    ComparisonOperator.Less -> {
+                        genLessThanPrim(compiledArg0.value, compiledArg1.value)
+                    }
+                    ComparisonOperator.LessEqual -> {
+                        genLessEqualPrim(compiledArg0.value, compiledArg1.value)
+                    }
+                    ComparisonOperator.NotEqual -> {
+                        genNotEqualPrim(compiledArg0.value, compiledArg1.value)
+                    }
+                }
+
+                // Добавляем в рзультат
+                heads.add(head)
+            }
+        }
+
+        return CompilationResult("", heads, completedRules)
     }
 }
