@@ -1,77 +1,72 @@
-package compiler.operators;
+package compiler.operators
 
-import compiler.Operator;
-import compiler.values.BooleanValue;
-import util.CompilationResult;
-import util.DataType;
-import util.JenaUtil;
-import util.NamingManager;
-
-import java.util.ArrayList;
-import java.util.List;
+import compiler.Operator
+import compiler.values.BooleanValue
+import util.CompilationResult
+import util.DataType
+import util.JenaUtil.genEqualPrim
+import util.JenaUtil.genTriple
+import util.JenaUtil.genVar
+import util.NamingManager.genVarName
 
 /**
  * Квантор существования
+ * TODO: отрицание
  */
-public class ExistenceQuantifier extends BaseOperator {
-
-    private final String varName;
+class ExistenceQuantifier(
+    args: List<Operator>,
+    private val varName: String
+) : BaseOperator(args) {
 
     /**
-     * Конструктор
-     * @param args Аргументы
+     * Является ли оператор негативным (т.е. нужно ли отрицание при компиляции)
      */
-    public ExistenceQuantifier(List<Operator> args, String varName) {
-        super(args);
-        this.varName = varName;
+    internal var isNegative = false
+
+    override fun argsDataTypes(): List<List<DataType>> {
+        return listOf(listOf(DataType.Boolean))
     }
 
-    @Override
-    public List<List<DataType>> argsDataTypes() {
-        List<List<DataType>> result = new ArrayList<>();
-
-        result.add(List.of(DataType.BOOLEAN));
-
-        return result;
+    override fun resultDataType(): DataType {
+        return DataType.Boolean
     }
 
-    @Override
-    public DataType resultDataType() {
-        return DataType.BOOLEAN;
-    }
-
-    @Override
-    public CompilationResult compile() {
+    override fun compile(): CompilationResult {
         // Объявляем переменные
-        String value = "";
-        String rulePart = "";
-        String completedRules = "";
+        val heads = ArrayList<String>()
+        var completedRules = ""
 
         // Получаем аргументы
-        Operator arg0 = arg(0);
+        val arg0 = arg(0)
 
         // Компилируем аргументы
-        CompilationResult compiledArg0 = arg0.compile();
+        val compiledArg0 = arg0.compile()
 
-        // Инициализация переменной
-        rulePart = "(" + JenaUtil.genVar(varName) + " " + NamingManager.genVarName() + " " + NamingManager.genVarName() + ")";
+        // Передаем завершенные правила дальше
+        completedRules += compiledArg0.completedRules
 
         // Если оператор булево значение
-        if(arg0 instanceof BooleanValue) {
+        if (arg0 is BooleanValue) {
             // Добавляем выражение, равное значению
-            if(Boolean.parseBoolean(((BooleanValue) arg0).value())) {
-                rulePart += JenaUtil.genEqualPrim("1", "1");
+            val head = if (arg0.value.toBoolean()) {
+                genEqualPrim("1", "1")
+            } else {
+                genEqualPrim("0", "1")
             }
-            else {
-                rulePart += JenaUtil.genEqualPrim("0", "1");
+
+            // Добавляем в массив
+            heads.add(head)
+        } else {
+            // Для всех результатов компиляции
+            compiledArg0.ruleHeads.forEach { head0 ->
+                // Добавляем инициализацию переменной
+                val head = genTriple(genVar(varName), genVarName(), genVarName()) + head0
+
+                // Добавляем в массив
+                heads.add(head)
             }
         }
 
-        rulePart += compiledArg0.ruleHead();
-        completedRules = compiledArg0.completedRules();
-
-        usedObjects = List.of(JenaUtil.genVar(varName));
-
-        return new CompilationResult(value, rulePart, completedRules);
+        return CompilationResult("", heads, completedRules)
     }
 }
