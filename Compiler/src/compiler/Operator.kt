@@ -76,25 +76,41 @@ interface Operator {
         // Добавляем паузу
         rules += JenaUtil.PAUSE_MARK
 
-        // Компилируем оператор
-        val result = this.doSemantic().compile()
-
-        // Добавляем скомпилированныее правила в результат
-        rules += result.completedRules
-
         // Генерируем имена
         val skolemName = NamingManager.genVarName()
         val resPredicateName = NamingManager.genPredicateName()
 
-        // Для всех незаконченных правил
-        result.ruleHeads.forEach { head ->
-            // Если есть незаконченное правило
-            if (head.isNotEmpty() && resultDataType() != null) {
-                // Генерируем правило и добавляем правило к остальным
-                rules += if (resultDataType() == DataType.Boolean) {
-                    JenaUtil.genBooleanRule(head, skolemName, resPredicateName)
-                } else {
-                    JenaUtil.genRule(head, skolemName, resPredicateName, result.value)
+        // Упрощаем выражение
+        val expr = doSemantic()
+
+        // Если корневой оператор - булево значение
+        if (expr is BooleanValue) {
+            // Добавляем выражение, равное значению
+            val head = if (expr.value.toBoolean()) {
+                JenaUtil.genEqualPrim("1", "1")
+            } else {
+                JenaUtil.genEqualPrim("0", "1")
+            }
+
+            // Генерируем правило и добавляем правило к остальным
+            rules += JenaUtil.genBooleanRule(head, skolemName, resPredicateName)
+        } else {
+            // Компилируем оператор
+            val result = expr.compile()
+
+            // Добавляем скомпилированныее правила в результат
+            rules += result.completedRules
+
+            // Для всех незаконченных правил
+            result.ruleHeads.forEach { head ->
+                // Если есть незаконченное правило
+                if (head.isNotEmpty() && resultDataType() != null) {
+                    // Генерируем правило и добавляем правило к остальным
+                    rules += if (resultDataType() == DataType.Boolean) {
+                        JenaUtil.genBooleanRule(head, skolemName, resPredicateName)
+                    } else {
+                        JenaUtil.genRule(head, skolemName, resPredicateName, result.value)
+                    }
                 }
             }
         }
@@ -330,28 +346,28 @@ interface Operator {
                 }
 
                 "boolean" -> {
-                    val `val` = node.firstChild.textContent
-                    return BooleanValue(`val` == "TRUE")
+                    val value = node.firstChild.textContent
+                    return BooleanValue(value == "TRUE")
                 }
 
                 "integer" -> {
-                    val `val` = node.firstChild.textContent
-                    return IntegerValue(Integer.valueOf(`val`))
+                    val value = node.firstChild.textContent
+                    return IntegerValue(value.toInt())
                 }
 
                 "double" -> {
-                    val `val` = node.firstChild.textContent
-                    return DoubleValue(java.lang.Double.valueOf(`val`))
+                    val value = node.firstChild.textContent
+                    return DoubleValue(value.toDouble())
                 }
 
                 "string" -> {
-                    val `val` = node.firstChild.textContent
-                    return StringValue(`val`)
+                    val value = node.firstChild.textContent
+                    return StringValue(value)
                 }
 
                 "comparison_result" -> {
-                    val `val` = node.firstChild.textContent
-                    return ComparisonResultValue(ComparisonResult.valueOf(`val`.uppercase(Locale.getDefault())))
+                    val value = node.firstChild.textContent
+                    return ComparisonResultValue(ComparisonResult.valueOf(value.uppercase(Locale.getDefault())))
                 }
 
                 "ref_to_decision_tree_var" -> {
@@ -369,72 +385,77 @@ interface Operator {
                         build(node.lastChild.firstChild)
                     ))
                 }
-//
-//                "get_relationship_object" -> {
-//                    return GetByRelationship(listOf(
-//                        build(node.firstChild.firstChild),
-//                        build(node.lastChild.firstChild)
-//                    ))
-//                }
-//
-//                "get_condition_object" -> {
-//                    return GetByCondition(listOf(
-//                        build(node.lastChild.firstChild)),
-//                        node.firstChild.textContent
-//                    )
-//                }
-//
-//                "get_extr_object_condition_and_relation" -> {
-//                    // TODO
-//                }
-//
-//                "assign_value_to_property" -> {
-//                    return Assign(listOf(
-//                        build(node.childNodes.item(0).firstChild),
-//                        build(node.childNodes.item(1).firstChild),
-//                        build(node.childNodes.item(2).firstChild)
-//                    ))
-//                }
-//
-//                "assign_value_to_variable_decision_tree" -> {
-//                    return Assign(listOf(
-//                        build(node.firstChild.firstChild),
-//                        build(node.lastChild.firstChild)
-//                    ))
-//                }
-//
-//                "check_object_class" -> {
-//                    return CheckClass(listOf(
-//                        build(node.firstChild.firstChild),
-//                        build(node.lastChild.firstChild)
-//                    ))
-//                }
-//
-//                "check_value_of_property" -> {
-//                    return CheckPropertyValue(
-//                        listOf(
-//                            build(node.childNodes.item(0).firstChild),
-//                            build(node.childNodes.item(1).firstChild),
-//                            build(node.childNodes.item(2).firstChild)
-//                        )
-//                    )
-//                }
-//
-//                "check_relationship" -> {
-//                    val args = ArrayList<Operator?>()
-//                    val childNodes = node.childNodes
-//                    for (i in 0 until childNodes.length) {
-//                        val child = childNodes.item(i)
-//                        if (child.nodeType == Node.ELEMENT_NODE && child.nodeName != "mutation") {
-//                            args.add(build(child.firstChild))
-//                        }
-//                    }
-//                    val tmp = args[0]
-//                    args[0] = args[1]
-//                    args[1] = tmp
-//                    return CheckRelationship(args)
-//                }
-//
+
+                "get_relationship_object" -> {
+                    return GetByRelationship(listOf(
+                        build(node.firstChild.firstChild),
+                        build(node.lastChild.firstChild)
+                    ))
+                }
+
+                "get_condition_object" -> {
+                    return GetByCondition(listOf(
+                        build(node.lastChild.firstChild)),
+                        node.firstChild.textContent
+                    )
+                }
+
+                "get_extr_object" -> {
+                    return GetExtreme(listOf(
+                        build(node.childNodes.item(1).firstChild),
+                        build(node.childNodes.item(3).firstChild)),
+                        node.childNodes.item(0).textContent,
+                        node.childNodes.item(2).textContent
+                    )
+                }
+
+                "assign_value_to_property" -> {
+                    return Assign(listOf(
+                        build(node.childNodes.item(0).firstChild),
+                        build(node.childNodes.item(1).firstChild),
+                        build(node.childNodes.item(2).firstChild)
+                    ))
+                }
+
+                "assign_value_to_variable_decision_tree" -> {
+                    return Assign(listOf(
+                        build(node.firstChild.firstChild),
+                        build(node.lastChild.firstChild)
+                    ))
+                }
+
+                "check_object_class" -> {
+                    return CheckClass(listOf(
+                        build(node.firstChild.firstChild),
+                        build(node.lastChild.firstChild)
+                    ))
+                }
+
+                "check_value_of_property" -> {
+                    return CheckPropertyValue(
+                        listOf(
+                            build(node.childNodes.item(0).firstChild),
+                            build(node.childNodes.item(1).firstChild),
+                            build(node.childNodes.item(2).firstChild)
+                        )
+                    )
+                }
+
+                "check_relationship" -> {
+                    val args = ArrayList<Operator>()
+                    val childNodes = node.childNodes
+                    for (i in 0 until childNodes.length) {
+                        val child = childNodes.item(i)
+                        if (child.nodeType == Node.ELEMENT_NODE && child.nodeName != "mutation") {
+                            args.add(build(child.firstChild))
+                        }
+                    }
+                    val tmp = args[0]
+                    args[0] = args[1]
+                    args[1] = tmp
+                    return CheckRelationship(args)
+                }
+
                 "and" -> {
                     return LogicalAnd(listOf(
                         build(node.firstChild.firstChild),
@@ -454,36 +475,36 @@ interface Operator {
                         build(node.firstChild.firstChild)
                     ))
                 }
-//
-//                "comparison" -> {
-//                    return CompareWithComparisonOperator(listOf(
-//                        build(node.childNodes.item(1).firstChild),
-//                        build(node.childNodes.item(2).firstChild)),
-//                        CompareWithComparisonOperator.ComparisonOperator.valueOf(node.childNodes.item(0).textContent)
-//                    )
-//                }
-//
-//                "three_digit_comparison" -> {
-//                    return Compare(listOf(
-//                        build(node.firstChild.firstChild),
-//                        build(node.lastChild.firstChild)
-//                    ))
-//                }
-//
-//                "quantifier_of_existence" -> {
-//                    return ExistenceQuantifier(listOf(
-//                        build(node.lastChild.firstChild)),
-//                        node.firstChild.textContent
-//                    )
-//                }
-//
-//                "quantifier_of_generality" -> {
-//                    return ForAllQuantifier(listOf(
-//                        build(node.childNodes.item(1).firstChild),
-//                        build(node.childNodes.item(2).firstChild)),
-//                        node.childNodes.item(0).textContent
-//                    )
-//                }
+
+                "comparison" -> {
+                    return CompareWithComparisonOperator(listOf(
+                        build(node.childNodes.item(1).firstChild),
+                        build(node.childNodes.item(2).firstChild)),
+                        CompareWithComparisonOperator.ComparisonOperator.valueOf(node.childNodes.item(0).textContent)
+                    )
+                }
+
+                "three_digit_comparison" -> {
+                    return Compare(listOf(
+                        build(node.firstChild.firstChild),
+                        build(node.lastChild.firstChild)
+                    ))
+                }
+
+                "quantifier_of_existence" -> {
+                    return ExistenceQuantifier(listOf(
+                        build(node.lastChild.firstChild)),
+                        node.firstChild.textContent
+                    )
+                }
+
+                "quantifier_of_generality" -> {
+                    return ForAllQuantifier(listOf(
+                        build(node.childNodes.item(1).firstChild),
+                        build(node.childNodes.item(2).firstChild)),
+                        node.childNodes.item(0).textContent
+                    )
+                }
             }
             throw IllegalArgumentException("Неизвестный тип узла")
         }
