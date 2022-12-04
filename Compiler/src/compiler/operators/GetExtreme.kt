@@ -134,6 +134,16 @@ class GetExtreme(
         return CompilationResult(value, heads, completedRules)
     }
 
+    override fun clone(): Operator {
+        val newArgs = ArrayList<Operator>()
+
+        args().forEach { arg ->
+            newArgs.add(arg.clone())
+        }
+
+        return GetExtreme(newArgs, varName, extremeVarName)
+    }
+
     companion object {
 
         /**

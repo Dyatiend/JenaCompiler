@@ -225,7 +225,7 @@ object JenaUtil {
         var rule = MAIN_RULE_PATTERN
         rule = rule.replace("<ruleHead>", ruleHead)
         rule = rule.replace("<skolemName>", skolemName)
-        rule = rule.replace("resPredicateName", resPredicateName)
+        rule = rule.replace("<resPredicateName>", resPredicateName)
         rule = rule.replace("<resVarName>", resVarName)
         return rule
     }

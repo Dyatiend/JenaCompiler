@@ -1,5 +1,6 @@
 package compiler.values
 
+import compiler.Operator
 import compiler.Value
 import util.ComparisonResult
 import util.CompilationResult
@@ -12,4 +13,8 @@ class ComparisonResultValue(value: ComparisonResult) : Value(value.toString()) {
 
     override fun compile(): CompilationResult =
         CompilationResult(JenaUtil.genLink(JenaUtil.POAS_PREF, value), listOf(""), "")
+
+    override fun clone(): Operator {
+        return ComparisonResultValue(ComparisonResult.valueOf(value))
+    }
 }

@@ -117,6 +117,16 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
         return CompilationResult("", listOf(""), completedRules)
     }
 
+    override fun clone(): Operator {
+        val newArgs = ArrayList<Operator>()
+
+        args().forEach { arg ->
+            newArgs.add(arg.clone())
+        }
+
+        return Assign(newArgs)
+    }
+
     companion object {
 
         /**

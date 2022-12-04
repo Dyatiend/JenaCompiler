@@ -1,5 +1,6 @@
 package compiler.values
 
+import compiler.Operator
 import compiler.Value
 import util.CompilationResult
 import util.DataType
@@ -24,5 +25,9 @@ class DecisionTreeVarValue(value: String) : Value(value) {
             )),
             ""
         )
+    }
+
+    override fun clone(): Operator {
+        return DecisionTreeVarValue(value)
     }
 }

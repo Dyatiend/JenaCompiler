@@ -1,5 +1,6 @@
 package compiler.values
 
+import compiler.Operator
 import compiler.Value
 import util.CompilationResult
 import util.DataType
@@ -17,4 +18,8 @@ class BooleanValue(value: Boolean) : Value(value.toString()) {
 
     override fun compile(): CompilationResult =
         CompilationResult(JenaUtil.genBooleanVal(value), listOf(""), "")
+
+    override fun clone(): Operator {
+        return BooleanValue(value.toBoolean())
+    }
 }

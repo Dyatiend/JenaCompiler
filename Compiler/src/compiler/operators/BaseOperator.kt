@@ -11,7 +11,7 @@ abstract class BaseOperator(args: List<Operator>) : Operator {
     /**
      * Аргументы
      */
-    private val args: List<Operator>
+    private var args: List<Operator>
 
     init {
         // Проверяем аргументы перед сохранением
@@ -81,5 +81,9 @@ abstract class BaseOperator(args: List<Operator>) : Operator {
 
     override fun args(): List<Operator> {
         return args
+    }
+
+    override fun setArgs(args: List<Operator>) {
+        this.args = args
     }
 }

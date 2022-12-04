@@ -17,4 +17,8 @@ class Variable(
 
     override fun compile(): CompilationResult =
         CompilationResult(JenaUtil.genVar(name), listOf(""), "")
+
+    override fun clone(): Operator {
+        return Variable(name)
+    }
 }

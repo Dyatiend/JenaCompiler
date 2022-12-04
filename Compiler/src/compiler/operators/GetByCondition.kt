@@ -86,4 +86,14 @@ class GetByCondition(
 
         return CompilationResult(value, heads, completedRules)
     }
+
+    override fun clone(): Operator {
+        val newArgs = ArrayList<Operator>()
+
+        args().forEach { arg ->
+            newArgs.add(arg.clone())
+        }
+
+        return GetByCondition(newArgs, varName)
+    }
 }

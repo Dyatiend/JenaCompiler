@@ -27,9 +27,9 @@ class LogicalOr(args: List<Operator>): BaseOperator(args) {
         val arg1 = arg(1)
 
         // Раскрываем через And
-        val expr0 = LogicalAnd(listOf(arg0, arg1)).doSemantic()
-        val expr1 = LogicalAnd(listOf(LogicalNot(listOf(arg0)), arg1)).doSemantic()
-        val expr2 = LogicalAnd(listOf(arg0, LogicalNot(listOf(arg1)))).doSemantic()
+        val expr0 = LogicalAnd(listOf(arg0.clone(), arg1.clone())).doSemantic()
+        val expr1 = LogicalAnd(listOf(LogicalNot(listOf(arg0.clone())), arg1.clone())).doSemantic()
+        val expr2 = LogicalAnd(listOf(arg0.clone(), LogicalNot(listOf(arg1.clone())))).doSemantic()
 
         // Компилируем правила
         val compiledExpr0 = expr0.compile()
@@ -51,5 +51,15 @@ class LogicalOr(args: List<Operator>): BaseOperator(args) {
         heads.addAll(compiledExpr2.ruleHeads)
 
         return CompilationResult("", heads, completedRules)
+    }
+
+    override fun clone(): Operator {
+        val newArgs = ArrayList<Operator>()
+
+        args().forEach { arg ->
+            newArgs.add(arg.clone())
+        }
+
+        return LogicalOr(newArgs)
     }
 }

@@ -14,8 +14,14 @@ import util.NamingManager
 /**
  * Проверка наличия отношения между объектами
  * TODO?: переходы между классами?
+ * TODO: negative form
  */
 class CheckRelationship(args: List<Operator>) : BaseOperator(args) {
+
+    /**
+     * Является ли оператор негативным (т.е. нужно ли отрицание при компиляции)
+     */
+    internal var isNegative = false
 
     init {
         val arg0 = arg(0) as RelationshipValue
@@ -178,5 +184,15 @@ class CheckRelationship(args: List<Operator>) : BaseOperator(args) {
         }
 
         return CompilationResult("", heads, completedRules)
+    }
+
+    override fun clone(): Operator {
+        val newArgs = ArrayList<Operator>()
+
+        args().forEach { arg ->
+            newArgs.add(arg.clone())
+        }
+
+        return CheckRelationship(newArgs)
     }
 }

@@ -1,5 +1,6 @@
 package compiler.values
 
+import compiler.Operator
 import compiler.Value
 import dictionaries.PropertiesDictionary
 import util.CompilationResult
@@ -17,4 +18,8 @@ class PropertyValue(value: String) : Value(value) {
 
     override fun compile(): CompilationResult =
         CompilationResult(JenaUtil.genLink(POAS_PREF, value), listOf(""), "")
+
+    override fun clone(): Operator {
+        return PropertyValue(value)
+    }
 }

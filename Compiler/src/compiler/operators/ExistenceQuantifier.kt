@@ -69,4 +69,14 @@ class ExistenceQuantifier(
 
         return CompilationResult("", heads, completedRules)
     }
+
+    override fun clone(): Operator {
+        val newArgs = ArrayList<Operator>()
+
+        args().forEach { arg ->
+            newArgs.add(arg.clone())
+        }
+
+        return ExistenceQuantifier(newArgs, varName)
+    }
 }

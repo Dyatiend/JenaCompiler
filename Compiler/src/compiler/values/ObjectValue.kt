@@ -1,5 +1,6 @@
 package compiler.values
 
+import compiler.Operator
 import compiler.Value
 import util.CompilationResult
 import util.DataType
@@ -12,4 +13,8 @@ class ObjectValue(value: String) : Value(value) {
 
     override fun compile(): CompilationResult =
         CompilationResult(JenaUtil.genLink(POAS_PREF, value), listOf(""), "")
+
+    override fun clone(): Operator {
+        return ObjectValue(value)
+    }
 }

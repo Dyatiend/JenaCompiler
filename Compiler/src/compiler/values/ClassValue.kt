@@ -1,7 +1,9 @@
 package compiler.values
 
+import compiler.Operator
 import compiler.Value
 import dictionaries.ClassesDictionary
+import util.ComparisonResult
 import util.CompilationResult
 import util.DataType
 import util.JenaUtil
@@ -17,4 +19,8 @@ class ClassValue(value: String) : Value(value) {
 
     override fun compile(): CompilationResult =
         CompilationResult(JenaUtil.genLink(POAS_PREF, value), listOf(""), "")
+
+    override fun clone(): Operator {
+        return ClassValue(value)
+    }
 }

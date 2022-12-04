@@ -40,4 +40,14 @@ class ForAllQuantifier(
 
         return res.doSemantic().compile()
     }
+
+    override fun clone(): Operator {
+        val newArgs = ArrayList<Operator>()
+
+        args().forEach { arg ->
+            newArgs.add(arg.clone())
+        }
+
+        return ForAllQuantifier(newArgs, varName)
+    }
 }

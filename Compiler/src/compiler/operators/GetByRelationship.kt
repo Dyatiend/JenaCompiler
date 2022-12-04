@@ -18,6 +18,7 @@ import util.NamingManager.genVarName
 
 /**
  * Получить объект по отношению
+ * TODO: еще bool условие
  */
 class GetByRelationship(args: List<Operator>) : BaseOperator(args) {
 
@@ -95,5 +96,15 @@ class GetByRelationship(args: List<Operator>) : BaseOperator(args) {
         completedRules += JenaUtil.PAUSE_MARK
 
         return CompilationResult(value, heads, completedRules)
+    }
+
+    override fun clone(): Operator {
+        val newArgs = ArrayList<Operator>()
+
+        args().forEach { arg ->
+            newArgs.add(arg.clone())
+        }
+
+        return GetByRelationship(newArgs)
     }
 }

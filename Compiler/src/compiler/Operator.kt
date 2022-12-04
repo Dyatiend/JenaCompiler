@@ -15,11 +15,18 @@ import javax.xml.parsers.ParserConfigurationException
  * Оператор
  */
 interface Operator {
+
     /**
      * Список аргументов
      * @return Список аргументов
      */
     fun args(): List<Operator> = ArrayList()
+
+    /**
+     * Установить аргументы
+     * @param args Аргументы
+     */
+    fun setArgs(args: List<Operator>) {}
 
     /**
      * Получить аргумент
@@ -102,20 +109,128 @@ interface Operator {
     fun compile(): CompilationResult
 
     /**
+     * Создает копию объекта
+     * @return Копия
+     */
+    fun clone(): Operator
+
+    /**
      * Семантический анализ дерева
      */
-    fun doSemantic():Operator {
-        val result = simplify()
-//        result.fillVarsTable() TODO
-        return result
+    fun doSemantic(): Operator {
+//        fillVarsTable() TODO
+        return simplify(false)
     }
 
     /**
      * Упрощает выражение, удаляя из него отрицания
      * @return Упрощенное выражение
      */
-    private fun simplify(): Operator {
-        TODO()
+    private fun simplify(isNegative: Boolean): Operator {
+        if (isNegative) {
+            return when (this) {
+                is LogicalNot -> {
+                    arg(0).simplify(false)
+                }
+                is LogicalOr -> {
+                    LogicalAnd(listOf(arg(0).simplify(true), arg(1).simplify(true)))
+                }
+                is LogicalAnd -> {
+                    LogicalOr(listOf(arg(0).simplify(true), arg(1).simplify(true)))
+                }
+                is ForAllQuantifier -> {
+                    val newArgs = ArrayList<Operator>()
+
+                    args().forEach { arg ->
+                        newArgs.add(arg.simplify(false))
+                    }
+
+                    setArgs(newArgs)
+                    this.isNegative = true
+                    this
+                }
+                is ExistenceQuantifier -> {
+                    val newArgs = ArrayList<Operator>()
+
+                    args().forEach { arg ->
+                        newArgs.add(arg.simplify(false))
+                    }
+
+                    setArgs(newArgs)
+                    this.isNegative = true
+                    this
+                }
+                is CompareWithComparisonOperator -> {
+                    val newArgs = ArrayList<Operator>()
+
+                    args().forEach { arg ->
+                        newArgs.add(arg.simplify(false))
+                    }
+
+                    setArgs(newArgs)
+                    this.isNegative = true
+                    this
+                }
+                is CheckRelationship -> {
+                    val newArgs = ArrayList<Operator>()
+
+                    args().forEach { arg ->
+                        newArgs.add(arg.simplify(false))
+                    }
+
+                    setArgs(newArgs)
+                    this.isNegative = true
+                    this
+                }
+                is CheckPropertyValue -> {
+                    val newArgs = ArrayList<Operator>()
+
+                    args().forEach { arg ->
+                        newArgs.add(arg.simplify(false))
+                    }
+
+                    setArgs(newArgs)
+                    this.isNegative = true
+                    this
+                }
+                is CheckClass -> {
+                    val newArgs = ArrayList<Operator>()
+
+                    args().forEach { arg ->
+                        newArgs.add(arg.simplify(false))
+                    }
+
+                    setArgs(newArgs)
+                    this.isNegative = true
+                    this
+                }
+                is BooleanValue -> {
+                    value = (!value.toBoolean()).toString()
+                    this
+                }
+
+                else -> {
+                    throw IllegalStateException("Отрицание не над bool оператором")
+                }
+            }
+        } else {
+            return when (this) {
+                is LogicalNot -> {
+                    arg(0).simplify(true)
+                }
+
+                else -> {
+                    val newArgs = ArrayList<Operator>()
+
+                    args().forEach { arg ->
+                        newArgs.add(arg.simplify(false))
+                    }
+
+                    setArgs(newArgs)
+                    this
+                }
+            }
+        }
     }
 
     /**
