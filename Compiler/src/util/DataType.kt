@@ -56,11 +56,6 @@ sealed class DataType {
     object ComparisonResult : DataType()
 
     /**
-     * Литерал (Строка | Булево значение | Целое число | Дробное число | Enum)
-     */
-    object Literal : DataType()
-
-    /**
      * Enum
      */
     object Enum : DataType()
@@ -77,12 +72,6 @@ sealed class DataType {
      */
     fun canCast(to: DataType): kotlin.Boolean {
         return this == DecisionTreeVar && to == Object
-                || this == String && to == Literal
-                || this == Boolean && to == Literal
-                || this == Integer && to == Literal
-                || this == Double && to == Literal
-                || this == Enum && to == Literal
-                || this == LinerEnum && to == Literal
                 || this == LinerEnum && to == Enum
     }
 
@@ -95,7 +84,6 @@ sealed class DataType {
         Enum -> "ENUM"
         Integer -> "INTEGER"
         LinerEnum -> "LINER_ENUM"
-        Literal -> "LITERAL"
         Object -> "OBJECT"
         Property -> "PROPERTY"
         Relationship -> "RELATIONSHIP"
@@ -112,16 +100,23 @@ sealed class DataType {
          */
         fun canCast(from: DataType, to: DataType): kotlin.Boolean {
             return from == DecisionTreeVar && to == Object
-                    || from == String && to == Literal
-                    || from == Boolean && to == Literal
-                    || from == Integer && to == Literal
-                    || from == Double && to == Literal
-                    || from == Enum && to == Literal
-                    || from == LinerEnum && to == Literal
                     || from == LinerEnum && to == Enum
         }
 
-        fun values(): Array<DataType> = arrayOf(DecisionTreeVar, Class, Object, Property, Relationship, String, Boolean, Integer, Double, ComparisonResult, Literal, Enum, LinerEnum)
+        fun values(): Array<DataType> = arrayOf(
+            DecisionTreeVar,
+            Class,
+            Object,
+            Property,
+            Relationship,
+            String,
+            Boolean,
+            Integer,
+            Double,
+            ComparisonResult,
+            Enum,
+            LinerEnum
+        )
 
         fun valueOf(value: kotlin.String): DataType = when (value) {
                 "DECISION_TREE_VAR" -> DecisionTreeVar
@@ -134,7 +129,6 @@ sealed class DataType {
                 "INTEGER" -> Integer
                 "DOUBLE" -> Double
                 "COMPARISON_RESULT" -> ComparisonResult
-                "LITERAL" -> Literal
                 "ENUM" -> Enum
                 "LINER_ENUM" -> LinerEnum
                 else -> throw IllegalArgumentException("No object util.DataType.$value")

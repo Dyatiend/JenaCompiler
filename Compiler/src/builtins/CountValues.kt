@@ -5,7 +5,6 @@ import org.apache.jena.reasoner.rulesys.RuleContext
 import org.apache.jena.reasoner.rulesys.Util
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin
 
-
 class CountValues : BaseBuiltin() {
     /**
      * Return a name for this builtin, normally this will be the name of the

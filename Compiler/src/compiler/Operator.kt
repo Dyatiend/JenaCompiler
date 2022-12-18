@@ -1,13 +1,12 @@
 package compiler
 
+import compiler.literals.*
 import compiler.operators.*
-import compiler.values.*
 import dictionaries.RelationshipsDictionary
 import org.w3c.dom.Node
 import org.xml.sax.SAXException
 import util.*
 import java.io.IOException
-import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 
@@ -18,45 +17,56 @@ interface Operator {
 
     /**
      * Список аргументов
-     * @return Список аргументов
      */
-    fun args(): List<Operator> = ArrayList()
-
-    /**
-     * Установить аргументы
-     * @param args Аргументы
-     */
-    fun setArgs(args: List<Operator>) {}
+    val args: List<Operator>
 
     /**
      * Получить аргумент
      * @param index Индекс аргумента
      * @return Аргумент
      */
-    fun arg(index: Int): Operator = args()[index]
+    fun arg(index: Int) = args[index]
 
     /**
      * Список типов данных аргументов
-     * @return Список типов данных аргументов
      */
-    fun argsDataTypes(): List<List<DataType>>
+    val argsDataTypes: List<List<DataType>>
 
     /**
      * Является ли количество аргументов бесконечным
-     * @return true - если является, иначе - false
      */
-    val isArgsCountUnlimited: Boolean
+    val isArgsCountUnlimited
         get() = false
 
     /**
      * Тип данных оператора
-     * @return Тип данных оператора
      */
-    fun resultDataType(): DataType?
+    val resultDataType: DataType?
+
+    /**
+     * Создает копию объекта
+     * @return Копия
+     */
+    fun clone(): Operator
+
+    /**
+     * Создает копию объекта с новыми аргументами
+     * @param newArgs Новые аргументы
+     * @return Копия
+     */
+    fun clone(newArgs: List<Operator>): Operator
+
+    /**
+     * Скомпилировать оператор
+     * @return Результат компиляции
+     * @see CompilationResult
+     */
+    fun compile(): CompilationResult
 
     /**
      * Скомпилировать выражение
-     * @return Правила для вычисления выражения и имя предиката для чтения результата (если есть)
+     * @return Результат компиляции
+     * @see CompilationResult
      */
     fun compileExpression(): CompilationResult {
         // TODO: валидация переменных, вводимых операторами
@@ -64,14 +74,11 @@ interface Operator {
         // TODO?: оптимизация пауз?
         // TODO?: оптимизация правил? (удаление одинаковых строк)
 
-        // Добавляем пустой триплет в граф, чтобы он никогда небыл пустым
-        var rules = JenaUtil.genBooleanRule("", NamingManager.genVarName(), NamingManager.genPredicateName())
+        // Добавляем вспомогательные правила
+        var rules = JenaUtil.AUXILIARY_RULES
 
-        // Добавляем вспомогательные правила, если нужно
-        rules += if (RelationshipsDictionary.isLinerScaleUsed())
-            RelationshipsDictionary.auxiliaryLinerScaleRules()
-        else
-            ""
+        // Добавляем вспомогательные правила библиотеки
+        rules += RelationshipsDictionary.auxiliaryLibraryRuled
 
         // Добавляем паузу
         rules += JenaUtil.PAUSE_MARK
@@ -81,16 +88,12 @@ interface Operator {
         val resPredicateName = NamingManager.genPredicateName()
 
         // Упрощаем выражение
-        val expr = doSemantic()
+        val expr = semantic()
 
         // Если корневой оператор - булево значение
-        if (expr is BooleanValue) {
+        if (expr is BooleanLiteral) {
             // Добавляем выражение, равное значению
-            val head = if (expr.value.toBoolean()) {
-                JenaUtil.genEqualPrim("1", "1")
-            } else {
-                JenaUtil.genEqualPrim("0", "1")
-            }
+            val head = expr.compileAsHead()
 
             // Генерируем правило и добавляем правило к остальным
             rules += JenaUtil.genBooleanRule(head, skolemName, resPredicateName)
@@ -98,15 +101,15 @@ interface Operator {
             // Компилируем оператор
             val result = expr.compile()
 
-            // Добавляем скомпилированныее правила в результат
+            // Добавляем скомпилированные правила в результат
             rules += result.completedRules
 
             // Для всех незаконченных правил
             result.ruleHeads.forEach { head ->
                 // Если есть незаконченное правило
-                if (head.isNotEmpty() && resultDataType() != null) {
+                if (head.isNotEmpty() && resultDataType != null) {
                     // Генерируем правило и добавляем правило к остальным
-                    rules += if (resultDataType() == DataType.Boolean) {
+                    rules += if (resultDataType == DataType.Boolean) {
                         JenaUtil.genBooleanRule(head, skolemName, resPredicateName)
                     } else {
                         JenaUtil.genRule(head, skolemName, resPredicateName, result.value)
@@ -115,118 +118,92 @@ interface Operator {
             }
         }
 
-        return CompilationResult(resPredicateName, listOf(""), rules)
+        return CompilationResult(value = resPredicateName, completedRules = rules)
     }
-
-    /**
-     * Скомпилировать оператор
-     * @return Список правил для вычисления выражения, части правил для проверки и имя предикатов для чтения результата (если есть)
-     */
-    fun compile(): CompilationResult
-
-    /**
-     * Создает копию объекта
-     * @return Копия
-     */
-    fun clone(): Operator
 
     /**
      * Семантический анализ дерева
      */
-    fun doSemantic(): Operator {
-//        fillVarsTable() TODO
-        return simplify(false)
+    fun semantic(): Operator {
+        // TODO: fillVarsTable
+        return simplify()
     }
 
     /**
      * Упрощает выражение, удаляя из него отрицания
+     * @param isNegative Находится ли текущий оператор под отрицанием
      * @return Упрощенное выражение
      */
-    private fun simplify(isNegative: Boolean): Operator {
+    private fun simplify(isNegative: Boolean = false): Operator {
         if (isNegative) {
             return when (this) {
                 is LogicalNot -> {
                     arg(0).simplify(false)
                 }
+
                 is LogicalOr -> {
                     LogicalAnd(listOf(arg(0).simplify(true), arg(1).simplify(true)))
                 }
+
                 is LogicalAnd -> {
                     LogicalOr(listOf(arg(0).simplify(true), arg(1).simplify(true)))
                 }
                 is ForAllQuantifier -> {
-                    val newArgs = ArrayList<Operator>()
+                    val newArgs = args.map { arg -> arg.simplify() }
 
-                    args().forEach { arg ->
-                        newArgs.add(arg.simplify(false))
-                    }
+                    val res = clone(newArgs) as ForAllQuantifier
+                    res.isNegative = true
 
-                    setArgs(newArgs)
-                    this.isNegative = true
-                    this
+                    res
                 }
                 is ExistenceQuantifier -> {
-                    val newArgs = ArrayList<Operator>()
+                    val newArgs = args.map { arg -> arg.simplify() }
 
-                    args().forEach { arg ->
-                        newArgs.add(arg.simplify(false))
-                    }
+                    val res = clone(newArgs) as ExistenceQuantifier
+                    res.isNegative = true
 
-                    setArgs(newArgs)
-                    this.isNegative = true
-                    this
+                    res
                 }
                 is CompareWithComparisonOperator -> {
-                    val newArgs = ArrayList<Operator>()
+                    val newArgs = args.map { arg -> arg.simplify() }
 
-                    args().forEach { arg ->
-                        newArgs.add(arg.simplify(false))
-                    }
+                    val res = clone(newArgs) as CompareWithComparisonOperator
+                    res.isNegative = true
 
-                    setArgs(newArgs)
-                    this.isNegative = true
-                    this
+                    res
                 }
                 is CheckRelationship -> {
-                    val newArgs = ArrayList<Operator>()
+                    val newArgs = args.map { arg -> arg.simplify() }
 
-                    args().forEach { arg ->
-                        newArgs.add(arg.simplify(false))
-                    }
+                    val res = clone(newArgs) as CheckRelationship
+                    res.isNegative = true
 
-                    setArgs(newArgs)
-                    this.isNegative = true
-                    this
+                    res
                 }
                 is CheckPropertyValue -> {
-                    val newArgs = ArrayList<Operator>()
+                    val newArgs = args.map { arg -> arg.simplify() }
 
-                    args().forEach { arg ->
-                        newArgs.add(arg.simplify(false))
-                    }
+                    val res = clone(newArgs) as CheckPropertyValue
+                    res.isNegative = true
 
-                    setArgs(newArgs)
-                    this.isNegative = true
-                    this
+                    res
                 }
+
                 is CheckClass -> {
-                    val newArgs = ArrayList<Operator>()
+                    val newArgs = args.map { arg -> arg.simplify() }
 
-                    args().forEach { arg ->
-                        newArgs.add(arg.simplify(false))
-                    }
+                    val res = clone(newArgs) as CheckClass
+                    res.isNegative = true
 
-                    setArgs(newArgs)
-                    this.isNegative = true
-                    this
+                    res
                 }
-                is BooleanValue -> {
-                    value = (!value.toBoolean()).toString()
-                    this
+
+                is BooleanLiteral -> {
+                    BooleanLiteral(!value.toBoolean())
                 }
 
                 else -> {
-                    throw IllegalStateException("Отрицание не над bool оператором")
+                    throw IllegalStateException("Отрицание типа $resultDataType невозможно.")
                 }
             }
         } else {
@@ -234,16 +211,9 @@ interface Operator {
                 is LogicalNot -> {
                     arg(0).simplify(true)
                 }
-
                 else -> {
-                    val newArgs = ArrayList<Operator>()
-
-                    args().forEach { arg ->
-                        newArgs.add(arg.simplify(false))
-                    }
-
-                    setArgs(newArgs)
-                    this
+                    val newArgs = args.map { arg -> arg.simplify() }
+                    clone(newArgs)
                 }
             }
         }
@@ -259,25 +229,37 @@ interface Operator {
     companion object {
 
         /**
-         * Таблица переменных
-         * key - Имя
-         * val - Список известных классов
+         * Изменяемая таблица переменных
+         *
+         * key - Имя переменной
+         *
+         * val - Список известных классов переменной
          */
-        val varsTable: MutableMap<String, MutableList<String>> = HashMap()
+        private val mVarsTable: MutableMap<String, MutableList<String>> = HashMap()
 
         /**
-         * Создает дерево из XML файла
-         * @param path Путь к файлу
-         * @return Дерево выражения
+         * Таблица переменных
+         *
+         * key - Имя переменной
+         *
+         * val - Список известных классов переменной
          */
-        fun fromXML(path: String?): Operator? {
+        val varsTable: Map<String, List<String>>
+            get() = mVarsTable
+
+        /**
+         * Создает выражение из XML файла
+         * @param path Путь к файлу
+         * @return Выражение
+         */
+        fun fromXML(path: String): Operator? {
             try {
-                // Создается билдер дерева
+                // Создаем DocumentBuilder
                 val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                // Создается дерево DOM документа из файла
+                // Создаем DOM документ из файла
                 val document = documentBuilder.parse(path)
 
-                // Получаем корневой элемент
+                // Получаем корневой элемент документа
                 val xml: Node = document.documentElement
 
                 // Корень выражения
@@ -291,22 +273,22 @@ interface Operator {
                         root = if (root == null) {
                             child
                         } else {
-                            throw IllegalAccessException("Выражение должно иметь один корневой узел")
+                            throw IllegalAccessException("Выражение должно иметь один корневой узел.")
                         }
                     }
                 }
                 if (root == null) {
-                    throw IllegalAccessException("Не найден корневой узел выражения")
+                    throw IllegalAccessException("Не найден корневой узел выражения.")
                 }
 
                 // Строим дерево
                 return build(root)
             } catch (ex: ParserConfigurationException) {
-                ex.printStackTrace(System.out)
+                ex.printStackTrace()
             } catch (ex: IOException) {
-                ex.printStackTrace(System.out)
+                ex.printStackTrace()
             } catch (ex: SAXException) {
-                ex.printStackTrace(System.out)
+                ex.printStackTrace()
             }
             return null
         }
@@ -317,62 +299,50 @@ interface Operator {
          * @return Оператор
          */
         private fun build(node: Node): Operator {
-            require(node.nodeName == "block") { "Неподходящий тип узла" }
+            require(node.nodeName == "block") { "Некорректный тип узла." }
 
+            // TODO: синхронизировать с некитом
             when (node.attributes.getNamedItem("type").nodeValue) {
                 "object" -> {
-                    val name = node.firstChild.textContent
-                    return ObjectValue(name)
+                    return ObjectLiteral(node.firstChild.textContent)
                 }
-
                 "variable" -> {
-                    val name = node.firstChild.textContent
-                    return Variable(name)
+                    return Variable(node.firstChild.textContent)
                 }
-
                 "class" -> {
-                    val name = node.firstChild.textContent
-                    return ClassValue(name)
+                    return ClassLiteral(node.firstChild.textContent)
                 }
-
                 "property" -> {
-                    val name = node.firstChild.textContent
-                    return PropertyValue(name)
+                    return PropertyLiteral(node.firstChild.textContent)
                 }
-
                 "relationship" -> {
-                    val name = node.firstChild.textContent
-                    return RelationshipValue(name)
+                    return RelationshipLiteral(node.firstChild.textContent)
                 }
-
                 "boolean" -> {
-                    val value = node.firstChild.textContent
-                    return BooleanValue(value == "TRUE")
+                    return BooleanLiteral(node.firstChild.textContent == "TRUE")
                 }
-
                 "integer" -> {
-                    val value = node.firstChild.textContent
-                    return IntegerValue(value.toInt())
+                    return IntegerLiteral(node.firstChild.textContent.toInt())
                 }
 
                 "double" -> {
-                    val value = node.firstChild.textContent
-                    return DoubleValue(value.toDouble())
+                    return DoubleLiteral(node.firstChild.textContent.toDouble())
                 }
 
                 "string" -> {
-                    val value = node.firstChild.textContent
-                    return StringValue(value)
+                    return StringLiteral(node.firstChild.textContent)
                 }
 
                 "comparison_result" -> {
-                    val value = node.firstChild.textContent
-                    return ComparisonResultValue(ComparisonResult.valueOf(value.uppercase(Locale.getDefault())))
+                    return ComparisonResultLiteral(ComparisonResult.valueOf(node.firstChild.textContent))
+                }
+
+                "enum" -> {
+                    TODO()
                 }
 
                 "ref_to_decision_tree_var" -> {
-                    val name = node.firstChild.textContent
-                    return DecisionTreeVarValue(name)
+                    return DecisionTreeVarLiteral(node.firstChild.textContent)
                 }
 
                 "get_class" -> {
@@ -380,26 +350,24 @@ interface Operator {
                 }
 
                 "get_property_value" -> {
-                    return GetPropertyValue(listOf(
-                        build(node.firstChild.firstChild),
-                        build(node.lastChild.firstChild)
+                    return GetPropertyValue(
+                        listOf(
+                            build(node.firstChild.firstChild),
+                            build(node.lastChild.firstChild)
                     ))
                 }
-
                 "get_relationship_object" -> {
                     return GetByRelationship(listOf(
                         build(node.firstChild.firstChild),
                         build(node.lastChild.firstChild)
                     ))
                 }
-
                 "get_condition_object" -> {
                     return GetByCondition(listOf(
                         build(node.lastChild.firstChild)),
                         node.firstChild.textContent
                     )
                 }
-
                 "get_extr_object" -> {
                     return GetExtreme(listOf(
                         build(node.childNodes.item(1).firstChild),
@@ -408,7 +376,6 @@ interface Operator {
                         node.childNodes.item(2).textContent
                     )
                 }
-
                 "assign_value_to_property" -> {
                     return Assign(listOf(
                         build(node.childNodes.item(0).firstChild),
@@ -416,21 +383,18 @@ interface Operator {
                         build(node.childNodes.item(2).firstChild)
                     ))
                 }
-
                 "assign_value_to_variable_decision_tree" -> {
                     return Assign(listOf(
                         build(node.firstChild.firstChild),
                         build(node.lastChild.firstChild)
                     ))
                 }
-
                 "check_object_class" -> {
                     return CheckClass(listOf(
                         build(node.firstChild.firstChild),
                         build(node.lastChild.firstChild)
                     ))
                 }
-
                 "check_value_of_property" -> {
                     return CheckPropertyValue(
                         listOf(
@@ -440,7 +404,6 @@ interface Operator {
                         )
                     )
                 }
-
                 "check_relationship" -> {
                     val args = ArrayList<Operator>()
                     val childNodes = node.childNodes
@@ -455,27 +418,23 @@ interface Operator {
                     args[1] = tmp
                     return CheckRelationship(args)
                 }
-
                 "and" -> {
                     return LogicalAnd(listOf(
                         build(node.firstChild.firstChild),
                         build(node.lastChild.firstChild)
                     ))
                 }
-
                 "or" -> {
                     return LogicalOr(listOf(
                         build(node.firstChild.firstChild),
                         build(node.lastChild.firstChild)
                     ))
                 }
-
                 "not" -> {
                     return LogicalNot(listOf(
                         build(node.firstChild.firstChild)
                     ))
                 }
-
                 "comparison" -> {
                     return CompareWithComparisonOperator(listOf(
                         build(node.childNodes.item(1).firstChild),
@@ -483,21 +442,18 @@ interface Operator {
                         CompareWithComparisonOperator.ComparisonOperator.valueOf(node.childNodes.item(0).textContent)
                     )
                 }
-
                 "three_digit_comparison" -> {
                     return Compare(listOf(
                         build(node.firstChild.firstChild),
                         build(node.lastChild.firstChild)
                     ))
                 }
-
                 "quantifier_of_existence" -> {
                     return ExistenceQuantifier(listOf(
                         build(node.lastChild.firstChild)),
                         node.firstChild.textContent
                     )
                 }
-
                 "quantifier_of_generality" -> {
                     return ForAllQuantifier(listOf(
                         build(node.childNodes.item(1).firstChild),
@@ -506,7 +462,7 @@ interface Operator {
                     )
                 }
             }
-            throw IllegalArgumentException("Неизвестный тип узла")
+            throw IllegalArgumentException("Неизвестный тип узла ${node.attributes.getNamedItem("type").nodeValue}.")
         }
     }
 }

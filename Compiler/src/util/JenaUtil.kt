@@ -25,7 +25,24 @@ object JenaUtil {
      */
     const val RDF_PREF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 
-    // ++++++++++++++++++++++++++++ Постоянные элементы ++++++++++++++++++++++++++++
+    /**
+     * RDFS префикс
+     */
+    const val RDFS_PREF = "http://www.w3.org/2000/01/rdf-schema#"
+
+    // ++++++++++++++++++++++++ Вспомогательные правила ++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    const val AUXILIARY_RULES = """
+        [makeSkolem(?tmp) -> (?tmp ${POAS_PREF}__0__ ${POAS_PREF}__0__)]
+        [(?a ?p ?b), (?p ${RDFS_PREF}domain ?c) -> (?a ${RDF_PREF}type ?c)]
+        [(?a ?p ?b), (?p ${RDFS_PREF}range ?c) -> (?b ${RDF_PREF}type ?c)]
+        [(?a ?p ?b), (?p ${RDFS_PREF}subPropertyOf ?q) -> (?a ?q ?b)]
+        [(?a ${RDFS_PREF}subClassOf ?b), (?b ${RDFS_PREF}subClassOf ?c) -> (?a ${RDFS_PREF}subClassOf ?c)]
+        [(?a ${RDFS_PREF}subClassOf ?b), (?c ${RDF_PREF}type ?a) -> (?c ${RDF_PREF}type ?b)]
+    """
+
+    // +++++++++++++++++++++++++++++++++ Константы +++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**

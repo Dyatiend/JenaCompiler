@@ -9,7 +9,7 @@ package util
  * @param completedRules Полностью скомпилированные правила Jena
  */
 data class CompilationResult(
-        val value : String,
-        val ruleHeads : List<String>,
-        val completedRules : String
+        val value: String = "",
+        val ruleHeads: List<String> = listOf(""),
+        val completedRules: String = ""
 )
