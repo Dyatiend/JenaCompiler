@@ -78,7 +78,7 @@ interface Operator {
         var rules = JenaUtil.AUXILIARY_RULES
 
         // Добавляем вспомогательные правила библиотеки
-        rules += RelationshipsDictionary.auxiliaryLibraryRuled
+        rules += RelationshipsDictionary.auxiliaryLibraryRules
 
         // Добавляем паузу
         rules += JenaUtil.PAUSE_MARK
@@ -102,10 +102,10 @@ interface Operator {
             val result = expr.compile()
 
             // Добавляем скомпилированные правила в результат
-            rules += result.completedRules
+            rules += result.rules
 
             // Для всех незаконченных правил
-            result.ruleHeads.forEach { head ->
+            result.heads.forEach { head ->
                 // Если есть незаконченное правило
                 if (head.isNotEmpty() && resultDataType != null) {
                     // Генерируем правило и добавляем правило к остальным
@@ -118,15 +118,16 @@ interface Operator {
             }
         }
 
-        return CompilationResult(value = resPredicateName, completedRules = rules)
+        return CompilationResult(value = resPredicateName, rules = rules)
     }
 
     /**
      * Семантический анализ дерева
      */
     fun semantic(): Operator {
-        // TODO: fillVarsTable
-        return simplify()
+        val result = simplify()
+        result.fillVarsTable()
+        return result
     }
 
     /**
@@ -140,11 +141,9 @@ interface Operator {
                 is LogicalNot -> {
                     arg(0).simplify(false)
                 }
-
                 is LogicalOr -> {
                     LogicalAnd(listOf(arg(0).simplify(true), arg(1).simplify(true)))
                 }
-
                 is LogicalAnd -> {
                     LogicalOr(listOf(arg(0).simplify(true), arg(1).simplify(true)))
                 }
@@ -188,7 +187,6 @@ interface Operator {
 
                     res
                 }
-
                 is CheckClass -> {
                     val newArgs = args.map { arg -> arg.simplify() }
 
@@ -197,11 +195,9 @@ interface Operator {
 
                     res
                 }
-
                 is BooleanLiteral -> {
                     BooleanLiteral(!value.toBoolean())
                 }
-
                 else -> {
                     throw IllegalStateException("Отрицание типа $resultDataType невозможно.")
                 }
@@ -223,7 +219,7 @@ interface Operator {
      * Заполняет таблицу переменных
      */
     private fun fillVarsTable() {
-        TODO()
+        // TODO
     }
 
     companion object {
