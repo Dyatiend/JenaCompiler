@@ -6,20 +6,17 @@ import org.apache.jena.reasoner.rulesys.Util
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin
 
 class CountValues : BaseBuiltin() {
+
     /**
      * Return a name for this builtin, normally this will be the name of the
      * functor that will be used to invoke it.
      */
-    override fun getName(): String {
-        return "countValues"
-    }
+    override fun getName() = "countValues"
 
     /**
      * Return the expected number of arguments for this functor or 0 if the number is flexible.
      */
-    override fun getArgLength(): Int {
-        return 3
-    }
+    override fun getArgLength() = 3
 
     /**
      * This method is invoked when the builtin is called in a rule body.
@@ -32,12 +29,13 @@ class CountValues : BaseBuiltin() {
      * the current environment
      */
     override fun bodyCall(args: Array<Node>, length: Int, context: RuleContext): Boolean {
-        val values: MutableList<Node> = ArrayList()
+        checkArgs(length, context)
+        val values = ArrayList<Node>()
 
-        val a0 = getArg(0, args, context)
-        val a1 = getArg(1, args, context)
+        val arg0 = getArg(0, args, context)
+        val arg1 = getArg(1, args, context)
 
-        val iterator = context.find(a0, a1, null)
+        val iterator = context.find(arg0, arg1, null)
 
         while (iterator.hasNext()) {
             val currentObject = iterator.next().getObject()
