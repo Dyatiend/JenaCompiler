@@ -5,8 +5,8 @@ import compiler.Operator
 import util.CompilationResult
 import util.DataType
 import util.JenaUtil
+import util.JenaUtil.DECISION_TREE_VAR_PREDICATE
 import util.JenaUtil.POAS_PREF
-import util.JenaUtil.VAR_PREDICATE
 import util.JenaUtil.genTriple
 import util.NamingManager
 
@@ -22,11 +22,11 @@ class DecisionTreeVarLiteral(value: String) : Literal(value) {
         val resVarName = NamingManager.genVarName()
         return CompilationResult(
             value = resVarName,
-            ruleHeads = listOf(
+            heads = listOf(
                 genTriple(
                     resVarName,
-                    JenaUtil.genLink(POAS_PREF, VAR_PREDICATE),
-                    JenaUtil.genStingVal(value)
+                    JenaUtil.genLink(POAS_PREF, DECISION_TREE_VAR_PREDICATE),
+                    JenaUtil.genVal(value)
                 )
             )
         )

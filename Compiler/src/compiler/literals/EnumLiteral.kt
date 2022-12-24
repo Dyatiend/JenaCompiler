@@ -2,7 +2,6 @@ package compiler.literals
 
 import compiler.Literal
 import compiler.Operator
-import dictionaries.PropertiesDictionary
 import util.CompilationResult
 import util.DataType
 import util.JenaUtil
@@ -14,8 +13,7 @@ import util.JenaUtil
  */
 class EnumLiteral(value: String, private val owner: String) : Literal(value) {
 
-    override val resultDataType: DataType =
-        if (PropertiesDictionary.isLinerEnum(owner)) DataType.LinerEnum else DataType.Enum
+    override val resultDataType: DataType = DataType.Enum
 
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genLink(JenaUtil.POAS_PREF, value))

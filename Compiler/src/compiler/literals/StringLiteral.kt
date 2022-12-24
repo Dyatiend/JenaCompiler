@@ -15,7 +15,7 @@ class StringLiteral(value: String) : Literal(value) {
     override val resultDataType: DataType = DataType.String
 
     override fun compile(): CompilationResult =
-        CompilationResult(value = JenaUtil.genStingVal(value))
+        CompilationResult(value = JenaUtil.genVal(value))
 
     override fun clone(): Operator = StringLiteral(value)
 }

@@ -15,7 +15,7 @@ class IntegerLiteral(value: Int) : Literal(value.toString()) {
     override val resultDataType: DataType = DataType.Integer
 
     override fun compile(): CompilationResult =
-        CompilationResult(value = JenaUtil.genIntegerVal(value))
+        CompilationResult(value = JenaUtil.genVal(value.toInt()))
 
     override fun clone(): Operator = IntegerLiteral(value.toInt())
 }
