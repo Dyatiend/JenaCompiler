@@ -1,5 +1,7 @@
 package util
 
+import util.NamingManager.PROTECTIVE_CHARS
+
 /**
  * Содержит различные утилитарные методы и переменные, используемые при генерации правил
  */
@@ -34,7 +36,7 @@ object JenaUtil {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     const val AUXILIARY_RULES = """
-        [makeSkolem(?tmp) -> (?tmp ${POAS_PREF}__0__ ${POAS_PREF}__0__)]
+        [makeSkolem(?tmp) -> (?tmp ${POAS_PREF}predicate0$PROTECTIVE_CHARS "true"^^${XSD_PREF}boolean)]
         [(?a ?p ?b), (?p ${RDFS_PREF}domain ?c) -> (?a ${RDF_PREF}type ?c)]
         [(?a ?p ?b), (?p ${RDFS_PREF}range ?c) -> (?b ${RDF_PREF}type ?c)]
         [(?a ?p ?b), (?p ${RDFS_PREF}subPropertyOf ?q) -> (?a ?q ?b)]
@@ -46,14 +48,14 @@ object JenaUtil {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
-     * Предикат переменной
+     * Предикат переменной дерева мысли
      */
-    const val VAR_PREDICATE = "__var__"
+    const val DECISION_TREE_VAR_PREDICATE = "decisionTreeVar$PROTECTIVE_CHARS"
 
     /**
      * Предикат результата сравнения
      */
-    const val COMPARE_RESULT_PREDICATE = "__compare_result__"
+    const val COMPARE_RESULT_PREDICATE = "compareResul$PROTECTIVE_CHARS"
 
     /**
      * Маркировка паузы
@@ -71,12 +73,14 @@ object JenaUtil {
     /**
      * Основной шаблон правила с возвращаемым значением
      */
-    private const val MAIN_RULE_PATTERN = "[\n<ruleHead>\nmakeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> <resVarName>)\n]\n"
+    private const val MAIN_RULE_PATTERN =
+        "[\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> <resVarName>)\n]\n"
 
     /**
      * Шаблон для boolean правила
      */
-    private const val BOOLEAN_RULE_PATTERN = "[\n<ruleHead>\nmakeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> \"true\"^^xsd:boolean)\n]\n"
+    private const val BOOLEAN_RULE_PATTERN =
+        "[\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> \"true\"^^xsd:boolean)\n]\n"
 
     // ++++++++++++++++++++++++++++ Методы для генерации +++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -86,29 +90,28 @@ object JenaUtil {
      * @param value Строковая константа
      * @return Запись строковой константы для правила
      */
-    fun genStingVal(value: String): String = "\"$value\"^^${XSD_PREF}string"
+    fun genVal(value: String) = "\"$value\"^^${XSD_PREF}string"
 
     /**
      * Сгенерировать булеву константу
      * @param value Булева константа
      * @return Запись булевой константы для правила
      */
-    fun genBooleanVal(value: String): String = "\"$value\"^^${XSD_PREF}boolean"
+    fun genVal(value: Boolean) = "\"$value\"^^${XSD_PREF}boolean"
 
     /**
      * Сгенерировать целочисленную константу
      * @param value Целочисленная константа
      * @return Запись целочисленной константы для правила
      */
-    @JvmStatic
-    fun genIntegerVal(value: String): String = "\"$value\"^^${XSD_PREF}integer"
+    fun genVal(value: Int) = "\"$value\"^^${XSD_PREF}integer"
 
     /**
      * Сгенерировать дробную константу
      * @param value Дробная константа
      * @return Запись дробной константы для правила
      */
-    fun genDoubleVal(value: String): String = "\"$value\"^^${XSD_PREF}double"
+    fun genVal(value: Double) = "\"$value\"^^${XSD_PREF}double"
 
     /**
      * Сгенерировать ссылку в правиле
@@ -116,15 +119,14 @@ object JenaUtil {
      * @param obj Имя
      * @return Ссылка в правиле
      */
-    @JvmStatic
-    fun genLink(pref: String, obj: String): String = "$pref$obj"
+    fun genLink(pref: String, obj: String) = "$pref$obj"
 
     /**
      * Сгенерировать переменную
      * @param name Имя переменной
      * @return Имя переменной для правила
      */
-    fun genVar(name: String): String = "?$name"
+    fun genVar(name: String) = "?$name"
 
     /**
      * Сгенерировать примитив, проверяющий эквивалентность
@@ -132,7 +134,7 @@ object JenaUtil {
      * @param second Второй операнд
      * @return Примитив, проверяющий эквивалентность
      */
-    fun genEqualPrim(first: String, second: String): String = "equal($first,$second)\n"
+    fun genEqualPrim(first: String, second: String) = "equal($first,$second)\n"
 
     /**
      * Сгенерировать примитив, проверяющий неэквивалентность
@@ -140,7 +142,7 @@ object JenaUtil {
      * @param second Второй операнд
      * @return Примитив, проверяющий неэквивалентность
      */
-    fun genNotEqualPrim(first: String, second: String): String = "notEqual($first,$second)\n"
+    fun genNotEqualPrim(first: String, second: String) = "notEqual($first,$second)\n"
 
     /**
      * Сгенерировать примитив, проверяющий, что первый операнд меньше второго
@@ -148,7 +150,7 @@ object JenaUtil {
      * @param second Второй операнд
      * @return Примитив, проверяющий, что первый операнд меньше второго
      */
-    fun genLessThanPrim(first: String, second: String): String = "lessThan($first,$second)\n"
+    fun genLessThanPrim(first: String, second: String) = "lessThan($first,$second)\n"
 
     /**
      * Сгенерировать примитив, проверяющий, что первый операнд больше второго
@@ -156,23 +158,23 @@ object JenaUtil {
      * @param second Второй операнд
      * @return Примитив, проверяющий, что первый операнд больше второго
      */
-    fun genGreaterThanPrim(first: String, second: String): String = "greaterThan($first,$second)\n"
+    fun genGreaterThanPrim(first: String, second: String) = "greaterThan($first,$second)\n"
 
     /**
-     * Сгенерировать примитив, проверяющий, что первый операнд меньше или равен второму
+     * Сгенерировать примитив, проверяющий, что первый операнд меньше второго или равен ему
      * @param first Первый операнд
      * @param second Второй операнд
-     * @return Примитив, проверяющий, что первый операнд меньше или равен второму
+     * @return Примитив, проверяющий, что первый операнд меньше второго или равен ему
      */
-    fun genLessEqualPrim(first: String, second: String): String = "le($first,$second)\n"
+    fun genLessEqualPrim(first: String, second: String) = "le($first,$second)\n"
 
     /**
-     * Сгенерировать примитив, проверяющий, что первый операнд больше или равен второму
+     * Сгенерировать примитив, проверяющий, что первый операнд больше второго или равен ему
      * @param first Первый операнд
      * @param second Второй операнд
-     * @return Примитив, проверяющий, что первый операнд больше или равен второму
+     * @return Примитив, проверяющий, что первый операнд больше второго или равен ему
      */
-    fun genGreaterEqualPrim(first: String, second: String): String = "ge($first,$second)\n"
+    fun genGreaterEqualPrim(first: String, second: String) = "ge($first,$second)\n"
 
     /**
      * Сгенерировать примитив, проверяющий отсутствие у объекта указанного предиката
@@ -180,7 +182,7 @@ object JenaUtil {
      * @param predicate Предикат
      * @return Примитив, проверяющий отсутствие у объекта указанной предиката
      */
-    fun genNoValuePrim(subj: String, predicate: String): String = "noValue($subj,$predicate)\n"
+    fun genNoValuePrim(subj: String, predicate: String) = "noValue($subj,$predicate)\n"
 
     /**
      * Сгенерировать примитив, проверяющий отсутствие у объекта указанного предиката с указанным значением
@@ -189,22 +191,22 @@ object JenaUtil {
      * @param obj Объект
      * @return Примитив, проверяющий отсутствие у объекта указанной предиката с указанным значением
      */
-    fun genNoValuePrim(subj: String, predicate: String, obj: String): String = "noValue($subj,$predicate,$obj)\n"
+    fun genNoValuePrim(subj: String, predicate: String, obj: String) = "noValue($subj,$predicate,$obj)\n"
 
     /**
      * Сгенерировать примитив, создающий сколем с указанным именем
      * @param skolemName Имя
      * @return Примитив, создающий сколем с указанным именем
      */
-    fun genMakeSkolemPrim(skolemName: String): String = "makeSkolem($skolemName)\n"
+    fun genMakeSkolemPrim(skolemName: String) = "makeSkolem($skolemName)\n"
 
     /**
-     * Сгенерировать примитив, записывающий значение одно переменной в другую
+     * Сгенерировать примитив, записывающий значение одной переменной в другую
      * @param from Имя переменной, из которой берется значение
      * @param to Имя переменной, в которую записывается значение
-     * @return Примитив, записывающий значение одно переменной в другую
+     * @return Примитив, записывающий значение одной переменной в другую
      */
-    fun genBindPrim(from: String, to: String): String = "bind($from,$to)\n"
+    fun genBindPrim(from: String, to: String) = "bind($from,$to)\n"
 
     /**
      * Сгенерировать примитив, подсчитывающий количество связанных объектов
@@ -213,7 +215,7 @@ object JenaUtil {
      * @param res Результат
      * @return Примитив, подсчитывающий количество связанных объектов
      */
-    fun genCountValuesPrim(obj: String, predicate: String, res: String): String = "countValues($obj,$predicate,$res)\n"
+    fun genCountValuesPrim(obj: String, predicate: String, res: String) = "countValues($obj,$predicate,$res)\n"
 
     /**
      * Сгенерировать триплет правила
