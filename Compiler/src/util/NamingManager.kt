@@ -9,21 +9,23 @@ object NamingManager {
      * Индекс для переменных
      */
     private var varIndex = 0
+        get() = ++field
 
     /**
      * Индекс для предикатов
      */
     private var predicateIndex = 0
+        get() = ++field
 
     /**
      * Генерирует уникальное имя для переменной, не совпадающее с пользовательскими именами переменных
      * @return Имя переменной
      */
-    fun genVarName(): String = JenaUtil.genVar("__${++varIndex}__")
+    fun genVarName() = JenaUtil.genVar("var$varIndex...")
 
     /**
      * Генерирует уникальное имя для предиката, не совпадающее с пользовательскими именами предикатов
      * @return Имя предиката
      */
-    fun genPredicateName(): String = JenaUtil.genLink(JenaUtil.POAS_PREF, "__${++predicateIndex}__")
+    fun genPredicateName() = JenaUtil.genLink(JenaUtil.POAS_PREF, "predicate$predicateIndex...")
 }
