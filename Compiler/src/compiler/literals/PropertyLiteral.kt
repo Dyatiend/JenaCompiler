@@ -16,7 +16,7 @@ class PropertyLiteral(value: String) : Literal(value) {
 
     init {
         // Проверяем существование свойства
-        require(PropertiesDictionary.exist(value)) { "Указанного свойства не существует." }
+        require(PropertiesDictionary.exist(value)) { "Свойство $value не объявлено в словаре." }
     }
 
     override val resultDataType: DataType = DataType.Property

@@ -16,7 +16,7 @@ class ClassLiteral(value: String) : Literal(value) {
 
     init {
         // Проверяем существование класса
-        require(ClassesDictionary.exist(value)) { "Указанного класса не существует." }
+        require(ClassesDictionary.exist(value)) { "Класс $value не объявлен в словаре." }
     }
 
     override val resultDataType: DataType = DataType.Class

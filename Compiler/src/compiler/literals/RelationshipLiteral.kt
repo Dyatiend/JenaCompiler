@@ -16,7 +16,7 @@ class RelationshipLiteral(value: String) : Literal(value) {
 
     init {
         // Проверяем существование отношения
-        require(RelationshipsDictionary.exist(value)) { "Указанного отношения не существует." }
+        require(RelationshipsDictionary.exist(value)) { "Отношение $value не объявлено в словаре." }
     }
 
     override val resultDataType: DataType = DataType.Relationship
