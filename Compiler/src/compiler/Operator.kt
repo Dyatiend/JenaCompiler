@@ -3,10 +3,12 @@ package compiler
 import compiler.literals.*
 import compiler.operators.*
 import dictionaries.RelationshipsDictionary
+import org.apache.commons.io.IOUtils
 import org.w3c.dom.Node
 import org.xml.sax.SAXException
 import util.*
 import java.io.IOException
+import java.nio.charset.StandardCharsets
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 
@@ -244,11 +246,57 @@ interface Operator {
             get() = mVarsTable
 
         /**
+         * Создает выражение из строки с XML
+         * @param str Строка с XML
+         * @return Выражение
+         */
+        fun fromXMLString(str: String): Operator? {
+            try {
+                // Создаем DocumentBuilder
+                val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                // Создаем DOM документ из строки
+                val document = documentBuilder.parse(IOUtils.toInputStream(str, StandardCharsets.UTF_8))
+
+                // Получаем корневой элемент документа
+                val xml: Node = document.documentElement
+
+                // Корень выражения
+                var root: Node? = null
+
+                // Ищем корень
+                val childNodes = xml.childNodes
+                for (i in 0 until childNodes.length) {
+                    val child = childNodes.item(i)
+                    if (child.nodeType == Node.ELEMENT_NODE) {
+                        root = if (root == null) {
+                            child
+                        } else {
+                            throw IllegalAccessException("Выражение должно иметь один корневой узел.")
+                        }
+                    }
+                }
+                if (root == null) {
+                    throw IllegalAccessException("Не найден корневой узел выражения.")
+                }
+
+                // Строим дерево
+                return build(root)
+            } catch (ex: ParserConfigurationException) {
+                ex.printStackTrace()
+            } catch (ex: IOException) {
+                ex.printStackTrace()
+            } catch (ex: SAXException) {
+                ex.printStackTrace()
+            }
+            return null
+        }
+
+        /**
          * Создает выражение из XML файла
          * @param path Путь к файлу
          * @return Выражение
          */
-        fun fromXML(path: String): Operator? {
+        fun fromXMLFile(path: String): Operator? {
             try {
                 // Создаем DocumentBuilder
                 val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
