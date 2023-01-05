@@ -2,10 +2,10 @@ package compiler.literals
 
 import compiler.Literal
 import compiler.Operator
-import util.ComparisonResult
-import util.CompilationResult
+import compiler.util.ComparisonResult
+import compiler.util.CompilationResult
+import compiler.util.JenaUtil
 import util.DataType
-import util.JenaUtil
 
 /**
  * Литерал результата сравнения

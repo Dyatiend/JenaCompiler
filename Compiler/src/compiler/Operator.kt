@@ -2,11 +2,15 @@ package compiler
 
 import compiler.literals.*
 import compiler.operators.*
+import compiler.util.ComparisonResult
+import compiler.util.CompilationResult
+import compiler.util.JenaUtil
+import compiler.util.NamingManager
 import dictionaries.RelationshipsDictionary
 import org.apache.commons.io.IOUtils
 import org.w3c.dom.Node
 import org.xml.sax.SAXException
-import util.*
+import util.DataType
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import javax.xml.parsers.DocumentBuilderFactory

@@ -1,4 +1,4 @@
-package util
+package compiler.util
 
 /**
  * Описывает результат сравнения
@@ -46,7 +46,7 @@ sealed class ComparisonResult {
             "EQUAL" -> Equal
             "NOT_EQUAL" -> NotEqual
             "UNDETERMINED" -> Undetermined
-            else -> throw IllegalArgumentException("No object util.ComparisonResult.$value")
+            else -> throw IllegalArgumentException("No object compiler.util.ComparisonResult.$value")
         }
     }
 }

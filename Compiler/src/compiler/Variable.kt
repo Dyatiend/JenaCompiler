@@ -1,8 +1,8 @@
 package compiler
 
-import util.CompilationResult
+import compiler.util.CompilationResult
+import compiler.util.JenaUtil
 import util.DataType
-import util.JenaUtil
 
 /**
  * Переменная, вводимая некоторыми операторами

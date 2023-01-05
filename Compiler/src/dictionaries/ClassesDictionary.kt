@@ -3,6 +3,7 @@ package dictionaries
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
 import compiler.Operator
+import dictionaries.util.COL_DELIMITER
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -44,13 +45,17 @@ object ClassesDictionary {
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    fun init(path: String) {
+    /**
+     * Инициализирует словарь данными
+     * @param path Путь с фалу с данными для словаря
+     */
+    internal fun init(path: String) {
         // Очищаем старые значения
         classes.clear()
         calculations.clear()
 
         // Создаем объекты
-        val parser = CSVParserBuilder().withSeparator('|').build()
+        val parser = CSVParserBuilder().withSeparator(COL_DELIMITER).build()
         val bufferedReader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)
         val csvReader = CSVReaderBuilder(bufferedReader).withCSVParser(parser).build()
 

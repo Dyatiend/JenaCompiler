@@ -1,6 +1,6 @@
-package util
+package compiler.util
 
-import util.NamingManager.PROTECTIVE_CHARS
+import compiler.util.NamingManager.PROTECTIVE_CHARS
 
 /**
  * Содержит различные утилитарные методы и переменные, используемые при генерации правил

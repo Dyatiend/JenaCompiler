@@ -1,8 +1,8 @@
 package dictionaries
 
-import util.JenaUtil.POAS_PREF
-import util.JenaUtil.RDF_PREF
-import util.JenaUtil.genLink
+import compiler.util.JenaUtil.POAS_PREF
+import compiler.util.JenaUtil.RDF_PREF
+import compiler.util.JenaUtil.genLink
 
 /**
  * Словарь свойств
@@ -95,7 +95,7 @@ object RelationshipsDictionary {
 
     // +++++++++++++++++++++++++++++++++ Свойства ++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    
+
     /**
      * Использованы ли отношения линейной шкалы
      */
@@ -139,11 +139,15 @@ object RelationshipsDictionary {
      * val - предикат нумерации
      */
     private val numberPredicates: MutableMap<String, String> = HashMap()
-    
+
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    fun init(path: String) {
+    /**
+     * Инициализирует словарь данными
+     * @param path Путь с фалу с данными для словаря
+     */
+    internal fun init(path: String) {
         // Очищаем старые значения
         relationships.clear()
         linerRelationships.clear()
@@ -239,10 +243,10 @@ object RelationshipsDictionary {
         patterns["isCloserToThan"] = Pair(IS_CLOSER_TO_THAN_VAR_COUNT, Pair(IS_CLOSER_TO_THAN_PATTERN, ""))
         patterns["isFurtherFromThan"] = Pair(IS_FURTHER_FROM_THAN_VAR_COUNT, Pair(IS_FURTHER_FROM_THAN_PATTERN, ""))
     }
-    
+
     // ++++++++++++++++++++++++++++++++++++ Методы +++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    
+
     /**
      * Использованы ли отношения линейной шкалы
      * @return true - если использованы, иначе - false
@@ -254,6 +258,8 @@ object RelationshipsDictionary {
      * @return Вспомогательные правила для работы правил линейной шкалы
      */
     fun auxiliaryLinerScaleRules(): String = auxiliaryLinerScaleRules
+
+    const val auxiliaryLibraryRules: String = ""
 
     /**
      * Ялвяется ли отношение частью "библиотеки" линейной шкалы
