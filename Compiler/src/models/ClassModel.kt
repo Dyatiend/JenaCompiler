@@ -1,6 +1,8 @@
 package models
 
 import compiler.Operator
+import dictionaries.ClassesDictionary
+import util.DataType
 
 /**
  * Модель класса в предметной области
@@ -14,6 +16,18 @@ data class ClassModel(
     val parent: ClassModel?,
     val calcExpr: Operator?
 ) {
+
+    init {
+        require(name.isNotBlank()) {
+            "Некорректное имя класса."
+        }
+        require(!ClassesDictionary.exist(name)) {
+            "Класс $name уже объявлен в словаре."
+        }
+        require(calcExpr == null || calcExpr.resultDataType == DataType.Boolean) {
+            "Выражение для вычисления класса $name должно иметь тип Boolean, но имеет тип ${calcExpr?.resultDataType}."
+        }
+    }
 
     companion object {
 
