@@ -80,4 +80,22 @@ sealed class DataType {
         ComparisonResult -> "COMPARISON_RESULT"
         Enum -> "ENUM"
     }
+
+    companion object {
+
+        fun valueOf(value: kotlin.String) = when (value) {
+            "DECISION_TREE_VAR" -> DecisionTreeVar
+            "CLASS" -> Class
+            "OBJECT" -> Object
+            "PROPERTY" -> Property
+            "RELATIONSHIP" -> Relationship
+            "STRING" -> String
+            "BOOLEAN" -> Boolean
+            "INTEGER" -> Integer
+            "DOUBLE" -> Double
+            "COMPARISON_RESULT" -> ComparisonResult
+            "ENUM" -> Enum
+            else -> throw IllegalArgumentException("No object util.DataType.$value")
+        }
+    }
 }
