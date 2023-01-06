@@ -95,7 +95,7 @@ sealed class DataType {
             "DOUBLE" -> Double
             "COMPARISON_RESULT" -> ComparisonResult
             "ENUM" -> Enum
-            else -> throw IllegalArgumentException("No object util.DataType.$value")
+            else -> null
         }
     }
 }
