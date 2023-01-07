@@ -50,7 +50,7 @@ object ClassesDictionary {
                 classes.add(
                     ClassModel(
                         name = name,
-                        parent = get(parent),
+                        parent = parent,
                         calcExpr = calcExpr
                     )
                 )
@@ -65,7 +65,7 @@ object ClassesDictionary {
      * Получить модель класса по имени
      * @param name Имя класса
      */
-    fun get(name: String?) = classes.firstOrNull { it.name == name }
+    internal fun get(name: String) = classes.firstOrNull { it.name == name }
 
     /**
      * Существует ли класс
@@ -74,15 +74,19 @@ object ClassesDictionary {
     fun exist(name: String) = classes.any { it.name == name }
 
     /**
+     * Получить имя родительского класса
+     * @param name Имя класса
+     */
+    fun parent(name: String) = get(name)?.parent
+
+    /**
      * Является ли класс родителем другого
      * @param child Ребенок
      * @param parent Родитель
      */
     fun isParentOf(child: String, parent: String): Boolean {
-        val childModel = get(child)
-        val parentModel = get(parent)
-        if (!exist(child) || !exist(parent) || childModel?.parent == null) return false
-        return if (childModel.parent == parentModel) true else isParentOf(childModel.parent.name, parentModel!!.name)
+        if (!exist(child) || !exist(parent) || parent(child) == null) return false
+        return if (parent(child) == parent) true else isParentOf(parent(child)!!, parent)
     }
 
     /**
