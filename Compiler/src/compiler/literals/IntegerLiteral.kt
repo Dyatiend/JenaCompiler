@@ -3,8 +3,8 @@ package compiler.literals
 import compiler.Literal
 import compiler.Operator
 import compiler.util.CompilationResult
-import compiler.util.JenaUtil
 import util.DataType
+import util.JenaUtil
 
 /**
  * Integer литерал

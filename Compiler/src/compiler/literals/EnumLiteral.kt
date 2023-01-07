@@ -3,9 +3,9 @@ package compiler.literals
 import compiler.Literal
 import compiler.Operator
 import compiler.util.CompilationResult
-import compiler.util.JenaUtil
 import dictionaries.EnumsDictionary
 import util.DataType
+import util.JenaUtil
 
 /**
  * Enum литерал
@@ -17,7 +17,7 @@ class EnumLiteral(value: String, private val owner: String) : Literal(value) {
     init {
         // Проверяем существование enum и наличие у него такого значения
         require(EnumsDictionary.exist(owner)) { "Enum $owner не объявлен в словаре." }
-        require(EnumsDictionary.containsValue(owner, value)) {
+        require(EnumsDictionary.containsValue(owner, value) == true) {
             "Enum $owner не содержит значения $value."
         }
     }

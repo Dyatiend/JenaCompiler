@@ -4,13 +4,13 @@ import compiler.literals.*
 import compiler.operators.*
 import compiler.util.ComparisonResult
 import compiler.util.CompilationResult
-import compiler.util.JenaUtil
-import compiler.util.NamingManager
-import dictionaries.RelationshipsDictionary
+import dictionaries.util.generateAuxiliaryRules
 import org.apache.commons.io.IOUtils
 import org.w3c.dom.Node
 import org.xml.sax.SAXException
 import util.DataType
+import util.JenaUtil
+import util.NamingManager
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import javax.xml.parsers.DocumentBuilderFactory
@@ -83,8 +83,8 @@ interface Operator {
         // Добавляем вспомогательные правила
         var rules = JenaUtil.AUXILIARY_RULES
 
-        // Добавляем вспомогательные правила библиотеки
-        rules += RelationshipsDictionary.auxiliaryLibraryRules
+        // Добавляем вспомогательные правила, сгенерированные по словарям
+        rules += generateAuxiliaryRules()
 
         // Добавляем паузу
         rules += JenaUtil.PAUSE_MARK
@@ -382,7 +382,7 @@ interface Operator {
                 }
 
                 "comparison_result" -> {
-                    return ComparisonResultLiteral(ComparisonResult.valueOf(node.firstChild.textContent))
+                    return ComparisonResultLiteral(ComparisonResult.valueOf(node.firstChild.textContent)!!)
                 }
 
                 "enum" -> {
@@ -487,7 +487,7 @@ interface Operator {
                     return CompareWithComparisonOperator(listOf(
                         build(node.childNodes.item(1).firstChild),
                         build(node.childNodes.item(2).firstChild)),
-                        CompareWithComparisonOperator.ComparisonOperator.valueOf(node.childNodes.item(0).textContent)
+                        CompareWithComparisonOperator.ComparisonOperator.valueOf(node.childNodes.item(0).textContent)!!
                     )
                 }
                 "three_digit_comparison" -> {
