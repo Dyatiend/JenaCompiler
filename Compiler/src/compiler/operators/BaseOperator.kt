@@ -11,7 +11,7 @@ abstract class BaseOperator(args: List<Operator>) : Operator {
     /**
      * Аргументы
      */
-    private var args: List<Operator>
+    final override val args: List<Operator>
 
     init {
         // Проверяем аргументы перед сохранением
@@ -27,7 +27,7 @@ abstract class BaseOperator(args: List<Operator>) : Operator {
         // Получаем список типов данных
         val actual: MutableList<DataType> = ArrayList()
         args.forEach {arg ->
-            val resDataType = arg.resultDataType()
+            val resDataType = arg.resultDataType
 
             // Проверяем, что все операторы имеют возвращаемое значение
             requireNotNull(resDataType) { "Аргумент без возвращаемого значения" }
@@ -37,7 +37,7 @@ abstract class BaseOperator(args: List<Operator>) : Operator {
 
         var success = false
         // Для каждого набора типа данных
-        argsDataTypes().forEach { expected ->
+        argsDataTypes.forEach { expected ->
             // Если количество аргументов неограниченно
             if (isArgsCountUnlimited) {
                 // Проверяем, что кол-во полученных аргументов больше или равно ожидаемым
@@ -77,13 +77,5 @@ abstract class BaseOperator(args: List<Operator>) : Operator {
 
         // Если аргументы не совпали ни с одним набором - выбрасываем исключение
         require(success) { "Набор аргументов не соответствует ни одной из вариаций оператора" }
-    }
-
-    override fun args(): List<Operator> {
-        return args
-    }
-
-    override fun setArgs(args: List<Operator>) {
-        this.args = args
     }
 }
