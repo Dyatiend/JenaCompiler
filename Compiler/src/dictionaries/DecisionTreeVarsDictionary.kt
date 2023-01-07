@@ -45,16 +45,11 @@ object DecisionTreeVarsDictionary {
             rows.forEach { row ->
                 val name = row[0]
                 val className = row[1]
-                val classModel = ClassesDictionary.get(className)
-
-                require(classModel != null) {
-                    "Класс $className не объявлен в словаре."
-                }
 
                 decisionTreeVars.add(
                     DecisionTreeVarModel(
                         name = name,
-                        classModel = classModel
+                        className = className
                     )
                 )
             }
@@ -68,14 +63,18 @@ object DecisionTreeVarsDictionary {
      * Получить модель переменной по имени
      * @param name Имя переменной
      */
-    private fun get(name: String) = decisionTreeVars.firstOrNull { it.name == name }
+    internal fun get(name: String) = decisionTreeVars.firstOrNull { it.name == name }
 
-    fun exist(name: String) = false
+    /**
+     * Существует ли переменная с указанным именем
+     * @param name Имя переменной
+     */
+    fun exist(name: String) = decisionTreeVars.any { it.name == name }
 
     /**
      * Получить класс переменной дерева мысли
      * @param name Имя переменной
      * @return Имя класса переменной
      */
-    fun getClass(name: String) = get(name)?.classModel
+    fun getClass(name: String) = get(name)?.className
 }
