@@ -1,8 +1,8 @@
 package compiler.operators
 
 import compiler.Operator
-import compiler.values.BooleanValue
-import util.CompilationResult
+import compiler.literals.BooleanLiteral
+import compiler.util.CompilationResult
 import util.DataType
 import util.JenaUtil.genEqualPrim
 
@@ -11,14 +11,9 @@ import util.JenaUtil.genEqualPrim
  */
 class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
 
-    override fun argsDataTypes(): List<List<DataType>> {
-        return listOf(listOf(DataType.Boolean, DataType.Boolean))
-    }
+    override val argsDataTypes = listOf(listOf(DataType.Boolean, DataType.Boolean))
 
-    override fun resultDataType(): DataType {
-        return DataType.Boolean
-    }
-
+    override val resultDataType = DataType.Boolean
     override fun compile(): CompilationResult {
         // Объявляем переменные
         val heads = ArrayList<String>()
@@ -33,12 +28,12 @@ class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
         val compiledArg1 = arg1.compile()
 
         // Передаем завершенные правила дальше
-        completedRules += compiledArg0.completedRules +
-                compiledArg1.completedRules
+        completedRules += compiledArg0.rules +
+                compiledArg1.rules
 
         // Если операторы - булевы значения
         when {
-            arg0 is BooleanValue && arg1 is BooleanValue -> {
+            arg0 is BooleanLiteral && arg1 is BooleanLiteral -> {
                 // Добавляем выражение, равное значению
                 val head = if (arg0.value.toBoolean() && arg1.value.toBoolean()) {
                     genEqualPrim("1", "1")
@@ -49,7 +44,8 @@ class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
                 // Добавляем в массив
                 heads.add(head)
             }
-            arg0 is BooleanValue -> {
+
+            arg0 is BooleanLiteral -> {
                 // Добавляем выражение, равное значению
                 val head0 = if (arg0.value.toBoolean()) {
                     genEqualPrim("1", "1")
@@ -58,14 +54,15 @@ class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
                 }
 
                 // Для всех результатов компиляции
-                compiledArg1.ruleHeads.forEach { head1 ->
+                compiledArg1.heads.forEach { head1 ->
                     val head = head0 + head1
 
                     // Добавляем в массив
                     heads.add(head)
                 }
             }
-            arg1 is BooleanValue -> {
+
+            arg1 is BooleanLiteral -> {
                 // Добавляем выражение, равное значению
                 val head1 = if (arg1.value.toBoolean()) {
                     genEqualPrim("1", "1")
@@ -74,7 +71,7 @@ class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
                 }
 
                 // Для всех результатов компиляции
-                compiledArg0.ruleHeads.forEach { head0 ->
+                compiledArg0.heads.forEach { head0 ->
                     val head = head0 + head1
 
                     // Добавляем в массив
@@ -83,8 +80,8 @@ class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
             }
             else -> {
                 // Для всех результатов компиляции
-                compiledArg0.ruleHeads.forEach { head0 ->
-                    compiledArg1.ruleHeads.forEach { head1 ->
+                compiledArg0.heads.forEach { head0 ->
+                    compiledArg1.heads.forEach { head1 ->
                         val head = head0 + head1
 
                         // Добавляем в массив
@@ -100,10 +97,14 @@ class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
     override fun clone(): Operator {
         val newArgs = ArrayList<Operator>()
 
-        args().forEach { arg ->
+        args.forEach { arg ->
             newArgs.add(arg.clone())
         }
 
+        return LogicalAnd(newArgs)
+    }
+
+    override fun clone(newArgs: List<Operator>): Operator {
         return LogicalAnd(newArgs)
     }
 }

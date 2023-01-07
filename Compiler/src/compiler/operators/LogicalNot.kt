@@ -1,7 +1,7 @@
 package compiler.operators
 
 import compiler.Operator
-import util.CompilationResult
+import compiler.util.CompilationResult
 import util.DataType
 
 /**
@@ -9,13 +9,9 @@ import util.DataType
  */
 class LogicalNot(args: List<Operator>) : BaseOperator(args) {
 
-    override fun argsDataTypes(): List<List<DataType>> {
-        return listOf(listOf(DataType.Boolean))
-    }
+    override val argsDataTypes = listOf(listOf(DataType.Boolean))
 
-    override fun resultDataType(): DataType {
-        return DataType.Boolean
-    }
+    override val resultDataType = DataType.Boolean
 
     override fun compile(): CompilationResult {
         throw RuntimeException("Оператор LogicalNot должен быть удален при упрощении выражения")
@@ -24,10 +20,14 @@ class LogicalNot(args: List<Operator>) : BaseOperator(args) {
     override fun clone(): Operator {
         val newArgs = ArrayList<Operator>()
 
-        args().forEach { arg ->
+        args.forEach { arg ->
             newArgs.add(arg.clone())
         }
 
+        return LogicalNot(newArgs)
+    }
+
+    override fun clone(newArgs: List<Operator>): Operator {
         return LogicalNot(newArgs)
     }
 }

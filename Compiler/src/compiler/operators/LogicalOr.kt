@@ -1,7 +1,7 @@
 package compiler.operators
 
 import compiler.Operator
-import util.CompilationResult
+import compiler.util.CompilationResult
 import util.DataType
 
 /**
@@ -9,13 +9,9 @@ import util.DataType
  */
 class LogicalOr(args: List<Operator>): BaseOperator(args) {
 
-    override fun argsDataTypes(): List<List<DataType>> {
-        return listOf(listOf(DataType.Boolean, DataType.Boolean))
-    }
+    override val argsDataTypes = listOf(listOf(DataType.Boolean, DataType.Boolean))
 
-    override fun resultDataType(): DataType {
-        return DataType.Boolean
-    }
+    override val resultDataType = DataType.Boolean
 
     override fun compile(): CompilationResult {
         // Объявляем переменные
@@ -27,9 +23,9 @@ class LogicalOr(args: List<Operator>): BaseOperator(args) {
         val arg1 = arg(1)
 
         // Раскрываем через And
-        val expr0 = LogicalAnd(listOf(arg0.clone(), arg1.clone())).doSemantic()
-        val expr1 = LogicalAnd(listOf(LogicalNot(listOf(arg0.clone())), arg1.clone())).doSemantic()
-        val expr2 = LogicalAnd(listOf(arg0.clone(), LogicalNot(listOf(arg1.clone())))).doSemantic()
+        val expr0 = LogicalAnd(listOf(arg0.clone(), arg1.clone())).semantic()
+        val expr1 = LogicalAnd(listOf(LogicalNot(listOf(arg0.clone())), arg1.clone())).semantic()
+        val expr2 = LogicalAnd(listOf(arg0.clone(), LogicalNot(listOf(arg1.clone())))).semantic()
 
         // Компилируем правила
         val compiledExpr0 = expr0.compile()
@@ -37,18 +33,19 @@ class LogicalOr(args: List<Operator>): BaseOperator(args) {
         val compiledExpr2 = expr2.compile()
 
         // Если в разных вариациях отличаются не только головы
-        if (compiledExpr0.completedRules != compiledExpr1.completedRules
-            || compiledExpr0.completedRules != compiledExpr2.completedRules) {
+        if (compiledExpr0.rules != compiledExpr1.rules
+            || compiledExpr0.rules != compiledExpr2.rules
+        ) {
             TODO() // Как то собрать их в одно ???
         } else {
             // Передаем завершенные правила дальше
-            completedRules += compiledExpr0.completedRules
+            completedRules += compiledExpr0.rules
         }
 
         // Собираем полученные правила
-        heads.addAll(compiledExpr0.ruleHeads)
-        heads.addAll(compiledExpr1.ruleHeads)
-        heads.addAll(compiledExpr2.ruleHeads)
+        heads.addAll(compiledExpr0.heads)
+        heads.addAll(compiledExpr1.heads)
+        heads.addAll(compiledExpr2.heads)
 
         return CompilationResult("", heads, completedRules)
     }
@@ -56,10 +53,14 @@ class LogicalOr(args: List<Operator>): BaseOperator(args) {
     override fun clone(): Operator {
         val newArgs = ArrayList<Operator>()
 
-        args().forEach { arg ->
+        args.forEach { arg ->
             newArgs.add(arg.clone())
         }
 
+        return LogicalOr(newArgs)
+    }
+
+    override fun clone(newArgs: List<Operator>): Operator {
         return LogicalOr(newArgs)
     }
 }
