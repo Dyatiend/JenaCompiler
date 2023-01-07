@@ -24,6 +24,9 @@ data class EnumModel(
         require(values.isNotEmpty()) {
             "Перечисление $name не содержит значений."
         }
+        require(linerPredicate == null || linerPredicate.isNotBlank()) {
+            "Некорректное имя предиката, задающего линейный порядок."
+        }
     }
 
     /**
