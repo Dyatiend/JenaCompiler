@@ -46,7 +46,7 @@ sealed class ComparisonResult {
             "EQUAL" -> Equal
             "NOT_EQUAL" -> NotEqual
             "UNDETERMINED" -> Undetermined
-            else -> throw IllegalArgumentException("No object compiler.util.ComparisonResult.$value")
+            else -> null
         }
     }
 }
