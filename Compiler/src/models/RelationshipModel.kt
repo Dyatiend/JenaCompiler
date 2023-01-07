@@ -34,9 +34,9 @@ data class RelationshipModel(
     val isCloserToThanRelName: String?,
     val isFurtherFromThanRelName: String?,
     val flags: Int,
-    val varsCount: Int,
-    val head: String,
-    val rules: String
+    val varsCount: Int?,
+    val head: String?,
+    val rules: String?
 ) {
 
     init {
