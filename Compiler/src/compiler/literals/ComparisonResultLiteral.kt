@@ -4,8 +4,8 @@ import compiler.Literal
 import compiler.Operator
 import compiler.util.ComparisonResult
 import compiler.util.CompilationResult
-import compiler.util.JenaUtil
 import util.DataType
+import util.JenaUtil
 
 /**
  * Литерал результата сравнения
@@ -19,5 +19,5 @@ class ComparisonResultLiteral(value: ComparisonResult) : Literal(value.toString(
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genLink(JenaUtil.POAS_PREF, value))
 
-    override fun clone(): Operator = ComparisonResultLiteral(ComparisonResult.valueOf(value))
+    override fun clone(): Operator = ComparisonResultLiteral(ComparisonResult.valueOf(value)!!)
 }

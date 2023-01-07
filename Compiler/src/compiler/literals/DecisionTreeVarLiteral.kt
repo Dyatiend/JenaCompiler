@@ -3,12 +3,12 @@ package compiler.literals
 import compiler.Literal
 import compiler.Operator
 import compiler.util.CompilationResult
-import compiler.util.JenaUtil
-import compiler.util.JenaUtil.DECISION_TREE_VAR_PREDICATE
-import compiler.util.JenaUtil.POAS_PREF
-import compiler.util.JenaUtil.genTriple
-import compiler.util.NamingManager
 import util.DataType
+import util.JenaUtil
+import util.JenaUtil.DECISION_TREE_VAR_PREDICATE
+import util.JenaUtil.POAS_PREF
+import util.JenaUtil.genTriple
+import util.NamingManager
 
 /**
  * Литерал переменной из дерева рассуждения
