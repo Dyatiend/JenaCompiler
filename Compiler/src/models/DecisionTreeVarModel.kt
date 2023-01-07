@@ -6,12 +6,11 @@ import dictionaries.DecisionTreeVarsDictionary
 /**
  * Модель переменной дерева рассуждения
  * @param name Имя переменной
- * @param classModel Модель класса переменной
- * @see ClassModel
+ * @param className Имя класса переменной
  */
 data class DecisionTreeVarModel(
     val name: String,
-    val classModel: ClassModel
+    val className: String
 ) {
 
     init {
@@ -21,8 +20,8 @@ data class DecisionTreeVarModel(
         require(!DecisionTreeVarsDictionary.exist(name)) {
             "Переменная $name уже объявлена в словаре."
         }
-        require(ClassesDictionary.exist(classModel.name)) {
-            "Класс ${classModel.name} не объявлен в словаре."
+        require(ClassesDictionary.exist(className)) {
+            "Класс $className не объявлен в словаре."
         }
     }
 }
