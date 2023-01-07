@@ -45,8 +45,8 @@ object EnumsDictionary {
             rows.forEach { row ->
                 val name = row[0]
                 val values = row[1].split(LIST_ITEMS_SEPARATOR).filter { it.isNotBlank() }
-                val isLiner = row[3].toBoolean()
-                val linerPredicate = row[4].ifBlank { null }
+                val isLiner = row[2].toBoolean()
+                val linerPredicate = row[3].ifBlank { null }
 
                 require(!isLiner || linerPredicate != null) {
                     "Для линейного перечисления $name не указан линейный предикат."
@@ -70,7 +70,7 @@ object EnumsDictionary {
      * Получить модель перечисления по имени
      * @param name Имя перечисления
      */
-    private fun get(name: String) = enums.firstOrNull { it.name == name }
+    internal fun get(name: String) = enums.firstOrNull { it.name == name }
 
     /**
      * Существует ли перечисление
@@ -96,7 +96,7 @@ object EnumsDictionary {
      * Является ли перечисление линейным
      * @param name Имя перечисления
      */
-    fun isLiner(name: String) = get(name)?.linerPredicate != null
+    fun isLiner(name: String) = get(name)?.isLiner
 
     /**
      * Получить линейный предикат перечисления
