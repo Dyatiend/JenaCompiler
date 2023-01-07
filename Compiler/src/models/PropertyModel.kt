@@ -1,5 +1,8 @@
 package models
 
+import dictionaries.ClassesDictionary
+import dictionaries.EnumsDictionary
+import dictionaries.PropertiesDictionary
 import util.DataType
 
 /**
@@ -25,6 +28,9 @@ data class PropertyModel(
         require(name.isNotBlank()) {
             "Некорректное имя свойства."
         }
+        require(!PropertiesDictionary.exist(name)) {
+            "Свойство $name уже объявлено в словаре."
+        }
         require(
             dataType == DataType.Integer
                     || dataType == DataType.Double
@@ -33,6 +39,17 @@ data class PropertyModel(
                     || dataType == DataType.Enum
         ) {
             "Некорректный тип свойства $name."
+        }
+        require(dataType != DataType.Enum || enumModel != null && EnumsDictionary.exist(enumModel.name)) {
+            "Некорректное имя перечисления ${enumModel?.name} для свойства $name."
+        }
+        require(owners == null || owners.isNotEmpty()) {
+            "Свойством $name не обладает ни один класс."
+        }
+        owners?.forEach {
+            require(ClassesDictionary.exist(it.name)) {
+                "Класс $it не объявлен в словаре."
+            }
         }
         require(dataType == DataType.Integer || dataType == DataType.Double || valuesRanges == null) {
             "У свойства $name не может быть диапазонов значений, т.к. оно имеет тип $dataType."
@@ -43,6 +60,12 @@ data class PropertyModel(
             }
         }
     }
+
+    /**
+     * Является ли статическим
+     */
+    val isStatic
+        get() = owners != null
 
     /**
      * Попадает ли значение в один из диапазонов свойства
