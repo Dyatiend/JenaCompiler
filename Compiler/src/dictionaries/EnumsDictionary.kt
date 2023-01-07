@@ -5,6 +5,7 @@ import com.opencsv.CSVReaderBuilder
 import dictionaries.util.COLUMNS_SEPARATOR
 import dictionaries.util.LIST_ITEMS_SEPARATOR
 import models.EnumModel
+import util.NamingManager
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -21,6 +22,21 @@ object EnumsDictionary {
      * Список перечислений
      */
     private val enums: MutableList<EnumModel> = mutableListOf()
+
+    /**
+     * Названия предикатов, задающих нумерацию для шкал
+     *
+     * key - имя перечисления,
+     * val - имя предиката нумерации
+     */
+    private val scalePredicates: MutableMap<String, String> = HashMap()
+
+    /**
+     * ID предиката
+     */
+    private var scalePredicateId = 0
+        get() = ++field
+
 
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -52,6 +68,10 @@ object EnumsDictionary {
                     "Для линейного перечисления $name не указан линейный предикат."
                 }
 
+                if (isLiner) {
+                    scalePredicates[name] = name + scalePredicateId + NamingManager.PROTECTIVE_CHARS
+                }
+
                 enums.add(
                     EnumModel(
                         name = name,
@@ -65,6 +85,16 @@ object EnumsDictionary {
 
     // ++++++++++++++++++++++++++++++++++++ Методы +++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    internal fun forEach(block: (EnumModel) -> Unit) {
+        enums.forEach(block)
+    }
+
+    /**
+     * Получить предикат линейной шкалы для перечисления
+     * @param name Имя перечисления
+     */
+    internal fun getScalePredicate(name: String) = scalePredicates[name]
 
     /**
      * Получить модель перечисления по имени

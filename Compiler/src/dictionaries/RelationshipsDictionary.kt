@@ -1,144 +1,137 @@
 package dictionaries
 
-import compiler.util.JenaUtil.POAS_PREF
-import compiler.util.JenaUtil.RDF_PREF
-import compiler.util.JenaUtil.genLink
+import com.opencsv.CSVParserBuilder
+import com.opencsv.CSVReaderBuilder
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.IS_BETWEEN_PATTERN
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.IS_BETWEEN_VAR_COUNT
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.IS_CLOSER_TO_THAN_PATTERN
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.IS_CLOSER_TO_THAN_VAR_COUNT
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.IS_FURTHER_FROM_THAN_PATTERN
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.IS_FURTHER_FROM_THAN_VAR_COUNT
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.REVERSE_PATTERN
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.REVERSE_TRANSITIVE_CLOSURE_PATTERN
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.REVERSE_TRANSITIVE_CLOSURE_VAR_COUNT
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.REVERSE_VAR_COUNT
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.TRANSITIVE_CLOSURE_PATTERN
+import dictionaries.RelationshipsDictionary.LinerScalePatterns.TRANSITIVE_CLOSURE_VAR_COUNT
+import dictionaries.util.COLUMNS_SEPARATOR
+import dictionaries.util.LIST_ITEMS_SEPARATOR
+import models.RelationshipModel
+import models.RelationshipModel.Companion.RelationType
+import models.RelationshipModel.Companion.ScaleType
+import util.JenaUtil.POAS_PREF
+import util.JenaUtil.genLink
+import util.NamingManager
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
 
 /**
  * Словарь свойств
  */
 object RelationshipsDictionary {
 
-    // ++++++ Шаблоны вспомогательных правил для свойств линейного порядка +++++++++
+    // ++++++ Шаблоны вспомогательных правил для отношений порядковых шкал +++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    private const val ASCENDING_NUMERATION_RULES_PATTERN = """
-        [
-        (?var1 <linerPredicate> ?var2)
-        noValue(?var3, <linerPredicate>, ?var1)
-        ->
-        (?var1 <numberPredicate> "1"^^xsd:integer)
-        ]
-        [
-        (?var1 <linerPredicate> ?var2)
-        noValue(?var2, <numberPredicate>)
-        (?var1 <numberPredicate> ?var3)
-        addOne(?var3, ?var4)
-        ->
-        (?var2 <numberPredicate> ?var4)
-        ]
-    """
+    object LinerScalePatterns {
 
-    private const val DESCENDING_NUMERATION_RULES_PATTERN = """
-        [
-        (?var1 <linerPredicate> ?var2)
-        noValue(?var2, <linerPredicate>, ?var3)
-        ->
-        (?var1 <numberPredicate> "1"^^xsd:integer)
-        ]
-        [
-        (?var1 <linerPredicate> ?var2)
-        noValue(?var1, <numberPredicate>)
-        (?var2 <numberPredicate> ?var3)
-        addOne(?var3, ?var4)
-        ->
-        (?var1 <numberPredicate> ?var4)
-        ]
-    """
+        const val NUMERATION_RULES_PATTERN = """
+            [
+            (?var1 <linerPredicate> ?var2)
+            noValue(?var3, <linerPredicate>, ?var1)
+            ->
+            (?var1 <numberPredicate> "1"^^xsd:integer)
+            ]
+        
+            [
+            (?var1 <linerPredicate> ?var2)
+            noValue(?var2, <numberPredicate>)
+            (?var1 <numberPredicate> ?var3)
+            addOne(?var3, ?var4)
+            ->
+            (?var2 <numberPredicate> ?var4)
+            ]
+        """
 
-    private const val LEFT_OF_VAR_COUNT = 2
-    private const val LEFT_OF_PATTERN = """
-        (<arg1> <numberPredicate> <var1>)
-        (<arg2> <numberPredicate> <var2>)
-        lessThan(<var1>, <var2>)
-    """
+        const val REVERSE_VAR_COUNT = 0
+        const val REVERSE_PATTERN = """
+            (<arg2> <predicate> <arg1>)
+        """
 
-    private const val RIGHT_OF_VAR_COUNT = 2
-    private const val RIGHT_OF_PATTERN = """
-        (<arg1> <numberPredicate> <var1>)
-        (<arg2> <numberPredicate> <var2>)
-        greaterThan(<var1>, <var2>)
-    """
+        const val TRANSITIVE_CLOSURE_VAR_COUNT = 2
+        const val TRANSITIVE_CLOSURE_PATTERN = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            lessThan(<var1>, <var2>)
+        """
 
-    private const val IS_BETWEEN_VAR_COUNT = 3
-    private const val IS_BETWEEN_PATTERN = """
-        (<arg1> <numberPredicate> <var1>)
-        (<arg2> <numberPredicate> <var2>)
-        (<arg3> <numberPredicate> <var3>)
-        greaterThan(<var1>, <var2>)
-        lessThan(<var1>, <var3>)
-    """
+        const val REVERSE_TRANSITIVE_CLOSURE_VAR_COUNT = 2
+        const val REVERSE_TRANSITIVE_CLOSURE_PATTERN = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            greaterThan(<var1>, <var2>)
+        """
 
-    private const val IS_CLOSER_TO_THAN_VAR_COUNT = 7
-    private const val IS_CLOSER_TO_THAN_PATTERN = """
-        (<arg1> <numberPredicate> <var1>)
-        (<arg2> <numberPredicate> <var2>)
-        (<arg3> <numberPredicate> <var3>)
-        difference(<var2>, <var1>, <var4>)
-        difference(<var2>, <var3>, <var5>)
-        absoluteValue(<var4>, <var6>)
-        absoluteValue(<var5>, <var7>)
-        lessThan(<var6>, <var7>)
-    """
+        const val IS_BETWEEN_VAR_COUNT = 3
+        const val IS_BETWEEN_PATTERN = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            (<arg3> <numberPredicate> <var3>)
+            greaterThan(<var1>, <var2>)
+            lessThan(<var1>, <var3>)
+        """
 
-    private const val IS_FURTHER_FROM_THAN_VAR_COUNT = 7
-    private const val IS_FURTHER_FROM_THAN_PATTERN = """
-        (<arg1> <numberPredicate> <var1>)
-        (<arg2> <numberPredicate> <var2>)
-        (<arg3> <numberPredicate> <var3>)
-        difference(<var2>, <var1>, <var4>)
-        difference(<var2>, <var3>, <var5>)
-        absoluteValue(<var4>, <var6>)
-        absoluteValue(<var5>, <var7>)
-        greaterThan(<var6>, <var7>)
-    """
+        const val IS_CLOSER_TO_THAN_VAR_COUNT = 7
+        const val IS_CLOSER_TO_THAN_PATTERN = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            (<arg3> <numberPredicate> <var3>)
+            difference(<var2>, <var1>, <var4>)
+            difference(<var2>, <var3>, <var5>)
+            absoluteValue(<var4>, <var6>)
+            absoluteValue(<var5>, <var7>)
+            lessThan(<var6>, <var7>)
+        """
+
+        const val IS_FURTHER_FROM_THAN_VAR_COUNT = 7
+        const val IS_FURTHER_FROM_THAN_PATTERN = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            (<arg3> <numberPredicate> <var3>)
+            difference(<var2>, <var1>, <var4>)
+            difference(<var2>, <var3>, <var5>)
+            absoluteValue(<var4>, <var6>)
+            absoluteValue(<var5>, <var7>)
+            greaterThan(<var6>, <var7>)
+        """
+    }
+
+    object PartialScalePatterns {
+        // TODO
+    }
 
     // +++++++++++++++++++++++++++++++++ Свойства ++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
-     * Использованы ли отношения линейной шкалы
+     * Список отношений
      */
-    private var isLinerScaleUsed: Boolean = false
+    private val relationships: MutableList<RelationshipModel> = mutableListOf()
 
     /**
-     * список отношений линейной шкалы
+     * Названия предикатов, задающих нумерацию для шкал
+     *
+     * key - имя отношения,
+     * val - имя предиката нумерации
      */
-    private val linerScaleRelationships = listOf("leftOf", "rightOf", "isBetween", "isCloserToThan", "isFurtherFromThan")
+    private val scalePredicates: MutableMap<String, String> = HashMap()
 
     /**
-     * Вспомогательные правила для работы правил линейной шкалы
+     * ID предиката
      */
-    private var auxiliaryLinerScaleRules = ""
-
-    /**
-     * Отношения
-     * key - имя отношения
-     * val - список классов аргументов
-     */
-    private val relationships: MutableMap<String, List<String>> = HashMap()
-
-    /**
-     * Имена отношений линейной шкалы
-     * key - First - общее имя отношения линейной шкалы, Second - имя предиката линейной шкалы
-     * val - конкретное имя отношения
-     */
-    private val linerRelationships: MutableMap<Pair<String, String>, String> = HashMap()
-
-    /**
-     * Шаблоны правил для отношений
-     * row - Имя отношения
-     * col - Количество вспомогательных переменных в шаблоне
-     * val - First - шаблон правила, Second - вспомогательные правила
-     */
-    private val patterns: MutableMap<String, Pair<Int, Pair<String, String>>> = HashMap()
-
-    /**
-     * Названия предикатов, задающих нумерацию
-     * key - предикат линейной шкалы
-     * val - предикат нумерации
-     */
-    private val numberPredicates: MutableMap<String, String> = HashMap()
+    private var scalePredicateId = 0
+        get() = ++field
 
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -150,173 +143,285 @@ object RelationshipsDictionary {
     internal fun init(path: String) {
         // Очищаем старые значения
         relationships.clear()
-        linerRelationships.clear()
-        patterns.clear()
-        numberPredicates.clear()
-        auxiliaryLinerScaleRules = ""
-        isLinerScaleUsed = false
+        scalePredicates.clear()
 
-        // TODO: чтение из файла
-        // TODO?: проекция на линейную шкалу?
-        // FIXME?: не считать классы линейной шкалой?
+        // Создаем объекты
+        val parser = CSVParserBuilder().withSeparator(COLUMNS_SEPARATOR).build()
+        val bufferedReader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)
+        val csvReader = CSVReaderBuilder(bufferedReader).withCSVParser(parser).build()
 
-        // Подключаем "библиотеку"
-        isLinerScaleUsed = true
+        // Считываем файл
+        csvReader.use { reader ->
+            val rows = reader.readAll()
 
-        // Добавляем свойства
-        relationships["has"] = listOf("element", "token")
-        relationships["belongsTo"] = listOf("token", "element")
-        relationships["directlyLeftOf"] = listOf("token", "token")
-        relationships["directlyRightOf"] = listOf("token", "token")
-        relationships["isOperandOf"] = listOf("element", "element")
-        relationships["isOperatorTo"] = listOf("element", "element")
+            rows.forEach { row ->
+                val name = row[0]
+                val parent = row[1].ifBlank { null }
+                val args = row[2].split(LIST_ITEMS_SEPARATOR).filter {
+                    it.isNotBlank()
+                }.ifEmpty { null }
+                val scaleType = ScaleType.valueOf(row[3])
+                val isRelation = row[4].toBoolean()
+                val relationType = RelationType.valueOf(row[5])
+                val scaleRelations = row[6].split(LIST_ITEMS_SEPARATOR).filter {
+                    it.isNotBlank()
+                }.ifEmpty { null }
+                var flags = row[7].toInt()
 
-        relationships["token_leftOf"] = listOf("token", "token")
-        relationships["token_rightOf"] = listOf("token", "token")
-        relationships["token_isBetween"] = listOf("token", "token", "token")
-        relationships["token_isCloserToThan"] = listOf("token", "token", "token")
-        relationships["token_isFurtherFromThan"] = listOf("token", "token", "token")
+                require(!isRelation || relationType != null) {
+                    "Не указан тип связи между классами."
+                }
+                require(scaleType == null || scaleRelations != null && scaleRelations.size == 6) {
+                    "Некорректное количество отношений порядковой шкалы для отношения $name."
+                }
+                require(args != null) {
+                    "Не указаны аргументы для отношения $name."
+                }
+                args.forEach {
+                    require(ClassesDictionary.exist(it)) { "Класс $it не объявлен в словаре." }
+                }
+                when (scaleType) {
+                    ScaleType.Liner -> {
+                        require(flags == 6 || flags == 0) {
+                            "Некорректный набор флагов для отношения линейного порядка."
+                        }
 
-        relationships["class_leftOf"] = listOf("class", "class")
-        relationships["class_rightOf"] = listOf("class", "class")
-        relationships["class_isBetween"] = listOf("class", "class", "class")
-        relationships["class_isCloserToThan"] = listOf("class", "class", "class")
-        relationships["class_isFurtherFromThan"] = listOf("class", "class", "class")
+                        scalePredicates[name] = name + scalePredicateId + NamingManager.PROTECTIVE_CHARS
+                        flags = 6
+                    }
 
-        relationships["state_leftOf"] = emptyList()
-        relationships["state_rightOf"] = emptyList()
-        relationships["state_isBetween"] = emptyList()
-        relationships["state_isCloserToThan"] = emptyList()
-        relationships["state_isFurtherFromThan"] = emptyList()
+                    ScaleType.Partial -> {
+                        require(flags == 22 || flags == 0) {
+                            "Некорректный набор флагов для отношения частичного порядка."
+                        }
 
-        linerRelationships[Pair("leftOf", "directlyLeftOf")] = "token_leftOf"
-        linerRelationships[Pair("leftOf", "subClassOf")] = "class_leftOf"
-        linerRelationships[Pair("leftOf", "state_directlyLeftOf")] = "state_leftOf"
+                        scalePredicates[name] = name + scalePredicateId + NamingManager.PROTECTIVE_CHARS
+                        flags = 22
+                    }
 
-        linerRelationships[Pair("rightOf", "directlyLeftOf")] = "token_rightOf"
-        linerRelationships[Pair("rightOf", "subClassOf")] = "class_rightOf"
-        linerRelationships[Pair("rightOf", "state_directlyLeftOf")] = "state_rightOf"
+                    else -> require(flags < 64) {
+                        "Некорректный набор флагов."
+                    }
+                }
 
-        linerRelationships[Pair("isBetween", "directlyLeftOf")] = "token_isBetween"
-        linerRelationships[Pair("isBetween", "subClassOf")] = "class_isBetween"
-        linerRelationships[Pair("isBetween", "state_directlyLeftOf")] = "state_isBetween"
+                when (scaleType) {
+                    ScaleType.Liner -> {
+                        require(scaleRelations != null)
 
-        linerRelationships[Pair("isCloserToThan", "directlyLeftOf")] = "token_isCloserToThan"
-        linerRelationships[Pair("isCloserToThan", "subClassOf")] = "class_isCloserToThan"
-        linerRelationships[Pair("isCloserToThan", "state_directlyLeftOf")] = "state_isCloserToThan"
+                        val scalePredicate = scalePredicates[name]!!
 
-        linerRelationships[Pair("isFurtherFromThan", "directlyLeftOf")] = "token_isFurtherFromThan"
-        linerRelationships[Pair("isFurtherFromThan", "subClassOf")] = "class_isFurtherFromThan"
-        linerRelationships[Pair("isFurtherFromThan", "state_directlyLeftOf")] = "state_isFurtherFromThan"
+                        relationships.add(
+                            RelationshipModel(
+                                name = scaleRelations[0],
+                                parent = null,
+                                argsClasses = args,
+                                scaleType = null,
+                                relationType = null,
+                                reverseRelName = null,
+                                transitiveClosureRelName = null,
+                                reverseTransitiveClosureRelName = null,
+                                isBetweenRelName = null,
+                                isCloserToThanRelName = null,
+                                isFurtherFromThanRelName = null,
+                                flags = flags,
+                                varsCount = REVERSE_VAR_COUNT,
+                                head = REVERSE_PATTERN.replace("<predicate>", genLink(POAS_PREF, name)),
+                                rules = null
+                            )
+                        )
 
-        // Добавляем вспомогательные правила
-        var tokenNumerationRules = ASCENDING_NUMERATION_RULES_PATTERN
-        tokenNumerationRules = tokenNumerationRules.replace("<linerPredicate>", genLink(POAS_PREF, "directlyLeftOf"))
-        tokenNumerationRules = tokenNumerationRules.replace("<numberPredicate>", genLink(POAS_PREF, "__tokenNumber__"))
+                        relationships.add(
+                            RelationshipModel(
+                                name = scaleRelations[1],
+                                parent = null,
+                                argsClasses = args,
+                                scaleType = null,
+                                relationType = null,
+                                reverseRelName = null,
+                                transitiveClosureRelName = null,
+                                reverseTransitiveClosureRelName = null,
+                                isBetweenRelName = null,
+                                isCloserToThanRelName = null,
+                                isFurtherFromThanRelName = null,
+                                flags = 16,
+                                varsCount = TRANSITIVE_CLOSURE_VAR_COUNT,
+                                head = TRANSITIVE_CLOSURE_PATTERN.replace(
+                                    "<numberPredicate>",
+                                    genLink(POAS_PREF, scalePredicate)
+                                ),
+                                rules = null
+                            )
+                        )
 
-        var classNumerationRules = DESCENDING_NUMERATION_RULES_PATTERN
-        classNumerationRules = classNumerationRules.replace("<linerPredicate>", genLink(RDF_PREF, "subClassOf"))
-        classNumerationRules = classNumerationRules.replace("<numberPredicate>", genLink(POAS_PREF, "__classNumber__"))
+                        relationships.add(
+                            RelationshipModel(
+                                name = scaleRelations[2],
+                                parent = null,
+                                argsClasses = args,
+                                scaleType = null,
+                                relationType = null,
+                                reverseRelName = null,
+                                transitiveClosureRelName = null,
+                                reverseTransitiveClosureRelName = null,
+                                isBetweenRelName = null,
+                                isCloserToThanRelName = null,
+                                isFurtherFromThanRelName = null,
+                                flags = 16,
+                                varsCount = REVERSE_TRANSITIVE_CLOSURE_VAR_COUNT,
+                                head = REVERSE_TRANSITIVE_CLOSURE_PATTERN.replace(
+                                    "<numberPredicate>",
+                                    genLink(POAS_PREF, scalePredicate)
+                                ),
+                                rules = null
+                            )
+                        )
 
-        var stateNumerationRules = ASCENDING_NUMERATION_RULES_PATTERN
-        stateNumerationRules = stateNumerationRules.replace("<linerPredicate>", genLink(RDF_PREF, "state_directlyLeftOf"))
-        stateNumerationRules = stateNumerationRules.replace("<numberPredicate>", genLink(POAS_PREF, "__stateNumber__"))
+                        relationships.add(
+                            RelationshipModel(
+                                name = scaleRelations[3],
+                                parent = null,
+                                argsClasses = args.plus(args[0]),
+                                scaleType = null,
+                                relationType = null,
+                                reverseRelName = null,
+                                transitiveClosureRelName = null,
+                                reverseTransitiveClosureRelName = null,
+                                isBetweenRelName = null,
+                                isCloserToThanRelName = null,
+                                isFurtherFromThanRelName = null,
+                                flags = 0,
+                                varsCount = IS_BETWEEN_VAR_COUNT,
+                                head = IS_BETWEEN_PATTERN.replace(
+                                    "<numberPredicate>",
+                                    genLink(POAS_PREF, scalePredicate)
+                                ),
+                                rules = null
+                            )
+                        )
 
-        auxiliaryLinerScaleRules += tokenNumerationRules + classNumerationRules + stateNumerationRules
+                        relationships.add(
+                            RelationshipModel(
+                                name = scaleRelations[4],
+                                parent = null,
+                                argsClasses = args.plus(args[0]),
+                                scaleType = null,
+                                relationType = null,
+                                reverseRelName = null,
+                                transitiveClosureRelName = null,
+                                reverseTransitiveClosureRelName = null,
+                                isBetweenRelName = null,
+                                isCloserToThanRelName = null,
+                                isFurtherFromThanRelName = null,
+                                flags = 0,
+                                varsCount = IS_CLOSER_TO_THAN_VAR_COUNT,
+                                head = IS_CLOSER_TO_THAN_PATTERN.replace(
+                                    "<numberPredicate>",
+                                    genLink(POAS_PREF, scalePredicate)
+                                ),
+                                rules = null
+                            )
+                        )
 
-        // Сохраняем предикаты нумерации
-        numberPredicates["directlyLeftOf"] = "__tokenNumber__"
-        numberPredicates["subClassOf"] = "__classNumber__"
-        numberPredicates["state_directlyLeftOf"] = "__stateNumber__"
+                        relationships.add(
+                            RelationshipModel(
+                                name = scaleRelations[5],
+                                parent = null,
+                                argsClasses = args.plus(args[0]),
+                                scaleType = null,
+                                relationType = null,
+                                reverseRelName = null,
+                                transitiveClosureRelName = null,
+                                reverseTransitiveClosureRelName = null,
+                                isBetweenRelName = null,
+                                isCloserToThanRelName = null,
+                                isFurtherFromThanRelName = null,
+                                flags = 0,
+                                varsCount = IS_FURTHER_FROM_THAN_VAR_COUNT,
+                                head = IS_FURTHER_FROM_THAN_PATTERN.replace(
+                                    "<numberPredicate>",
+                                    genLink(POAS_PREF, scalePredicate)
+                                ),
+                                rules = null
+                            )
+                        )
+                    }
 
-        // Добавляем шаблоны
-        patterns["has"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "has")} <arg2>)\n", ""))
-        patterns["belongsTo"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "belongsTo")} <arg2>)\n", ""))
-        patterns["directlyLeftOf"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "directlyLeftOf")} <arg2>)\n", ""))
-        patterns["directlyRightOf"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "directlyRightOf")} <arg2>)\n", ""))
-        patterns["isOperandOf"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "isOperandOf")} <arg2>)\n", ""))
-        patterns["isOperatorTo"] = Pair(0, Pair("(<arg1> ${genLink(POAS_PREF, "isOperatorTo")} <arg2>)\n", ""))
+                    ScaleType.Partial -> {
+                        TODO("Отношения частичного порядка")
+                    }
 
-        patterns["leftOf"] = Pair(LEFT_OF_VAR_COUNT, Pair(LEFT_OF_PATTERN, ""))
-        patterns["rightOf"] = Pair(RIGHT_OF_VAR_COUNT, Pair(RIGHT_OF_PATTERN, ""))
-        patterns["isBetween"] = Pair(IS_BETWEEN_VAR_COUNT, Pair(IS_BETWEEN_PATTERN, ""))
-        patterns["isCloserToThan"] = Pair(IS_CLOSER_TO_THAN_VAR_COUNT, Pair(IS_CLOSER_TO_THAN_PATTERN, ""))
-        patterns["isFurtherFromThan"] = Pair(IS_FURTHER_FROM_THAN_VAR_COUNT, Pair(IS_FURTHER_FROM_THAN_PATTERN, ""))
+                    else -> {}
+                }
+
+                relationships.add(
+                    RelationshipModel(
+                        name = name,
+                        parent = parent,
+                        argsClasses = args,
+                        scaleType = scaleType,
+                        relationType = relationType,
+                        reverseRelName = scaleRelations?.get(0),
+                        transitiveClosureRelName = scaleRelations?.get(1),
+                        reverseTransitiveClosureRelName = scaleRelations?.get(2),
+                        isBetweenRelName = scaleRelations?.get(3),
+                        isCloserToThanRelName = scaleRelations?.get(4),
+                        isFurtherFromThanRelName = scaleRelations?.get(5),
+                        flags = flags,
+                        varsCount = null,
+                        head = null,
+                        rules = null
+                    )
+                )
+            }
+        }
     }
 
     // ++++++++++++++++++++++++++++++++++++ Методы +++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    /**
-     * Использованы ли отношения линейной шкалы
-     * @return true - если использованы, иначе - false
-     */
-    fun isLinerScaleUsed(): Boolean = isLinerScaleUsed
+    internal fun forEach(block: (RelationshipModel) -> Unit) {
+        relationships.forEach(block)
+    }
 
     /**
-     * Получить вспомогательные правила для работы правил линейной шкалы
-     * @return Вспомогательные правила для работы правил линейной шкалы
+     * Получить предикат порядковой шкалы для отношения
+     * @param name Имя отношения
      */
-    fun auxiliaryLinerScaleRules(): String = auxiliaryLinerScaleRules
-
-    const val auxiliaryLibraryRules: String = ""
+    internal fun getScalePredicate(name: String) = scalePredicates[name]
 
     /**
-     * Ялвяется ли отношение частью "библиотеки" линейной шкалы
+     * Получить модель отношения по имени
+     * @param name Имя отношения
      */
-    fun isLinerScaleRelationship(relationshipName: String): Boolean = linerScaleRelationships.contains(relationshipName)
+    internal fun get(name: String) = relationships.firstOrNull { it.name == name }
 
     /**
      * Существует ли отношение
-     * @param relationshipName Имя отношения
-     * @return true - если существует, иначе - false
+     * @param name Имя отношения
      */
-    fun exist(relationshipName: String): Boolean = relationships.containsKey(relationshipName)
+    fun exist(name: String) = relationships.any { it.name == name }
 
     /**
      * Получить список классов аргументов
-     * @param relationshipName Имя отношения
-     * @param linerPredicate Предикат линейной шкалы
-     * @return Список классов аргументов
+     * @param name Имя отношения
      */
-    fun args(relationshipName: String, linerPredicate: String? = null): List<String>? {
-        return if (isLinerScaleRelationship(relationshipName) && linerPredicate != null) {
-            relationships[linerRelationships[Pair(relationshipName, linerPredicate)]]
-        } else {
-            relationships[relationshipName]
-        }
-    }
+    fun args(name: String) = get(name)?.argsClasses
 
     /**
      * Получить количество переменных в шаблоне правила
-     * @param relationshipName Имя отношения
-     * @param linerPredicate Предикат линейной шкалы
-     * @return Количество переменных в шаблоне
+     * @param name Имя отношения
      */
-    fun varCount(relationshipName: String, linerPredicate: String? = null): Int? {
-        return if (isLinerScaleRelationship(relationshipName) && linerPredicate != null) {
-            patterns[linerRelationships[Pair(relationshipName, linerPredicate)]]?.first
-        } else {
-            if (!exist(relationshipName)) null else patterns[relationshipName]?.first
-        }
-    }
+    fun varsCount(name: String) = get(name)?.varsCount
 
     /**
-     * Получить шаблон правила
-     * @param relationshipName Имя отношения
-     * @param linerPredicate Предикат линейной шкалы
-     * @return Шаблон правила
+     * Получить голову правила для проверки отношения
+     * @param name Имя отношения
      */
-    fun pattern(relationshipName: String, linerPredicate: String? = null): Pair<String, String>? {
-        return if (isLinerScaleRelationship(relationshipName) && linerPredicate != null && numberPredicates.containsKey(linerPredicate)) {
-            val pattern = pattern(relationshipName)!!
+    fun head(name: String) = get(name)?.head
 
-            var ruleHead = pattern.first
-            ruleHead = ruleHead.replace("<numberPredicate>", genLink(POAS_PREF, numberPredicates[linerPredicate]!!))
-
-            Pair(ruleHead, pattern.second)
-        } else {
-            patterns[relationshipName]?.second
-        }
-    }
+    /**
+     * Получить завершенные правила для проверки отношения
+     * @param name Имя отношения
+     */
+    fun rules(name: String) = get(name)?.rules
 }
