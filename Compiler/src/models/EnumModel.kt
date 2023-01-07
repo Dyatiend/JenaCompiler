@@ -1,5 +1,7 @@
 package models
 
+import dictionaries.EnumsDictionary
+
 /**
  * Модель перечисления в предметной области
  * @param name Имя перечисления
@@ -16,10 +18,19 @@ data class EnumModel(
         require(name.isNotBlank()) {
             "Некорректное имя перечисления."
         }
+        require(!EnumsDictionary.exist(name)) {
+            "Перечисление $name уже объявлено в словаре."
+        }
         require(values.isNotEmpty()) {
             "Перечисление $name не содержит значений."
         }
     }
+
+    /**
+     * Является ли перечисление линейным
+     */
+    val isLiner
+        get() = linerPredicate != null
 
     /**
      * Содержит ли перечисление указанное значение
