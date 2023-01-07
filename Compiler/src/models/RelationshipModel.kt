@@ -17,6 +17,9 @@ import dictionaries.RelationshipsDictionary
  * @param isCloserToThanRelName Имя отношения типа "ближе"
  * @param isFurtherFromThanRelName Имя отношения типа "дальше"
  * @param flags Флаги свойств отношения
+ * @param varsCount Количество переменных в правиле для вычисления
+ * @param head Голова правила для проверки отношения
+ * @param rules Завершенные правила для проверки отношения
  */
 data class RelationshipModel(
     val name: String,
@@ -30,7 +33,10 @@ data class RelationshipModel(
     val isBetweenRelName: String?,
     val isCloserToThanRelName: String?,
     val isFurtherFromThanRelName: String?,
-    val flags: Int
+    val flags: Int,
+    val varsCount: Int,
+    val head: String,
+    val rules: String
 ) {
 
     init {
