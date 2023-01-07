@@ -25,7 +25,7 @@ data class ClassModel(
             "Класс $name уже объявлен в словаре."
         }
         require(parent == null || ClassesDictionary.exist(parent.name)) {
-            "Класс $parent не объявлен в словаре."
+            "Класс ${parent?.name} не объявлен в словаре."
         }
         require(calcExpr == null || calcExpr.resultDataType == DataType.Boolean) {
             "Выражение для вычисления класса $name должно иметь тип Boolean, но имеет тип ${calcExpr?.resultDataType}."

@@ -1,64 +1,107 @@
 package models
 
+import dictionaries.ClassesDictionary
+import dictionaries.RelationshipsDictionary
+
 /**
  * Модель отношения в предметной области
  * @param name Имя отношения
- * @param parent Имя родительского отношения
- * @param args Имена классов аргументов
+ * @param parent Модель родительского отношения
+ * @param argsClasses Модели классов аргументов
  * @param scaleType Тип порядковой шкалы
  * @param relationType Тип связи между классами
- * @param reverse Имя обратного отношения
- * @param transitiveClosure Имя транзитивного замыкания
- * @param reverseTransitiveClosure Имя обратного транзитивного замыкания
- * @param between Имя отношения типа "между"
- * @param closerToThan Имя отношения типа "ближе"
- * @param furtherFromThan Имя отношения типа "дальше"
+ * @param reverse Обратное отношение
+ * @param transitiveClosure Отношение транзитивного замыкания
+ * @param reverseTransitiveClosure Отношение обратного транзитивного замыкания
+ * @param between Отношение типа "между"
+ * @param closerToThan Отношение типа "ближе"
+ * @param furtherFromThan Отношение типа "дальше"
  * @param flags Флаги свойств отношения
+ * @see ClassModel
  */
 data class RelationshipModel(
     val name: String,
-    val parent: String?,
-    val args: List<String>,
+    val parent: RelationshipModel?,
+    val argsClasses: List<ClassModel>,
     val scaleType: ScaleType?,
     val relationType: RelationType?,
-    val reverse: String?,
-    val transitiveClosure: String?,
-    val reverseTransitiveClosure: String?,
-    val between: String?,
-    val closerToThan: String?,
-    val furtherFromThan: String?,
+    val reverse: RelationshipModel?,
+    val transitiveClosure: RelationshipModel?,
+    val reverseTransitiveClosure: RelationshipModel?,
+    val between: RelationshipModel?,
+    val closerToThan: RelationshipModel?,
+    val furtherFromThan: RelationshipModel?,
     val flags: Int
 ) {
+
+    init {
+        require(name.isNotBlank()) {
+            "Некорректное имя отношения."
+        }
+        require(!RelationshipsDictionary.exist(name, argsClasses)) {
+            "Отношение $name уже объявлено в словаре."
+        }
+        require(parent == null || RelationshipsDictionary.exist(parent)) {
+            "Отношение ${parent?.name} не объявлено в словаре."
+        }
+        require(argsClasses.size >= 2) {
+            "Отношение $name имеет меньше двух аргументов."
+        }
+        argsClasses.forEach {
+            require(ClassesDictionary.exist(it.name)) {
+                "Класс $it не объявлен в словаре."
+            }
+        }
+        require(
+            scaleType == null || reverse != null
+                    && transitiveClosure != null && reverseTransitiveClosure != null
+                    && between != null && closerToThan != null && furtherFromThan != null
+        ) {
+            "Не указано одно из отношений порядковой шкалы для отношения $name."
+        }
+        require(scaleType == null || argsClasses.size == 2 && argsClasses[0] == argsClasses[1]) {
+            "Отношение порядковой шкалы может быть только бинарным и только между объектами одного класса."
+        }
+        require(flags < 128) {
+            "Некорректный набор флагов."
+        }
+    }
 
     /**
      * Является ли отношение симметричным
      */
-    fun isSymmetric() = flags and SYMMETRIC
+    val isSymmetric
+        get() = flags and SYMMETRIC != 0
 
     /**
      * Является ли отношение анти-симметричным
      */
-    fun isAntisymmetric() = flags and ANTISYMMETRIC
+    val isAntisymmetric
+        get() = flags and ANTISYMMETRIC != 0
 
     /**
      * Является ли отношение рефлексивным
      */
-    fun isReflexive() = flags and REFLEXIVE
+    val isReflexive
+        get() = flags and REFLEXIVE != 0
 
     /**
      * Является ли отношение анти-рефлексивным (строгим)
      */
-    fun isStrict() = flags and STRICT
+    val isStrict
+        get() = flags and STRICT != 0
 
     /**
      * Является ли отношение транзитивным
      */
-    fun isTransitive() = flags and TRANSITIVE
+    val isTransitive
+        get() = flags and TRANSITIVE != 0
 
     /**
      * Является ли отношение анти-транзитивным
      */
-    fun isIntransitive() = flags and INTRANSITIVE
+    val isIntransitive
+        get() = flags and INTRANSITIVE != 0
 
     companion object {
 
@@ -112,7 +155,7 @@ data class RelationshipModel(
                 fun valueOf(value: String) = when (value) {
                     "ONE_TO_ONE" -> OneToOne
                     "ONE_TO_MANY" -> OneToMany
-                    else -> throw IllegalArgumentException("No object models.RelationshipModel.RelationType.$value")
+                    else -> null
                 }
             }
         }
@@ -137,7 +180,7 @@ data class RelationshipModel(
                 fun valueOf(value: String) = when (value) {
                     "LINER" -> Liner
                     "PARTIAL" -> Partial
-                    else -> throw IllegalArgumentException("No object models.RelationshipModel.ScaleType.$value")
+                    else -> null
                 }
             }
         }
