@@ -71,8 +71,9 @@ data class PropertyModel(
      */
     fun isValueInRange(value: Int): Boolean {
         if (dataType != DataType.Integer) return false
+        if (valuesRanges.isNullOrEmpty()) return true
 
-        valuesRanges?.forEach {
+        valuesRanges.forEach {
             if (value.toDouble() in it.first..it.second) return true
         }
         return false
@@ -84,8 +85,9 @@ data class PropertyModel(
      */
     fun isValueInRange(value: Double): Boolean {
         if (dataType != DataType.Double) return false
+        if (valuesRanges.isNullOrEmpty()) return true
 
-        valuesRanges?.forEach {
+        valuesRanges.forEach {
             if (value in it.first..it.second) return true
         }
         return false
