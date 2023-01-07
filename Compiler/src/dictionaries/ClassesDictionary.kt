@@ -3,7 +3,8 @@ package dictionaries
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
 import compiler.Operator
-import dictionaries.util.COL_DELIMITER
+import dictionaries.util.COLUMNS_SEPARATOR
+import models.ClassModel
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -13,34 +14,13 @@ import java.nio.file.Paths
  */
 object ClassesDictionary {
 
-    // +++++++++++++++++++++++++++++++++ Константы +++++++++++++++++++++++++++++++++
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    /**
-     * Имя переменной в выражении для вычисления класса
-     */
-    const val CALCULATION_VAR_NAME = "obj"
-
     // +++++++++++++++++++++++++++++++++ Свойства ++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
      * Список классов
-     *
-     * key - класс,
-     * val - предок
      */
-    private var classes: MutableMap<String, String?> = HashMap()
-
-    /**
-     * Вычисляемые классы
-     *
-     * Класс вычисляется путем вычисления boolean выражения над объектом
-     *
-     * key - класс,
-     * val - выражение для вычисления
-     */
-    private var calculations: MutableMap<String, Operator> = HashMap()
+    private val classes: MutableList<ClassModel> = mutableListOf()
 
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -52,10 +32,9 @@ object ClassesDictionary {
     internal fun init(path: String) {
         // Очищаем старые значения
         classes.clear()
-        calculations.clear()
 
         // Создаем объекты
-        val parser = CSVParserBuilder().withSeparator(COL_DELIMITER).build()
+        val parser = CSVParserBuilder().withSeparator(COLUMNS_SEPARATOR).build()
         val bufferedReader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)
         val csvReader = CSVReaderBuilder(bufferedReader).withCSVParser(parser).build()
 
@@ -64,20 +43,17 @@ object ClassesDictionary {
             val rows = reader.readAll()
 
             rows.forEach { row ->
-                // Считываем классы
-                classes[row[0]] = row[1].ifBlank { null }
+                val name = row[0]
+                val parent = row[1].ifBlank { null }
+                val calcExpr = if (row[2].isNotBlank()) Operator.fromXMLString(row[2]) else null
 
-                // Если класс вычисляемый
-                if (row[2].isNotBlank()) {
-                    // Считываем XML и стоки с собираем дерево
-                    val calculation = Operator.fromXMLString(row[2])
-
-                    // Проверяем, что дерево построено
-                    require(calculation != null) { "Некорректное выражения для вычисления класса ${row[0]}." }
-
-                    // Записываем
-                    calculations[row[0]] = calculation
-                }
+                classes.add(
+                    ClassModel(
+                        name = name,
+                        parent = get(parent),
+                        calcExpr = calcExpr
+                    )
+                )
             }
         }
     }
@@ -86,34 +62,39 @@ object ClassesDictionary {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
-     * Существует ли класс
-     * @param className Имя класса
-     * @return true - если существует, иначе - false
+     * Получить модель класса по имени
+     * @param name Имя класса
      */
-    fun exist(className: String) = classes.containsKey(className)
+    private fun get(name: String?) = classes.firstOrNull { it.name == name }
+
+    /**
+     * Существует ли класс
+     * @param name Имя класса
+     */
+    fun exist(name: String) = classes.any { it.name == name }
 
     /**
      * Является ли класс родителем другого
-     * @param parent Родитель
      * @param child Ребенок
-     * @return true - если является, иначе - false
+     * @param parent Родитель
      */
-    fun isParentOf(parent: String, child: String): Boolean {
-        if (!exist(parent) || !exist(child)) return false
-        return if (classes[child] == parent) true else isParentOf(parent, classes[child]!!)
+    fun isParentOf(child: String, parent: String): Boolean {
+        val childModel = get(child)
+        val parentModel = get(parent)
+        if (!exist(child) || !exist(parent) || childModel?.parent == null) return false
+        return if (childModel.parent == parentModel) true else isParentOf(childModel.parent.name, parentModel!!.name)
     }
 
     /**
      * Вычисляемый ли класс
-     * @param className Имя класса
-     * @return true - если вычисляемый, иначе - false
+     * @param name Имя класса
      */
-    fun isCalculable(className: String) = calculations.containsKey(className)
+    fun isCalculable(name: String) = get(name)?.calcExpr != null
 
     /**
-     * Как вычислить класс
-     * @param className Имя класса
+     * Получить выражение для вычисления класса
+     * @param name Имя класса
      * @return Выражение для вычисления
      */
-    fun calculation(className: String) = calculations[className]
+    fun calcExpr(name: String) = get(name)?.calcExpr
 }
