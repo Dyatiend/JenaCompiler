@@ -65,7 +65,7 @@ object ClassesDictionary {
      * Получить модель класса по имени
      * @param name Имя класса
      */
-    private fun get(name: String?) = classes.firstOrNull { it.name == name }
+    fun get(name: String?) = classes.firstOrNull { it.name == name }
 
     /**
      * Существует ли класс

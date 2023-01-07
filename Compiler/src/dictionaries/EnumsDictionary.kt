@@ -2,8 +2,9 @@ package dictionaries
 
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
-import dictionaries.util.COL_DELIMITER
-import dictionaries.util.LIST_DELIMITER
+import dictionaries.util.COLUMNS_SEPARATOR
+import dictionaries.util.LIST_ITEMS_SEPARATOR
+import models.EnumModel
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -18,19 +19,8 @@ object EnumsDictionary {
 
     /**
      * Список перечислений
-     *
-     * key - имя перечисления,
-     * val - возможные значения
      */
-    private var enums: MutableMap<String, List<String>> = HashMap()
-
-    /**
-     * Список линейных перечислений
-     *
-     * key - имя перечисления,
-     * val - имя связи в RDF которая задает порядок
-     */
-    private var linerEnums: MutableMap<String, String> = HashMap()
+    private val enums: MutableList<EnumModel> = mutableListOf()
 
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -44,7 +34,7 @@ object EnumsDictionary {
         enums.clear()
 
         // Создаем объекты
-        val parser = CSVParserBuilder().withSeparator(COL_DELIMITER).build()
+        val parser = CSVParserBuilder().withSeparator(COLUMNS_SEPARATOR).build()
         val bufferedReader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)
         val csvReader = CSVReaderBuilder(bufferedReader).withCSVParser(parser).build()
 
@@ -53,20 +43,22 @@ object EnumsDictionary {
             val rows = reader.readAll()
 
             rows.forEach { row ->
-                // Проверяем, что enum содержит хоть одно значение
-                require(row[1].split(LIST_DELIMITER).isNotEmpty()) { "Enum ${row[0]} не содержит значений." }
+                val name = row[0]
+                val values = row[1].split(LIST_ITEMS_SEPARATOR).filter { it.isNotBlank() }
+                val isLiner = row[3].toBoolean()
+                val linerPredicate = row[4].ifBlank { null }
 
-                // Добавляем в список enum и его значения
-                enums[row[0]] = row[1].split(LIST_DELIMITER)
-
-                // Если enum линейный
-                if (row[2].toBoolean()) {
-                    // Проверяем, что связь, задающая порядок, указана
-                    require(row[3].isNotBlank()) { "Для линейного enum ${row[0]} не указана связь, задающая порядок." }
-
-                    // Добавляем в список линейных enum
-                    linerEnums[row[0]] = row[3]
+                require(!isLiner || linerPredicate != null) {
+                    "Для линейного перечисления $name не указан линейный предикат."
                 }
+
+                enums.add(
+                    EnumModel(
+                        name = name,
+                        values = values,
+                        linerPredicate = linerPredicate
+                    )
+                )
             }
         }
     }
@@ -75,38 +67,41 @@ object EnumsDictionary {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
-     * Существует ли enum
-     * @param name Имя enum
-     * @return true - если существует, иначе - false
+     * Получить модель перечисления по имени
+     * @param name Имя перечисления
      */
-    fun exist(name: String) = enums.containsKey(name)
+    private fun get(name: String) = enums.firstOrNull { it.name == name }
 
     /**
-     * Содержит ли enum указанное значение
-     * @param name Имя enum
+     * Существует ли перечисление
+     * @param name Имя перечисления
+     */
+    fun exist(name: String) = enums.any { it.name == name }
+
+    /**
+     * Содержит ли перечисление указанное значение
+     * @param name Имя перечисления
      * @param value Значение
-     * @return true - если enum содержит такое значение, иначе - false
      */
-    fun containsValue(name: String, value: String) = enums[name]?.contains(value) ?: false
+    fun containsValue(name: String, value: String) = get(name)?.containsValue(value)
 
     /**
-     * Получить список всех значений enum
-     * @param name Имя enum
+     * Получить список всех значений перечисления
+     * @param name Имя перечисления
      * @return Список всех значений
      */
-    fun values(name: String) = enums[name]
+    fun values(name: String) = get(name)?.values
 
     /**
-     * Является ли enum линейным
-     * @param name Имя enum
-     * @return true - если является, иначе - false
+     * Является ли перечисление линейным
+     * @param name Имя перечисления
      */
-    fun isLiner(name: String) = linerEnums.containsKey(name)
+    fun isLiner(name: String) = get(name)?.linerPredicate != null
 
     /**
      * Получить линейный предикат перечисления
-     * @param name Имя enum
+     * @param name Имя перечисления
      * @return Линейный предикат перечисления, задающий порядок
      */
-    fun linerPredicate(name: String) = linerEnums[name]
+    fun linerPredicate(name: String) = get(name)?.linerPredicate
 }

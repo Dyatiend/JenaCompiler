@@ -2,12 +2,13 @@ package dictionaries
 
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
-import dictionaries.util.COL_DELIMITER
+import dictionaries.util.COLUMNS_SEPARATOR
+import models.DecisionTreeVarModel
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 
-// TODO: может быть вычислен
+// TODO: вычислять по дереву
 /**
  * Словарь переменных дерева мысли
  */
@@ -17,12 +18,9 @@ object DecisionTreeVarsDictionary {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
-     * Переменные дерева мысли
-     *
-     * key - имя переменной,
-     * val - класс переменной
+     * Список переменных дерева мысли
      */
-    private var decisionTreeVars: MutableMap<String, String> = HashMap()
+    private val decisionTreeVars: MutableList<DecisionTreeVarModel> = mutableListOf()
 
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -36,7 +34,7 @@ object DecisionTreeVarsDictionary {
         decisionTreeVars.clear()
 
         // Создаем объекты
-        val parser = CSVParserBuilder().withSeparator(COL_DELIMITER).build()
+        val parser = CSVParserBuilder().withSeparator(COLUMNS_SEPARATOR).build()
         val bufferedReader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)
         val csvReader = CSVReaderBuilder(bufferedReader).withCSVParser(parser).build()
 
@@ -45,12 +43,20 @@ object DecisionTreeVarsDictionary {
             val rows = reader.readAll()
 
             rows.forEach { row ->
-                // Проверяем, что класс переменной не пустой и существует
-                require(row[1].isNotBlank()) { "Не указан класс переменной ${row[0]}." }
-                require(ClassesDictionary.exist(row[1])) { "Класс ${row[0]} не объявлен в словаре." }
+                val name = row[0]
+                val className = row[1]
+                val classModel = ClassesDictionary.get(className)
 
-                // Считываем классы переменных
-                decisionTreeVars[row[0]] = row[1]
+                require(classModel != null) {
+                    "Класс $className не объявлен в словаре."
+                }
+
+                decisionTreeVars.add(
+                    DecisionTreeVarModel(
+                        name = name,
+                        classModel = classModel
+                    )
+                )
             }
         }
     }
@@ -59,9 +65,17 @@ object DecisionTreeVarsDictionary {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
-     * Получить класс переменной дерева мысли
-     * @param varName Имя переменной
-     * @return Класс переменной
+     * Получить модель переменной по имени
+     * @param name Имя переменной
      */
-    fun getClass(varName: String) = decisionTreeVars[varName]
+    private fun get(name: String) = decisionTreeVars.firstOrNull { it.name == name }
+
+    fun exist(name: String) = false
+
+    /**
+     * Получить класс переменной дерева мысли
+     * @param name Имя переменной
+     * @return Имя класса переменной
+     */
+    fun getClass(name: String) = get(name)?.classModel
 }
