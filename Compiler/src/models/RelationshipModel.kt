@@ -6,31 +6,30 @@ import dictionaries.RelationshipsDictionary
 /**
  * Модель отношения в предметной области
  * @param name Имя отношения
- * @param parent Модель родительского отношения
- * @param argsClasses Модели классов аргументов
+ * @param parent Имя родительского отношения
+ * @param argsClasses Имена классов аргументов
  * @param scaleType Тип порядковой шкалы
  * @param relationType Тип связи между классами
- * @param reverse Обратное отношение
- * @param transitiveClosure Отношение транзитивного замыкания
- * @param reverseTransitiveClosure Отношение обратного транзитивного замыкания
- * @param between Отношение типа "между"
- * @param closerToThan Отношение типа "ближе"
- * @param furtherFromThan Отношение типа "дальше"
+ * @param reverseRelName Имя обратного отношения
+ * @param transitiveClosureRelName Имя отношения транзитивного замыкания
+ * @param reverseTransitiveClosureRelName Имя отношения обратного транзитивного замыкания
+ * @param isBetweenRelName Имя отношения типа "между"
+ * @param isCloserToThanRelName Имя отношения типа "ближе"
+ * @param isFurtherFromThanRelName Имя отношения типа "дальше"
  * @param flags Флаги свойств отношения
- * @see ClassModel
  */
 data class RelationshipModel(
     val name: String,
-    val parent: RelationshipModel?,
-    val argsClasses: List<ClassModel>,
+    val parent: String?,
+    val argsClasses: List<String>,
     val scaleType: ScaleType?,
     val relationType: RelationType?,
-    val reverse: RelationshipModel?,
-    val transitiveClosure: RelationshipModel?,
-    val reverseTransitiveClosure: RelationshipModel?,
-    val between: RelationshipModel?,
-    val closerToThan: RelationshipModel?,
-    val furtherFromThan: RelationshipModel?,
+    val reverseRelName: String?,
+    val transitiveClosureRelName: String?,
+    val reverseTransitiveClosureRelName: String?,
+    val isBetweenRelName: String?,
+    val isCloserToThanRelName: String?,
+    val isFurtherFromThanRelName: String?,
     val flags: Int
 ) {
 
@@ -38,32 +37,52 @@ data class RelationshipModel(
         require(name.isNotBlank()) {
             "Некорректное имя отношения."
         }
-        require(!RelationshipsDictionary.exist(name, argsClasses)) {
+        require(!RelationshipsDictionary.exist(name)) {
             "Отношение $name уже объявлено в словаре."
         }
         require(parent == null || RelationshipsDictionary.exist(parent)) {
-            "Отношение ${parent?.name} не объявлено в словаре."
+            "Отношение $parent не объявлено в словаре."
         }
         require(argsClasses.size >= 2) {
             "Отношение $name имеет меньше двух аргументов."
         }
         argsClasses.forEach {
-            require(ClassesDictionary.exist(it.name)) {
+            require(ClassesDictionary.exist(it)) {
                 "Класс $it не объявлен в словаре."
             }
         }
         require(
-            scaleType == null || reverse != null
-                    && transitiveClosure != null && reverseTransitiveClosure != null
-                    && between != null && closerToThan != null && furtherFromThan != null
+            scaleType == null
+                    || reverseRelName != null
+                    && transitiveClosureRelName != null
+                    && reverseTransitiveClosureRelName != null
+                    && isBetweenRelName != null
+                    && isCloserToThanRelName != null
+                    && isFurtherFromThanRelName != null
+                    && RelationshipsDictionary.exist(reverseRelName)
+                    && RelationshipsDictionary.exist(transitiveClosureRelName)
+                    && RelationshipsDictionary.exist(reverseTransitiveClosureRelName)
+                    && RelationshipsDictionary.exist(isBetweenRelName)
+                    && RelationshipsDictionary.exist(isCloserToThanRelName)
+                    && RelationshipsDictionary.exist(isFurtherFromThanRelName)
         ) {
-            "Не указано одно из отношений порядковой шкалы для отношения $name."
+            "Для отношения $name не указано одно из отношений порядковой шкалы или оно не объявлено в словаре."
         }
         require(scaleType == null || argsClasses.size == 2 && argsClasses[0] == argsClasses[1]) {
             "Отношение порядковой шкалы может быть только бинарным и только между объектами одного класса."
         }
-        require(flags < 128) {
-            "Некорректный набор флагов."
+        when (scaleType) {
+            ScaleType.Liner -> require(flags == 6) {
+                "Некорректный набор флагов для отношения линейного порядка."
+            }
+
+            ScaleType.Partial -> require(flags == 22) {
+                "Некорректный набор флагов для отношения частичного порядка."
+            }
+
+            else -> require(flags < 64) {
+                "Некорректный набор флагов."
+            }
         }
     }
 
@@ -108,32 +127,32 @@ data class RelationshipModel(
         /**
          * Флаг симметричности отношения
          */
-        const val SYMMETRIC = 2
+        const val SYMMETRIC = 1
 
         /**
          * Флаг анти-симметричности отношения
          */
-        const val ANTISYMMETRIC = 4
+        const val ANTISYMMETRIC = 2
 
         /**
          * Флаг рефлексивности отношения
          */
-        const val REFLEXIVE = 8
+        const val REFLEXIVE = 4
 
         /**
          * Флаг анти-рефлексивности (строгости) отношения
          */
-        const val STRICT = 16
+        const val STRICT = 8
 
         /**
          * Флаг транзитивности отношения
          */
-        const val TRANSITIVE = 32
+        const val TRANSITIVE = 16
 
         /**
          * Флаг анти-транзитивности отношения
          */
-        const val INTRANSITIVE = 64
+        const val INTRANSITIVE = 32
 
         /**
          * Типы связей между классами
