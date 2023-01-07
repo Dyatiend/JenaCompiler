@@ -1,124 +1,141 @@
 package dictionaries
 
+import com.opencsv.CSVParserBuilder
+import com.opencsv.CSVReaderBuilder
+import dictionaries.util.COLUMNS_SEPARATOR
+import dictionaries.util.LIST_ITEMS_SEPARATOR
+import models.PropertyModel
 import util.DataType
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
 
 /**
  * Словарь свойств
  */
 object PropertiesDictionary {
 
+    // +++++++++++++++++++++++++++++++++ Константы +++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    /**
+     * Разделитель возможных значений у свойств
+     */
+    private const val RANGE_SEPARATOR = '-'
+
     // +++++++++++++++++++++++++++++++++ Свойства ++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
-     * Свойства
-     * row - имя свойства
-     * val - First - список классов с данным свойством, null - если относится к объекту, Second - тип данных
+     * Список свойств
      */
-    private val properties: MutableMap<String, Pair<List<String>?, DataType>> = HashMap()
-
-    /**
-     * Enum свойства
-     * row - имя свойства
-     * val - Отношение, определяющее порядок значений линейного enum
-     */
-    private val enums: MutableMap<String, String?> = HashMap()
+    private val properties: MutableList<PropertyModel> = mutableListOf()
 
     // ++++++++++++++++++++++++++++++++ Инициализация ++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    fun init(path: String) {
+    /**
+     * Инициализирует словарь данными
+     * @param path Путь с фалу с данными для словаря
+     */
+    internal fun init(path: String) {
         // Очищаем старые значения
         properties.clear()
 
-        // TODO: чтение из файла
+        // Создаем объекты
+        val parser = CSVParserBuilder().withSeparator(COLUMNS_SEPARATOR).build()
+        val bufferedReader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)
+        val csvReader = CSVReaderBuilder(bufferedReader).withCSVParser(parser).build()
 
-        // Добавляем свойства
-        properties["countOfTokens"] = Pair(listOf(
-                "element", "plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"
-        ), DataType.Integer)
-        properties["arity"] = Pair(listOf(
-                "plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"
-        ), DataType.Enum)
-        properties["place"] = Pair(listOf(
-                "plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"
-        ), DataType.Enum)
-        properties["precedence"] = Pair(listOf(
-                "plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"
-        ), DataType.Integer)
-        properties["associativity"] = Pair(listOf(
-                "plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"
-        ), DataType.Enum)
-        properties["needsLeftOperand"] = Pair(listOf(
-                "plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"
-        ), DataType.Boolean)
-        properties["needsRightOperand"] = Pair(listOf(
-                "plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"
-        ), DataType.Boolean)
-        properties["needsInnerOperand"] = Pair(listOf(
-                "plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"
-        ), DataType.Boolean)
-        properties["hasStrictOperandOrder"] = Pair(listOf(
-                "plus", "minus", "multiplication",
-                "division", "squareParenthesis", "parenthesis"
-        ), DataType.Boolean)
+        // Считываем файл
+        csvReader.use { reader ->
+            val rows = reader.readAll()
 
-        properties["state"] = Pair(null, DataType.LinerEnum)
-        properties["evaluatesTo"] = Pair(null, DataType.Enum)
+            rows.forEach { row ->
+                val name = row[0]
+                val dataType = DataType.valueOf(row[1])
+                val enumName = row[2].ifBlank { null }
+                val isStatic = row[3].toBoolean()
+                val owners = row[4].split(LIST_ITEMS_SEPARATOR).filter {
+                    it.isNotBlank()
+                }.ifEmpty { null }
+                val valuesRanges = row[5].split(LIST_ITEMS_SEPARATOR).filter {
+                    it.isNotBlank()
+                }.map {
+                    Pair(
+                        it.split(RANGE_SEPARATOR)[0].toDouble(),
+                        it.split(RANGE_SEPARATOR)[1].toDouble()
+                    )
+                }.ifEmpty { null }
 
-        enums["state"] = "state_directlyLeftOf"
+                require(dataType != null) {
+                    "Некорректный тип данных ${row[1]}."
+                }
+                require(!isStatic || !owners.isNullOrEmpty()) {
+                    "Свойством $name не обладает ни один класс."
+                }
+                owners?.forEach {
+                    require(ClassesDictionary.exist(it)) {
+                        "Класс $it не объявлен в словаре."
+                    }
+                }
+
+                properties.add(
+                    PropertyModel(
+                        name = name,
+                        dataType = dataType,
+                        enumName = enumName,
+                        owners = owners,
+                        valuesRanges = valuesRanges
+                    )
+                )
+            }
+        }
     }
 
     // ++++++++++++++++++++++++++++++++++++ Методы +++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /**
-     * Существует ли свойство
-     * @param propertyName Имя свойства
-     * @return true - если существует, иначе - false
+     * Получить модель свойства по имени
+     * @param name Имя свойства
      */
-    fun exist(propertyName: String): Boolean = properties.containsKey(propertyName)
+    internal fun get(name: String) = properties.firstOrNull { it.name == name }
+
+    /**
+     * Существует ли свойство
+     * @param name Имя свойства
+     */
+    fun exist(name: String) = properties.any { it.name == name }
 
     /**
      * Является ли статическим
-     * @param propertyName Имя свойства
-     * @return true - если относится к классу, false - если к объекту
+     * @param name Имя свойства
      */
-    fun isStatic(propertyName: String): Boolean {
-        return if (!exist(propertyName)) false else properties[propertyName]?.first != null
-    }
+    fun isStatic(name: String) = get(name)?.isStatic
 
     /**
-     * Тип данных
-     * @param propertyName Имя свойства
-     * @return Тип данных
+     * Получить имя перечисления свойства
+     * @param name Имя свойства
+     * @return Имя перечисления
      */
-    fun dataType(propertyName: String): DataType? {
-        return if (!exist(propertyName)) null else properties[propertyName]!!.second
-    }
+    fun enumName(name: String) = get(name)?.enumName
 
     /**
-     * Получить отношение, задающее порядок значений enum свойства
+     * Тип данных свойства
+     * @param name Имя свойства
      */
-    fun orderRelationship(propertyName: String): String? = enums[propertyName]
+    fun dataType(name: String) = get(name)?.dataType
 
     /**
      * Переопределяется ли свойство
-     * @param propertyName Имя свойства
-     * @return true - если переопределяется, иначе - false
+     * @param name Имя свойства
      */
-    fun isPropertyBeingOverridden(propertyName: String): Boolean {
-        if (!exist(propertyName)) return false
-        if (properties[propertyName]?.first == null) return false
-        val classes: List<String> = properties[propertyName]?.first!!
+    fun isPropertyBeingOverridden(name: String): Boolean {
+        if (!exist(name)) return false
+        if (isStatic(name) != true) return false
+
+        val classes = get(name)?.owners!!
         for (i in classes.indices) {
             for (j in classes.indices) {
                 if (i == j) continue
@@ -129,4 +146,18 @@ object PropertiesDictionary {
         }
         return false
     }
+
+    /**
+     * Попадает ли значение в один из диапазонов свойства
+     * @param name Имя свойства
+     * @param value Значение
+     */
+    fun isValueInRange(name: String, value: Int) = get(name)?.isValueInRange(value)
+
+    /**
+     * Попадает ли значение в один из диапазонов свойства
+     * @param name Имя свойства
+     * @param value Значение
+     */
+    fun isValueInRange(name: String, value: Double) = get(name)?.isValueInRange(value)
 }
