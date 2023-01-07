@@ -9,18 +9,16 @@ import util.DataType
  * Модель свойства в предметной области
  * @param name Имя свойства
  * @param dataType Тип данных свойства
- * @param enumModel Модель перечисления (только для свойств с типом Enum)
- * @param owners Модели классов, обладающих этим свойством
+ * @param enumName Имя перечисления (только для свойств с типом Enum)
+ * @param owners Имена классов, обладающих этим свойством
  * @param valuesRanges Диапазоны возможных значений свойства (только для свойств с типом Integer и Double)
  * @see DataType
- * @see EnumModel
- * @see ClassModel
  */
 data class PropertyModel(
     val name: String,
     val dataType: DataType,
-    val enumModel: EnumModel?,
-    val owners: List<ClassModel>?,
+    val enumName: String?,
+    val owners: List<String>?,
     val valuesRanges: List<Pair<Double, Double>>?
 ) {
 
@@ -40,14 +38,14 @@ data class PropertyModel(
         ) {
             "Некорректный тип свойства $name."
         }
-        require(dataType != DataType.Enum || enumModel != null && EnumsDictionary.exist(enumModel.name)) {
-            "Некорректное имя перечисления ${enumModel?.name} для свойства $name."
+        require(dataType != DataType.Enum || enumName != null && EnumsDictionary.exist(enumName)) {
+            "Для свойства $name не указано имя перечисления, или оно не объявлено в словаре."
         }
         require(owners == null || owners.isNotEmpty()) {
             "Свойством $name не обладает ни один класс."
         }
         owners?.forEach {
-            require(ClassesDictionary.exist(it.name)) {
+            require(ClassesDictionary.exist(it)) {
                 "Класс $it не объявлен в словаре."
             }
         }
@@ -62,7 +60,7 @@ data class PropertyModel(
     }
 
     /**
-     * Является ли статическим
+     * Является свойство ли статическим
      */
     val isStatic
         get() = owners != null
