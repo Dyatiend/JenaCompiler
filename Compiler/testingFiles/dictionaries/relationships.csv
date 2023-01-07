@@ -1,0 +1,4 @@
+has||element;token||TRUE|ONE_TO_MANY||
+belongsTo||token;element||TRUE|ONE_TO_ONE||
+directlyLeftOf||token;token|LINER|||directlyRightOf;leftOf;rightOf;isBetween;isCloserToThan;isFurtherFromThan|
+isOperandOf||element;element|||||
