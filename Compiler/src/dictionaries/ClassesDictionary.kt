@@ -46,6 +46,10 @@ object ClassesDictionary {
                 val parent = row[1].ifBlank { null }
                 val calcExprXML = row[2].ifBlank { null }
 
+                require(!exist(name)) {
+                    "Класс $name уже объявлен в словаре."
+                }
+
                 classes.add(
                     ClassModel(
                         name = name,
@@ -71,7 +75,12 @@ object ClassesDictionary {
      * @throws IllegalArgumentException
      */
     fun validate() {
-        classes.forEach { it.validate() }
+        classes.forEach {
+            it.validate()
+            require(it.parent == null || exist(it.parent)) {
+                "Класс ${it.parent} не объявлен в словаре."
+            }
+        }
     }
 
     /**

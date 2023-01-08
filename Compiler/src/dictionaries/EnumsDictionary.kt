@@ -64,12 +64,15 @@ object EnumsDictionary {
                 val isLiner = row[2].toBoolean()
                 val linerPredicate = row[3].ifBlank { null }
 
+                require(!exist(name)) {
+                    "Перечисление $name уже объявлено в словаре."
+                }
                 require(!isLiner || linerPredicate != null) {
                     "Для линейного перечисления $name не указан линейный предикат."
                 }
 
                 if (isLiner) {
-                    scalePredicates[name] = name + scalePredicateId + NamingManager.PROTECTIVE_CHARS
+                    scalePredicates[name] = NamingManager.genPredicateName()
                 }
 
                 enums.add(

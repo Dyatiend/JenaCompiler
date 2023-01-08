@@ -8,7 +8,7 @@ object NamingManager {
     /**
      * Символы, которые добавляются в генерируемые имена для защиты от совпадений с пользовательскими
      */
-    internal const val PROTECTIVE_CHARS = "..."
+    private const val PROTECTIVE_CHARS = "..."
 
     /**
      * Индекс для переменных

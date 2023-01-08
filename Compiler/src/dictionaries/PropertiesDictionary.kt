@@ -56,18 +56,24 @@ object PropertiesDictionary {
                 val dataType = DataType.valueOf(row[1])
                 val enumName = row[2].ifBlank { null }
                 val isStatic = row[3].toBoolean()
-                val owners = row[4].split(LIST_ITEMS_SEPARATOR).filter {
-                    it.isNotBlank()
-                }.ifEmpty { null }
-                val valuesRanges = row[5].split(LIST_ITEMS_SEPARATOR).filter {
-                    it.isNotBlank()
-                }.map {
-                    Pair(
-                        it.split(RANGE_SEPARATOR)[0].toDouble(),
-                        it.split(RANGE_SEPARATOR)[1].toDouble()
-                    )
-                }.ifEmpty { null }
+                val owners = row[4]
+                    .split(LIST_ITEMS_SEPARATOR)
+                    .filter { it.isNotBlank() }
+                    .ifEmpty { null }
+                val valuesRanges = row[5]
+                    .split(LIST_ITEMS_SEPARATOR)
+                    .filter { it.isNotBlank() }
+                    .map {
+                        Pair(
+                            it.split(RANGE_SEPARATOR)[0].toDouble(),
+                            it.split(RANGE_SEPARATOR)[1].toDouble()
+                        )
+                    }
+                    .ifEmpty { null }
 
+                require(!exist(name)) {
+                    "Свойство $name уже объявлено в словаре."
+                }
                 require(dataType != null) {
                     "Некорректный тип данных ${row[1]}."
                 }
@@ -102,7 +108,17 @@ object PropertiesDictionary {
      * @throws IllegalArgumentException
      */
     fun validate() {
-        properties.forEach { it.validate() }
+        properties.forEach {
+            it.validate()
+            require(it.dataType != DataType.Enum || it.enumName != null && EnumsDictionary.exist(it.enumName)) {
+                "Для свойства ${it.name} не указано имя перечисления, или оно не объявлено в словаре."
+            }
+            it.owners?.forEach { owner ->
+                require(ClassesDictionary.exist(owner)) {
+                    "Класс $owner не объявлен в словаре."
+                }
+            }
+        }
     }
 
     /**

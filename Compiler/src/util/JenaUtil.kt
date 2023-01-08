@@ -1,6 +1,6 @@
 package util
 
-import util.NamingManager.PROTECTIVE_CHARS
+import util.NamingManager.genPredicateName
 
 /**
  * Содержит различные утилитарные методы и переменные, используемые при генерации правил
@@ -35,13 +35,14 @@ object JenaUtil {
     // ++++++++++++++++++++++++ Вспомогательные правила ++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    const val AUXILIARY_RULES =
-        "[makeSkolem(?tmp) -> (?tmp ${POAS_PREF}predicate0$PROTECTIVE_CHARS \"true\"^^${XSD_PREF}boolean)]\n" +
-                "[(?a ?p ?b), (?p ${RDFS_PREF}domain ?c) -> (?a ${RDF_PREF}type ?c)]\n" +
-                "[(?a ?p ?b), (?p ${RDFS_PREF}range ?c) -> (?b ${RDF_PREF}type ?c)]\n" +
-                "[(?a ?p ?b), (?p ${RDFS_PREF}subPropertyOf ?q) -> (?a ?q ?b)]\n" +
-                "[(?a ${RDFS_PREF}subClassOf ?b), (?b ${RDFS_PREF}subClassOf ?c) -> (?a ${RDFS_PREF}subClassOf ?c)]\n" +
-                "[(?a ${RDFS_PREF}subClassOf ?b), (?c ${RDF_PREF}type ?a) -> (?c ${RDF_PREF}type ?b)]\n"
+    val AUXILIARY_RULES = """
+        [makeSkolem(?tmp) -> (?tmp ${genPredicateName()} "true"^^${XSD_PREF}boolean)]
+        [(?a ?p ?b), (?p ${RDFS_PREF}domain ?c) -> (?a ${RDF_PREF}type ?c)]
+        [(?a ?p ?b), (?p ${RDFS_PREF}range ?c) -> (?b ${RDF_PREF}type ?c)]
+        [(?a ?p ?b), (?p ${RDFS_PREF}subPropertyOf ?q) -> (?a ?q ?b)]
+        [(?a ${RDFS_PREF}subClassOf ?b), (?b ${RDFS_PREF}subClassOf ?c) -> (?a ${RDFS_PREF}subClassOf ?c)]
+        [(?a ${RDFS_PREF}subClassOf ?b), (?c ${RDF_PREF}type ?a) -> (?c ${RDF_PREF}type ?b)]
+    """.trimIndent()
 
     // +++++++++++++++++++++++++++++++++ Константы +++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -49,12 +50,12 @@ object JenaUtil {
     /**
      * Предикат переменной дерева мысли
      */
-    const val DECISION_TREE_VAR_PREDICATE = "decisionTreeVar$PROTECTIVE_CHARS"
+    val DECISION_TREE_VAR_PREDICATE = genPredicateName()
 
     /**
      * Предикат результата сравнения
      */
-    const val COMPARE_RESULT_PREDICATE = "compareResul$PROTECTIVE_CHARS"
+    val COMPARE_RESULT_PREDICATE = genPredicateName()
 
     /**
      * Маркировка паузы

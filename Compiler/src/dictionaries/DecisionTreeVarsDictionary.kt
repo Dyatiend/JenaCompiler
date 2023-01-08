@@ -46,6 +46,10 @@ object DecisionTreeVarsDictionary {
                 val name = row[0]
                 val className = row[1]
 
+                require(!exist(name)) {
+                    "Переменная $name уже объявлена в словаре."
+                }
+
                 decisionTreeVars.add(
                     DecisionTreeVarModel(
                         name = name,
@@ -70,7 +74,12 @@ object DecisionTreeVarsDictionary {
      * @throws IllegalArgumentException
      */
     fun validate() {
-        decisionTreeVars.forEach { it.validate() }
+        decisionTreeVars.forEach {
+            it.validate()
+            require(ClassesDictionary.exist(it.className)) {
+                "Класс ${it.className} не объявлен в словаре."
+            }
+        }
     }
 
     /**
