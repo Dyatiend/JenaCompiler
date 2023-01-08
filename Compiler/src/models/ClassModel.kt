@@ -1,7 +1,6 @@
 package models
 
 import compiler.Operator
-import dictionaries.ClassesDictionary
 import util.DataType
 
 /**
@@ -12,8 +11,8 @@ import util.DataType
  */
 data class ClassModel(
     val name: String,
-    val parent: String?,
-    val calcExprXML: String?
+    val parent: String? = null,
+    val calcExprXML: String? = null
 ) {
 
     /**
@@ -23,12 +22,6 @@ data class ClassModel(
     fun validate() {
         require(name.isNotBlank()) {
             "Некорректное имя класса."
-        }
-        require(!ClassesDictionary.exist(name)) {
-            "Класс $name уже объявлен в словаре."
-        }
-        require(parent == null || ClassesDictionary.exist(parent)) {
-            "Класс $parent не объявлен в словаре."
         }
         calcExprXML?.let {
             val expr = Operator.fromXMLString(it)

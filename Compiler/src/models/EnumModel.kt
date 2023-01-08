@@ -1,7 +1,5 @@
 package models
 
-import dictionaries.EnumsDictionary
-
 /**
  * Модель перечисления в предметной области
  * @param name Имя перечисления
@@ -11,7 +9,7 @@ import dictionaries.EnumsDictionary
 data class EnumModel(
     val name: String,
     val values: List<String>,
-    val linerPredicate: String?
+    val linerPredicate: String? = null
 ) {
 
     /**
@@ -21,9 +19,6 @@ data class EnumModel(
     fun validate() {
         require(name.isNotBlank()) {
             "Некорректное имя перечисления."
-        }
-        require(!EnumsDictionary.exist(name)) {
-            "Перечисление $name уже объявлено в словаре."
         }
         require(values.isNotEmpty()) {
             "Перечисление $name не содержит значений."
