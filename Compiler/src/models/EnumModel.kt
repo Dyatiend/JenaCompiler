@@ -14,7 +14,11 @@ data class EnumModel(
     val linerPredicate: String?
 ) {
 
-    init {
+    /**
+     * Проверяет корректность модели
+     * @throws IllegalArgumentException
+     */
+    fun validate() {
         require(name.isNotBlank()) {
             "Некорректное имя перечисления."
         }

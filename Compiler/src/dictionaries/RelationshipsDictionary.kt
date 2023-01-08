@@ -14,8 +14,8 @@ import dictionaries.RelationshipsDictionary.LinerScalePatterns.REVERSE_TRANSITIV
 import dictionaries.RelationshipsDictionary.LinerScalePatterns.REVERSE_VAR_COUNT
 import dictionaries.RelationshipsDictionary.LinerScalePatterns.TRANSITIVE_CLOSURE_PATTERN
 import dictionaries.RelationshipsDictionary.LinerScalePatterns.TRANSITIVE_CLOSURE_VAR_COUNT
-import dictionaries.util.COLUMNS_SEPARATOR
-import dictionaries.util.LIST_ITEMS_SEPARATOR
+import dictionaries.util.DictionariesUtil.COLUMNS_SEPARATOR
+import dictionaries.util.DictionariesUtil.LIST_ITEMS_SEPARATOR
 import models.RelationshipModel
 import models.RelationshipModel.Companion.RelationType
 import models.RelationshipModel.Companion.ScaleType
@@ -176,9 +176,6 @@ object RelationshipsDictionary {
                 }
                 require(args != null) {
                     "Не указаны аргументы для отношения $name."
-                }
-                args.forEach {
-                    require(ClassesDictionary.exist(it)) { "Класс $it не объявлен в словаре." }
                 }
                 when (scaleType) {
                     ScaleType.Liner -> {
@@ -353,6 +350,25 @@ object RelationshipsDictionary {
                     else -> {}
                 }
 
+                val varsCount = if (args.size == 2) {
+                    0
+                } else {
+                    1
+                }
+                val head = if (args.size == 2) {
+                    "(<arg1> ${genLink(POAS_PREF, name)} <arg2>)\n"
+                } else {
+                    var tmp = "(<arg1> ${genLink(POAS_PREF, name)} <var1>)\n"
+
+                    args.forEachIndexed { index, _ ->
+                        if (index != 0) {
+                            tmp += "(<var1> ${genLink(POAS_PREF, name)} <arg${index + 1}>)\n"
+                        }
+                    }
+
+                    tmp
+                }
+
                 relationships.add(
                     RelationshipModel(
                         name = name,
@@ -367,8 +383,8 @@ object RelationshipsDictionary {
                         isCloserToThanRelName = scaleRelations?.get(4),
                         isFurtherFromThanRelName = scaleRelations?.get(5),
                         flags = flags,
-                        varsCount = null,
-                        head = null,
+                        varsCount = varsCount,
+                        head = head,
                         rules = null
                     )
                 )
@@ -394,6 +410,17 @@ object RelationshipsDictionary {
      * @param name Имя отношения
      */
     internal fun get(name: String) = relationships.firstOrNull { it.name == name }
+
+    /**
+     * Проверяет корректность содержимого словаря
+     * @throws IllegalArgumentException
+     */
+    fun validate() {
+        relationships.forEach {
+            it.validate()
+            require(it.scaleType == null || scalePredicates.containsKey(it.name))
+        }
+    }
 
     /**
      * Существует ли отношение

@@ -8,16 +8,19 @@ import util.DataType
  * Модель класса в предметной области
  * @param name Имя класса
  * @param parent Имя класса родителя
- * @param calcExpr Выражение для вычисления
- * @see Operator
+ * @param calcExprXML Выражение для вычисления в формате XML
  */
 data class ClassModel(
     val name: String,
     val parent: String?,
-    val calcExpr: Operator?
+    val calcExprXML: String?
 ) {
 
-    init {
+    /**
+     * Проверяет корректность модели
+     * @throws IllegalArgumentException
+     */
+    fun validate() {
         require(name.isNotBlank()) {
             "Некорректное имя класса."
         }
@@ -27,10 +30,19 @@ data class ClassModel(
         require(parent == null || ClassesDictionary.exist(parent)) {
             "Класс $parent не объявлен в словаре."
         }
-        require(calcExpr == null || calcExpr.resultDataType == DataType.Boolean) {
-            "Выражение для вычисления класса $name должно иметь тип Boolean, но имеет тип ${calcExpr?.resultDataType}."
+        calcExprXML?.let {
+            val expr = Operator.fromXMLString(it)
+            require(expr?.resultDataType == DataType.Boolean) {
+                "Выражение для вычисления класса $name должно иметь тип Boolean, но имеет тип ${expr?.resultDataType}."
+            }
         }
     }
+
+    /**
+     * Выражение для вычисления
+     */
+    val calcExpr
+        get() = if (calcExprXML != null) Operator.fromXMLString(calcExprXML) else null
 
     companion object {
 

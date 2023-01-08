@@ -22,7 +22,11 @@ data class PropertyModel(
     val valuesRanges: List<Pair<Double, Double>>?
 ) {
 
-    init {
+    /**
+     * Проверяет корректность модели
+     * @throws IllegalArgumentException
+     */
+    fun validate() {
         require(name.isNotBlank()) {
             "Некорректное имя свойства."
         }

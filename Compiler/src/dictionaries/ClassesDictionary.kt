@@ -2,8 +2,7 @@ package dictionaries
 
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
-import compiler.Operator
-import dictionaries.util.COLUMNS_SEPARATOR
+import dictionaries.util.DictionariesUtil.COLUMNS_SEPARATOR
 import models.ClassModel
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -45,13 +44,13 @@ object ClassesDictionary {
             rows.forEach { row ->
                 val name = row[0]
                 val parent = row[1].ifBlank { null }
-                val calcExpr = if (row[2].isNotBlank()) Operator.fromXMLString(row[2]) else null
+                val calcExprXML = row[2].ifBlank { null }
 
                 classes.add(
                     ClassModel(
                         name = name,
                         parent = parent,
-                        calcExpr = calcExpr
+                        calcExprXML = calcExprXML
                     )
                 )
             }
@@ -66,6 +65,14 @@ object ClassesDictionary {
      * @param name Имя класса
      */
     internal fun get(name: String) = classes.firstOrNull { it.name == name }
+
+    /**
+     * Проверяет корректность содержимого словаря
+     * @throws IllegalArgumentException
+     */
+    fun validate() {
+        classes.forEach { it.validate() }
+    }
 
     /**
      * Существует ли класс

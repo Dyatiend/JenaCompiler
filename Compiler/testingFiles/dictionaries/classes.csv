@@ -1,7 +1,7 @@
 token||
 element||
-operand||<LogicalNot><CheckPropertyValue><Variable name="obj"/><Property name="state"/><Enum value="unevaluated" owner="state"/></CheckPropertyValue></LogicalNot>
-operator||<CheckPropertyValue><Variable name="obj"/><Property name="state"/><Enum value="unevaluated" owner="state"/></CheckPropertyValue>
+operand|element|<LogicalNot><CheckPropertyValue><Variable name="obj"/><Property name="state"/><Enum value="unevaluated" owner="state"/></CheckPropertyValue></LogicalNot>
+operator|element|<CheckPropertyValue><Variable name="obj"/><Property name="state"/><Enum value="unevaluated" owner="state"/></CheckPropertyValue>
 plus|element|
 minus|element|
 multiplication|element|

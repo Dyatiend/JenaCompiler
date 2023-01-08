@@ -2,7 +2,7 @@ package dictionaries
 
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
-import dictionaries.util.COLUMNS_SEPARATOR
+import dictionaries.util.DictionariesUtil.COLUMNS_SEPARATOR
 import models.DecisionTreeVarModel
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -64,6 +64,14 @@ object DecisionTreeVarsDictionary {
      * @param name Имя переменной
      */
     internal fun get(name: String) = decisionTreeVars.firstOrNull { it.name == name }
+
+    /**
+     * Проверяет корректность содержимого словаря
+     * @throws IllegalArgumentException
+     */
+    fun validate() {
+        decisionTreeVars.forEach { it.validate() }
+    }
 
     /**
      * Существует ли переменная с указанным именем

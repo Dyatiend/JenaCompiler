@@ -2,8 +2,8 @@ package dictionaries
 
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
-import dictionaries.util.COLUMNS_SEPARATOR
-import dictionaries.util.LIST_ITEMS_SEPARATOR
+import dictionaries.util.DictionariesUtil.COLUMNS_SEPARATOR
+import dictionaries.util.DictionariesUtil.LIST_ITEMS_SEPARATOR
 import models.EnumModel
 import util.NamingManager
 import java.nio.charset.StandardCharsets
@@ -101,6 +101,17 @@ object EnumsDictionary {
      * @param name Имя перечисления
      */
     internal fun get(name: String) = enums.firstOrNull { it.name == name }
+
+    /**
+     * Проверяет корректность содержимого словаря
+     * @throws IllegalArgumentException
+     */
+    fun validate() {
+        enums.forEach {
+            it.validate()
+            require(!it.isLiner || scalePredicates.containsKey(it.name))
+        }
+    }
 
     /**
      * Существует ли перечисление

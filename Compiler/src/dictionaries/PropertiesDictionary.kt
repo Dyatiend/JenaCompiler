@@ -2,8 +2,8 @@ package dictionaries
 
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
-import dictionaries.util.COLUMNS_SEPARATOR
-import dictionaries.util.LIST_ITEMS_SEPARATOR
+import dictionaries.util.DictionariesUtil.COLUMNS_SEPARATOR
+import dictionaries.util.DictionariesUtil.LIST_ITEMS_SEPARATOR
 import models.PropertyModel
 import util.DataType
 import java.nio.charset.StandardCharsets
@@ -74,11 +74,6 @@ object PropertiesDictionary {
                 require(!isStatic || !owners.isNullOrEmpty()) {
                     "Свойством $name не обладает ни один класс."
                 }
-                owners?.forEach {
-                    require(ClassesDictionary.exist(it)) {
-                        "Класс $it не объявлен в словаре."
-                    }
-                }
 
                 properties.add(
                     PropertyModel(
@@ -101,6 +96,14 @@ object PropertiesDictionary {
      * @param name Имя свойства
      */
     internal fun get(name: String) = properties.firstOrNull { it.name == name }
+
+    /**
+     * Проверяет корректность содержимого словаря
+     * @throws IllegalArgumentException
+     */
+    fun validate() {
+        properties.forEach { it.validate() }
+    }
 
     /**
      * Существует ли свойство

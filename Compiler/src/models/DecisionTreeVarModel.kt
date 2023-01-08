@@ -13,7 +13,11 @@ data class DecisionTreeVarModel(
     val className: String
 ) {
 
-    init {
+    /**
+     * Проверяет корректность модели
+     * @throws IllegalArgumentException
+     */
+    fun validate() {
         require(name.isNotBlank()) {
             "Некорректное имя переменной."
         }
