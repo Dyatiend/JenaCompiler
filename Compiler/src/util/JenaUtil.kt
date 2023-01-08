@@ -35,14 +35,13 @@ object JenaUtil {
     // ++++++++++++++++++++++++ Вспомогательные правила ++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    const val AUXILIARY_RULES = """
-        [makeSkolem(?tmp) -> (?tmp ${POAS_PREF}predicate0$PROTECTIVE_CHARS "true"^^${XSD_PREF}boolean)]
-        [(?a ?p ?b), (?p ${RDFS_PREF}domain ?c) -> (?a ${RDF_PREF}type ?c)]
-        [(?a ?p ?b), (?p ${RDFS_PREF}range ?c) -> (?b ${RDF_PREF}type ?c)]
-        [(?a ?p ?b), (?p ${RDFS_PREF}subPropertyOf ?q) -> (?a ?q ?b)]
-        [(?a ${RDFS_PREF}subClassOf ?b), (?b ${RDFS_PREF}subClassOf ?c) -> (?a ${RDFS_PREF}subClassOf ?c)]
-        [(?a ${RDFS_PREF}subClassOf ?b), (?c ${RDF_PREF}type ?a) -> (?c ${RDF_PREF}type ?b)]
-    """
+    const val AUXILIARY_RULES =
+        "[makeSkolem(?tmp) -> (?tmp ${POAS_PREF}predicate0$PROTECTIVE_CHARS \"true\"^^${XSD_PREF}boolean)]\n" +
+                "[(?a ?p ?b), (?p ${RDFS_PREF}domain ?c) -> (?a ${RDF_PREF}type ?c)]\n" +
+                "[(?a ?p ?b), (?p ${RDFS_PREF}range ?c) -> (?b ${RDF_PREF}type ?c)]\n" +
+                "[(?a ?p ?b), (?p ${RDFS_PREF}subPropertyOf ?q) -> (?a ?q ?b)]\n" +
+                "[(?a ${RDFS_PREF}subClassOf ?b), (?b ${RDFS_PREF}subClassOf ?c) -> (?a ${RDFS_PREF}subClassOf ?c)]\n" +
+                "[(?a ${RDFS_PREF}subClassOf ?b), (?c ${RDF_PREF}type ?a) -> (?c ${RDF_PREF}type ?b)]\n"
 
     // +++++++++++++++++++++++++++++++++ Константы +++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -74,13 +73,13 @@ object JenaUtil {
      * Основной шаблон правила с возвращаемым значением
      */
     private const val MAIN_RULE_PATTERN =
-        "[\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> <resVarName>)\n]\n"
+        "[\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> <resVarName>)\n]\n\n"
 
     /**
      * Шаблон для boolean правила
      */
     private const val BOOLEAN_RULE_PATTERN =
-        "[\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> \"true\"^^xsd:boolean)\n]\n"
+        "[\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> \"true\"^^xsd:boolean)\n]\n\n"
 
     // ++++++++++++++++++++++++++++ Методы для генерации +++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -235,7 +234,7 @@ object JenaUtil {
     /**
      * Сгенерировать правило с возвращаемым значением
      * @param ruleHead Голова правила
-     * @param skolemName Имя сколема
+     * @param skolemName Имя сколем
      * @param resPredicateName Предикат, указывающий на результат
      * @param resVarName Переменная, содержащая результат
      * @return Правило
@@ -252,7 +251,7 @@ object JenaUtil {
     /**
      * Сгенерировать булево правило
      * @param ruleHead Голова правила
-     * @param skolemName Имя сколема
+     * @param skolemName Имя сколем
      * @param resPredicateName Предикат, являющийся флагом результата
      * @return Правило
      */
