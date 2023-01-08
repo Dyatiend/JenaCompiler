@@ -19,7 +19,8 @@ class RelationshipLiteral(value: String) : Literal(value) {
         require(RelationshipsDictionary.exist(value)) { "Отношение $value не объявлено в словаре." }
     }
 
-    override val resultDataType: DataType = DataType.Relationship
+    override val resultDataType: DataType
+        get() = DataType.Relationship
 
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genLink(POAS_PREF, value))

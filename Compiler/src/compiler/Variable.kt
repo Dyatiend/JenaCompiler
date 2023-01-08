@@ -12,11 +12,14 @@ class Variable(
     private val name: String
 ) : Operator {
 
-    override val args: List<Operator> = ArrayList()
+    override val args: List<Operator>
+        get() = ArrayList()
 
-    override val argsDataTypes: List<List<DataType>> = ArrayList()
+    override val argsDataTypes: List<List<DataType>>
+        get() = ArrayList()
 
-    override val resultDataType: DataType = DataType.Object
+    override val resultDataType: DataType
+        get() = DataType.Object
 
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genVar(name))

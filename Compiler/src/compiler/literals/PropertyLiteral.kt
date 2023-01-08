@@ -19,7 +19,8 @@ class PropertyLiteral(value: String) : Literal(value) {
         require(PropertiesDictionary.exist(value)) { "Свойство $value не объявлено в словаре." }
     }
 
-    override val resultDataType: DataType = DataType.Property
+    override val resultDataType: DataType
+        get() = DataType.Property
 
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genLink(POAS_PREF, value))

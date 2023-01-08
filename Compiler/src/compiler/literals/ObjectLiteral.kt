@@ -13,7 +13,8 @@ import util.JenaUtil.POAS_PREF
  */
 class ObjectLiteral(value: String) : Literal(value) {
 
-    override val resultDataType: DataType = DataType.Object
+    override val resultDataType: DataType
+        get() = DataType.Object
 
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genLink(POAS_PREF, value))

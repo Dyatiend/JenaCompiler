@@ -4,7 +4,7 @@ import compiler.literals.*
 import compiler.operators.*
 import compiler.util.ComparisonResult
 import compiler.util.CompilationResult
-import dictionaries.util.generateAuxiliaryRules
+import dictionaries.util.DictionariesUtil.generateAuxiliaryRules
 import org.apache.commons.io.IOUtils
 import org.w3c.dom.Node
 import org.xml.sax.SAXException
@@ -264,27 +264,8 @@ interface Operator {
                 // Получаем корневой элемент документа
                 val xml: Node = document.documentElement
 
-                // Корень выражения
-                var root: Node? = null
-
-                // Ищем корень
-                val childNodes = xml.childNodes
-                for (i in 0 until childNodes.length) {
-                    val child = childNodes.item(i)
-                    if (child.nodeType == Node.ELEMENT_NODE) {
-                        root = if (root == null) {
-                            child
-                        } else {
-                            throw IllegalAccessException("Выражение должно иметь один корневой узел.")
-                        }
-                    }
-                }
-                if (root == null) {
-                    throw IllegalAccessException("Не найден корневой узел выражения.")
-                }
-
                 // Строим дерево
-                return build(root)
+                return build(xml)
             } catch (ex: ParserConfigurationException) {
                 ex.printStackTrace()
             } catch (ex: IOException) {
@@ -310,27 +291,8 @@ interface Operator {
                 // Получаем корневой элемент документа
                 val xml: Node = document.documentElement
 
-                // Корень выражения
-                var root: Node? = null
-
-                // Ищем корень
-                val childNodes = xml.childNodes
-                for (i in 0 until childNodes.length) {
-                    val child = childNodes.item(i)
-                    if (child.nodeType == Node.ELEMENT_NODE) {
-                        root = if (root == null) {
-                            child
-                        } else {
-                            throw IllegalAccessException("Выражение должно иметь один корневой узел.")
-                        }
-                    }
-                }
-                if (root == null) {
-                    throw IllegalAccessException("Не найден корневой узел выражения.")
-                }
-
                 // Строим дерево
-                return build(root)
+                return build(xml)
             } catch (ex: ParserConfigurationException) {
                 ex.printStackTrace()
             } catch (ex: IOException) {
@@ -347,170 +309,145 @@ interface Operator {
          * @return Оператор
          */
         private fun build(node: Node): Operator {
-            require(node.nodeName == "block") { "Некорректный тип узла." }
-
-            // TODO: синхронизировать с некитом
-            when (node.attributes.getNamedItem("type").nodeValue) {
-                "object" -> {
-                    return ObjectLiteral(node.firstChild.textContent)
-                }
-                "variable" -> {
-                    return Variable(node.firstChild.textContent)
-                }
-                "class" -> {
-                    return ClassLiteral(node.firstChild.textContent)
-                }
-                "property" -> {
-                    return PropertyLiteral(node.firstChild.textContent)
-                }
-                "relationship" -> {
-                    return RelationshipLiteral(node.firstChild.textContent)
-                }
-                "boolean" -> {
-                    return BooleanLiteral(node.firstChild.textContent == "TRUE")
-                }
-                "integer" -> {
-                    return IntegerLiteral(node.firstChild.textContent.toInt())
-                }
-
-                "double" -> {
-                    return DoubleLiteral(node.firstChild.textContent.toDouble())
-                }
-
-                "string" -> {
-                    return StringLiteral(node.firstChild.textContent)
-                }
-
-                "comparison_result" -> {
-                    return ComparisonResultLiteral(ComparisonResult.valueOf(node.firstChild.textContent)!!)
-                }
-
-                "enum" -> {
-                    TODO()
-                }
-
-                "ref_to_decision_tree_var" -> {
-                    return DecisionTreeVarLiteral(node.firstChild.textContent)
-                }
-
-                "get_class" -> {
-                    return GetClass(listOf(build(node.firstChild.firstChild)))
-                }
-
-                "get_property_value" -> {
-                    return GetPropertyValue(
-                        listOf(
-                            build(node.firstChild.firstChild),
-                            build(node.lastChild.firstChild)
-                    ))
-                }
-                "get_relationship_object" -> {
-                    return GetByRelationship(listOf(
-                        build(node.firstChild.firstChild),
-                        build(node.lastChild.firstChild)
-                    ))
-                }
-                "get_condition_object" -> {
-                    return GetByCondition(listOf(
-                        build(node.lastChild.firstChild)),
-                        node.firstChild.textContent
-                    )
-                }
-                "get_extr_object" -> {
-                    return GetExtreme(listOf(
-                        build(node.childNodes.item(1).firstChild),
-                        build(node.childNodes.item(3).firstChild)),
-                        node.childNodes.item(0).textContent,
-                        node.childNodes.item(2).textContent
-                    )
-                }
-                "assign_value_to_property" -> {
-                    return Assign(listOf(
-                        build(node.childNodes.item(0).firstChild),
-                        build(node.childNodes.item(1).firstChild),
-                        build(node.childNodes.item(2).firstChild)
-                    ))
-                }
-                "assign_value_to_variable_decision_tree" -> {
-                    return Assign(listOf(
-                        build(node.firstChild.firstChild),
-                        build(node.lastChild.firstChild)
-                    ))
-                }
-                "check_object_class" -> {
-                    return CheckClass(listOf(
-                        build(node.firstChild.firstChild),
-                        build(node.lastChild.firstChild)
-                    ))
-                }
-                "check_value_of_property" -> {
-                    return CheckPropertyValue(
-                        listOf(
-                            build(node.childNodes.item(0).firstChild),
-                            build(node.childNodes.item(1).firstChild),
-                            build(node.childNodes.item(2).firstChild)
-                        )
-                    )
-                }
-                "check_relationship" -> {
-                    val args = ArrayList<Operator>()
-                    val childNodes = node.childNodes
-                    for (i in 0 until childNodes.length) {
-                        val child = childNodes.item(i)
-                        if (child.nodeType == Node.ELEMENT_NODE && child.nodeName != "mutation") {
-                            args.add(build(child.firstChild))
-                        }
-                    }
-                    val tmp = args[0]
-                    args[0] = args[1]
-                    args[1] = tmp
-                    return CheckRelationship(args)
-                }
-                "and" -> {
-                    return LogicalAnd(listOf(
-                        build(node.firstChild.firstChild),
-                        build(node.lastChild.firstChild)
-                    ))
-                }
-                "or" -> {
-                    return LogicalOr(listOf(
-                        build(node.firstChild.firstChild),
-                        build(node.lastChild.firstChild)
-                    ))
-                }
-                "not" -> {
-                    return LogicalNot(listOf(
-                        build(node.firstChild.firstChild)
-                    ))
-                }
-                "comparison" -> {
-                    return CompareWithComparisonOperator(listOf(
-                        build(node.childNodes.item(1).firstChild),
-                        build(node.childNodes.item(2).firstChild)),
-                        CompareWithComparisonOperator.ComparisonOperator.valueOf(node.childNodes.item(0).textContent)!!
-                    )
-                }
-                "three_digit_comparison" -> {
-                    return Compare(listOf(
-                        build(node.firstChild.firstChild),
-                        build(node.lastChild.firstChild)
-                    ))
-                }
-                "quantifier_of_existence" -> {
-                    return ExistenceQuantifier(listOf(
-                        build(node.lastChild.firstChild)),
-                        node.firstChild.textContent
-                    )
-                }
-                "quantifier_of_generality" -> {
-                    return ForAllQuantifier(listOf(
-                        build(node.childNodes.item(1).firstChild),
-                        build(node.childNodes.item(2).firstChild)),
-                        node.childNodes.item(0).textContent
-                    )
+            val children = mutableListOf<Operator>()
+            for (i in 0 until node.childNodes.length) {
+                val child = node.childNodes.item(i)
+                if (child.nodeType == Node.ELEMENT_NODE) {
+                    children.add(build(child))
                 }
             }
-            throw IllegalArgumentException("Неизвестный тип узла ${node.attributes.getNamedItem("type").nodeValue}.")
+
+            when (node.nodeName) {
+                "Variable" -> {
+                    return Variable(node.attributes.getNamedItem("name").nodeValue)
+                }
+
+                "DecisionTreeVar" -> {
+                    return DecisionTreeVarLiteral(node.attributes.getNamedItem("name").nodeValue)
+                }
+
+                "Class" -> {
+                    return ClassLiteral(node.attributes.getNamedItem("name").nodeValue)
+                }
+
+                "Object" -> {
+                    return ObjectLiteral(node.attributes.getNamedItem("name").nodeValue)
+                }
+
+                "Property" -> {
+                    return PropertyLiteral(node.attributes.getNamedItem("name").nodeValue)
+                }
+
+                "Relationship" -> {
+                    return RelationshipLiteral(node.attributes.getNamedItem("name").nodeValue)
+                }
+
+                "ComparisonResult" -> {
+                    return ComparisonResultLiteral(ComparisonResult.valueOf(node.attributes.getNamedItem("value").nodeValue)!!)
+                }
+
+                "String" -> {
+                    return StringLiteral(node.attributes.getNamedItem("value").nodeValue)
+                }
+
+                "Boolean" -> {
+                    return BooleanLiteral(node.attributes.getNamedItem("value").nodeValue.toBoolean())
+                }
+
+                "Integer" -> {
+                    return IntegerLiteral(node.attributes.getNamedItem("value").nodeValue.toInt())
+                }
+
+                "Double" -> {
+                    return DoubleLiteral(node.attributes.getNamedItem("value").nodeValue.toDouble())
+                }
+
+                "Enum" -> {
+                    return EnumLiteral(
+                        node.attributes.getNamedItem("value").nodeValue,
+                        node.attributes.getNamedItem("owner").nodeValue
+                    )
+                }
+
+                "AssignToDecisionTreeVar" -> {
+                    return Assign(children)
+                }
+
+                "AssignToProperty" -> {
+                    return Assign(children)
+                }
+
+                "CheckClass" -> {
+                    return CheckClass(children)
+                }
+
+                "CheckPropertyValue" -> {
+                    return CheckPropertyValue(children)
+                }
+
+                "CheckRelationship" -> {
+                    return CheckRelationship(children)
+                }
+
+                "Compare" -> {
+                    return if (node.attributes.getNamedItem("operator") == null) {
+                        Compare(children)
+                    } else {
+                        val operator =
+                            CompareWithComparisonOperator.ComparisonOperator.valueOf(node.attributes.getNamedItem("operator").nodeValue)!!
+                        CompareWithComparisonOperator(children, operator)
+                    }
+                }
+
+                "ExistenceQuantifier" -> {
+                    return ExistenceQuantifier(children, node.attributes.getNamedItem("varName").nodeValue)
+                }
+
+                "ForAllQuantifier" -> {
+                    return ForAllQuantifier(children, node.attributes.getNamedItem("varName").nodeValue)
+                }
+
+                "GetByCondition" -> {
+                    return GetByCondition(children, node.attributes.getNamedItem("varName").nodeValue)
+                }
+
+                "GetByRelationship" -> {
+                    return GetByRelationship(
+                        children,
+                        if (node.attributes.getNamedItem("varName") == null) null
+                        else node.attributes.getNamedItem("varName").nodeValue
+                    )
+                }
+
+                "GetClass" -> {
+                    return GetClass(children)
+                }
+
+                "GetExtreme" -> {
+                    return GetExtreme(
+                        children,
+                        node.attributes.getNamedItem("varName").nodeValue,
+                        node.attributes.getNamedItem("extremeVarName").nodeValue
+                    )
+                }
+
+                "GetPropertyValue" -> {
+                    return GetPropertyValue(children)
+                }
+
+                "LogicalAnd" -> {
+                    return LogicalAnd(children)
+                }
+
+                "LogicalOr" -> {
+                    return LogicalOr(children)
+                }
+
+                "LogicalNot" -> {
+                    return LogicalNot(children)
+                }
+            }
+            throw IllegalArgumentException("Неизвестный тип узла ${node.nodeName}.")
         }
     }
 }

@@ -19,7 +19,8 @@ class ClassLiteral(value: String) : Literal(value) {
         require(ClassesDictionary.exist(value)) { "Класс $value не объявлен в словаре." }
     }
 
-    override val resultDataType: DataType = DataType.Class
+    override val resultDataType: DataType
+        get() = DataType.Class
 
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genLink(POAS_PREF, value))

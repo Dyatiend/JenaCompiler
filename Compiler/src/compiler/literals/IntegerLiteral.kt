@@ -12,7 +12,8 @@ import util.JenaUtil
  */
 class IntegerLiteral(value: Int) : Literal(value.toString()) {
 
-    override val resultDataType: DataType = DataType.Integer
+    override val resultDataType: DataType
+        get() = DataType.Integer
 
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genVal(value.toInt()))

@@ -22,7 +22,8 @@ class EnumLiteral(value: String, private val owner: String) : Literal(value) {
         }
     }
 
-    override val resultDataType: DataType = DataType.Enum
+    override val resultDataType: DataType
+        get() = DataType.Enum
 
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genLink(JenaUtil.POAS_PREF, value))

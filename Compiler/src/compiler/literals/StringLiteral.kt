@@ -12,7 +12,8 @@ import util.JenaUtil
  */
 class StringLiteral(value: String) : Literal(value) {
 
-    override val resultDataType: DataType = DataType.String
+    override val resultDataType: DataType
+        get() = DataType.String
 
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genVal(value))

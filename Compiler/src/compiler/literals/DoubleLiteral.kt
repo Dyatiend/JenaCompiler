@@ -12,7 +12,8 @@ import util.JenaUtil
  */
 class DoubleLiteral(value: Double) : Literal(value.toString()) {
 
-    override val resultDataType: DataType = DataType.Double
+    override val resultDataType: DataType
+        get() = DataType.Double
 
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genVal(value.toDouble()))

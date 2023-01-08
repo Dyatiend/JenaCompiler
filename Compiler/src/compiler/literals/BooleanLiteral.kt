@@ -12,7 +12,8 @@ import util.JenaUtil
  */
 class BooleanLiteral(value: Boolean) : Literal(value.toString()) {
 
-    override val resultDataType: DataType = DataType.Boolean
+    override val resultDataType: DataType
+        get() = DataType.Boolean
 
     override fun compile(): CompilationResult =
         CompilationResult(value = JenaUtil.genVal(value.toBoolean()))

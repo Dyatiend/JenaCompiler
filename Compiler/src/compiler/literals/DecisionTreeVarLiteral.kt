@@ -16,7 +16,8 @@ import util.NamingManager
  */
 class DecisionTreeVarLiteral(value: String) : Literal(value) {
 
-    override val resultDataType: DataType = DataType.DecisionTreeVar
+    override val resultDataType: DataType
+        get() = DataType.DecisionTreeVar
 
     override fun compile(): CompilationResult {
         val resVarName = NamingManager.genVarName()
