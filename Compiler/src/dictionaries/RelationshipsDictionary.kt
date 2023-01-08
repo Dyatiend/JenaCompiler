@@ -34,7 +34,27 @@ object RelationshipsDictionary {
     // ++++++ Шаблоны вспомогательных правил для отношений порядковых шкал +++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    private object LinerScalePatterns {
+    internal object LinerScalePatterns {
+
+        val NUMERATION_RULES_PATTERN = """
+            
+            [
+            (?var1 <linerPredicate> ?var2)
+            noValue(?var3, <linerPredicate>, ?var1)
+            ->
+            (?var1 <numberPredicate> "1"^^xsd:integer)
+            ]
+        
+            [
+            (?var1 <linerPredicate> ?var2)
+            noValue(?var2, <numberPredicate>)
+            (?var1 <numberPredicate> ?var3)
+            addOne(?var3, ?var4)
+            ->
+            (?var2 <numberPredicate> ?var4)
+            ]
+            
+        """.trimIndent()
 
         const val REVERSE_VAR_COUNT = 0
         val REVERSE_PATTERN = """

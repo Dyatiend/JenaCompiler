@@ -5,6 +5,7 @@ import models.RelationshipModel
 import util.JenaUtil.POAS_PREF
 import util.JenaUtil.RDF_PREF
 import util.JenaUtil.genLink
+import util.NamingManager.genPredicateName
 
 object DictionariesUtil {
 
@@ -21,10 +22,10 @@ object DictionariesUtil {
     /**
      * Предикат, задающий нумерацию для порядковой шкалы классов
      */
-    const val SUBCLASS_SCALE_PREDICATE = "classNumber..."
+    val SUBCLASS_SCALE_PREDICATE = genPredicateName()
 
     /**
-     * Инициализирует все словари в правильном порядке
+     * Инициализирует все словари и проверят их валидность
      */
     fun initAllDictionaries(
         classesDictionaryPath: String,
@@ -52,23 +53,26 @@ object DictionariesUtil {
     fun generateAuxiliaryRules(): String {
         var result = ""
 
-        // FIXME: частичный порядок
+        // FIXME: RelationshipsDictionary.PartialScalePatterns.NUMERATION_RULES_PATTERN
         var classNumerationRules = """
-        [
-        (?var1 <linerPredicate> ?var2)
-        noValue(?var2, <linerPredicate>, ?var3)
-        ->
-        (?var2 <numberPredicate> "1"^^xsd:integer)
-        ]
-        [
-        (?var1 <linerPredicate> ?var2)
-        noValue(?var1, <numberPredicate>)
-        (?var2 <numberPredicate> ?var3)
-        addOne(?var3, ?var4)
-        ->
-        (?var1 <numberPredicate> ?var4)
-        ]
-    """
+            
+            [
+            (?var1 <linerPredicate> ?var2)
+            noValue(?var2, <linerPredicate>, ?var3)
+            ->
+            (?var2 <numberPredicate> "1"^^xsd:integer)
+            ]
+            [
+            (?var1 <linerPredicate> ?var2)
+            noValue(?var1, <numberPredicate>)
+            (?var2 <numberPredicate> ?var3)
+            addOne(?var3, ?var4)
+            ->
+            (?var1 <numberPredicate> ?var4)
+            ]
+        
+        """.trimIndent()
+
         classNumerationRules = classNumerationRules.replace("<linerPredicate>", genLink(RDF_PREF, "subClassOf"))
         classNumerationRules =
             classNumerationRules.replace("<numberPredicate>", genLink(POAS_PREF, SUBCLASS_SCALE_PREDICATE))
