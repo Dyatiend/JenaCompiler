@@ -12,7 +12,7 @@ import util.JenaUtil
  * @param value Значение
  * @param owner Имя enum, к которому относится данный элемент
  */
-class EnumLiteral(value: String, private val owner: String) : Literal(value) {
+class EnumLiteral(value: String, val owner: String) : Literal(value) {
 
     init {
         // Проверяем существование enum и наличие у него такого значения
