@@ -110,7 +110,76 @@ object RelationshipsDictionary {
     }
 
     object PartialScalePatterns {
-        // TODO
+
+        val NUMERATION_RULES_PATTERN = """
+            
+            [
+            (?var1 <partialPredicate> ?var2)
+            noValue(?var2, <partialPredicate>, ?var3)
+            makeUniqueID(?var4)
+            ->
+            (?var2 <numberPredicate> ?var4)
+            ]
+        
+            [
+            (?var1 <partialPredicate> ?var2)
+            noValue(?var1, <numberPredicate>)
+            (?var2 <numberPredicate> ?var3)
+            makeUniqueID(?var4)
+            strConcat(?var3, ".", ?var4, ?var5)
+            ->
+            (?var1 <numberPredicate> ?var5)
+            ]
+            
+        """.trimIndent()
+
+        const val REVERSE_VAR_COUNT = 0
+        val REVERSE_PATTERN = """
+            (<arg2> <predicate> <arg1>)
+        """.trimIndent()
+
+        const val TRANSITIVE_CLOSURE_VAR_COUNT = 2
+        val TRANSITIVE_CLOSURE_PATTERN = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            startsWith(<var2>, <var1>)
+        """.trimIndent()
+
+        const val REVERSE_TRANSITIVE_CLOSURE_VAR_COUNT = 2
+        val REVERSE_TRANSITIVE_CLOSURE_PATTERN = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            startsWith(<var1>, <var2>)
+        """.trimIndent()
+
+        const val IS_BETWEEN_VAR_COUNT = 3
+        val IS_BETWEEN_PATTERN = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            (<arg3> <numberPredicate> <var3>)
+            startsWith(<var1>, <var2>)
+            startsWith(<var3>, <var1>)
+        """.trimIndent()
+
+        const val IS_CLOSER_TO_THAN_VAR_COUNT = 7
+        val IS_CLOSER_TO_THAN_PATTERN = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            (<arg3> <numberPredicate> <var3>)
+            partialScaleDistance(<var2>, <var1>, <var4>)
+            partialScaleDistance(<var2>, <var3>, <var5>)
+            lessThan(<var4>, <var5>)
+        """.trimIndent()
+
+        const val IS_FURTHER_FROM_THAN_VAR_COUNT = 7
+        val IS_FURTHER_FROM_THAN_PATTERN = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            (<arg3> <numberPredicate> <var3>)
+            partialScaleDistance(<var2>, <var1>, <var4>)
+            partialScaleDistance(<var2>, <var3>, <var5>)
+            greaterThan(<var4>, <var5>)
+        """.trimIndent()
     }
 
     // +++++++++++++++++++++++++++++++++ Свойства ++++++++++++++++++++++++++++++++++
@@ -278,7 +347,70 @@ object RelationshipsDictionary {
                         scalePredicates[name] = scalePredicate
                         flags = 22
 
-                        TODO("Отношения частичного порядка")
+                        relationships.addAll(
+                            listOf(
+                                RelationshipModel(
+                                    name = scaleRelations[0],
+                                    argsClasses = args,
+                                    flags = flags,
+                                    varsCount = PartialScalePatterns.REVERSE_VAR_COUNT,
+                                    head = PartialScalePatterns.REVERSE_PATTERN.replace(
+                                        "<predicate>",
+                                        genLink(POAS_PREF, name)
+                                    )
+                                ),
+                                RelationshipModel(
+                                    name = scaleRelations[1],
+                                    argsClasses = args,
+                                    flags = 16,
+                                    varsCount = PartialScalePatterns.TRANSITIVE_CLOSURE_VAR_COUNT,
+                                    head = PartialScalePatterns.TRANSITIVE_CLOSURE_PATTERN.replace(
+                                        "<numberPredicate>",
+                                        genLink(POAS_PREF, scalePredicate)
+                                    )
+                                ),
+                                RelationshipModel(
+                                    name = scaleRelations[2],
+                                    argsClasses = args,
+                                    flags = 16,
+                                    varsCount = PartialScalePatterns.REVERSE_TRANSITIVE_CLOSURE_VAR_COUNT,
+                                    head = PartialScalePatterns.REVERSE_TRANSITIVE_CLOSURE_PATTERN.replace(
+                                        "<numberPredicate>",
+                                        genLink(POAS_PREF, scalePredicate)
+                                    )
+                                ),
+                                RelationshipModel(
+                                    name = scaleRelations[3],
+                                    argsClasses = args.plus(args[0]),
+                                    flags = 0,
+                                    varsCount = PartialScalePatterns.IS_BETWEEN_VAR_COUNT,
+                                    head = PartialScalePatterns.IS_BETWEEN_PATTERN.replace(
+                                        "<numberPredicate>",
+                                        genLink(POAS_PREF, scalePredicate)
+                                    )
+                                ),
+                                RelationshipModel(
+                                    name = scaleRelations[4],
+                                    argsClasses = args.plus(args[0]),
+                                    flags = 0,
+                                    varsCount = PartialScalePatterns.IS_CLOSER_TO_THAN_VAR_COUNT,
+                                    head = PartialScalePatterns.IS_CLOSER_TO_THAN_PATTERN.replace(
+                                        "<numberPredicate>",
+                                        genLink(POAS_PREF, scalePredicate)
+                                    )
+                                ),
+                                RelationshipModel(
+                                    name = scaleRelations[5],
+                                    argsClasses = args.plus(args[0]),
+                                    flags = 0,
+                                    varsCount = PartialScalePatterns.IS_FURTHER_FROM_THAN_VAR_COUNT,
+                                    head = PartialScalePatterns.IS_FURTHER_FROM_THAN_PATTERN.replace(
+                                        "<numberPredicate>",
+                                        genLink(POAS_PREF, scalePredicate)
+                                    )
+                                )
+                            )
+                        )
                     }
 
                     else -> {

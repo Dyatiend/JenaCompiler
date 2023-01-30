@@ -77,8 +77,12 @@ object PropertiesDictionary {
                 require(dataType != null) {
                     "Некорректный тип данных ${row[1]}."
                 }
-                require(!isStatic || !owners.isNullOrEmpty()) {
-                    "Свойством $name не обладает ни один класс."
+                require(isStatic == !owners.isNullOrEmpty()) {
+                    if (isStatic) {
+                        "Свойством $name не обладает ни один класс."
+                    } else {
+                        "У нестатического свойства $name не должно быть классов-владельцев."
+                    }
                 }
 
                 properties.add(
