@@ -91,7 +91,7 @@ interface Operator {
 
         // Генерируем имена
         val skolemName = NamingManager.genVarName()
-        val resPredicateName = NamingManager.genPredicateName()
+        val resPredicateName = if (resultDataType != null) NamingManager.genPredicateName() else ""
 
         // Упрощаем выражение
         val expr = semantic()
