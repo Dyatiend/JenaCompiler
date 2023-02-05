@@ -1,0 +1,5 @@
+<AssignToProperty>
+    <Object name="object2"/>
+    <Property name="double1"/>
+    <Double value="3.3"/>
+</AssignToProperty>

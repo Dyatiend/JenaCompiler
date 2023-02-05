@@ -1,0 +1,8 @@
+<AssignToProperty>
+    <Object name="object2"/>
+    <Property name="enum1"/>
+    <GetPropertyValue>
+        <Object name="object3"/>
+        <Property name="enum2"/>
+    </GetPropertyValue>
+</AssignToProperty>

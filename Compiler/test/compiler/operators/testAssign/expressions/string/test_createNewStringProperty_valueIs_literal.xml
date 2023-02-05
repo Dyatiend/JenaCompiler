@@ -1,0 +1,5 @@
+<AssignToProperty>
+    <Object name="object1"/>
+    <Property name="string"/>
+    <String value="text_text"/>
+</AssignToProperty>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:ns0="http://www.vstu.ru/poas/code#">
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#class4">
+    <ns0:intStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:intStatic1>
+    <ns0:doubleStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.1</ns0:doubleStatic1>
+    <ns0:booleanStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:booleanStatic1>
+    <ns0:stringStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</ns0:stringStatic1>
+    <ns0:enumStatic1 rdf:resource="http://www.vstu.ru/poas/code#value1"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#class5">
+    <ns0:intStatic2 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:intStatic2>
+    <ns0:doubleStatic2 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">2.2</ns0:doubleStatic2>
+    <ns0:booleanStatic2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:booleanStatic2>
+    <ns0:stringStatic2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TEXT</ns0:stringStatic2>
+    <ns0:enumStatic2 rdf:resource="http://www.vstu.ru/poas/code#value2"/>
+  </rdf:Description>
+
+  <ns0:class1 rdf:about="http://www.vstu.ru/poas/code#object1">
+  </ns0:class1>
+
+  <ns0:class2 rdf:about="http://www.vstu.ru/poas/code#object2">
+    <ns0:int1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:int1>
+    <ns0:double1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.1</ns0:double1>
+    <ns0:boolean1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:boolean1>
+    <ns0:string1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text</ns0:string1>
+    <ns0:enum1 rdf:resource="http://www.vstu.ru/poas/code#value1"/>
+  </ns0:class2>
+
+  <ns0:class3 rdf:about="http://www.vstu.ru/poas/code#object3">
+    <ns0:int2 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:int2>
+    <ns0:double2 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">2.2</ns0:double2>
+    <ns0:boolean2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:boolean2>
+    <ns0:string2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TEXT</ns0:string2>
+    <ns0:enum2 rdf:resource="http://www.vstu.ru/poas/code#value2"/>
+  </ns0:class3>
+
+  <ns0:class4 rdf:about="http://www.vstu.ru/poas/code#object4">
+  </ns0:class4>
+
+  <ns0:class5 rdf:about="http://www.vstu.ru/poas/code#object5">
+  </ns0:class5>
+
+</rdf:RDF>

@@ -1,0 +1,5 @@
+<AssignToProperty>
+    <Object name="object1"/>
+    <Property name="boolean"/>
+    <Boolean value="TRUE"/>
+</AssignToProperty>

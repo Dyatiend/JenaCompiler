@@ -1,0 +1,16 @@
+<AssignToDecisionTreeVar>
+    <DecisionTreeVar name="Y"/>
+    <GetByCondition varName="X">
+        <LogicalAnd>
+            <CheckClass>
+                <Variable name="X"/>
+                <Class name="class1"/>
+            </CheckClass>
+            <CheckPropertyValue>
+                <Variable name="X"/>
+                <Property name="index"/>
+                <Integer value="1"/>
+            </CheckPropertyValue>
+        </LogicalAnd>
+    </GetByCondition>
+</AssignToDecisionTreeVar>

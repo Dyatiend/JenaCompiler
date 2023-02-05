@@ -1,0 +1,8 @@
+<AssignToProperty>
+    <Object name="object1"/>
+    <Property name="int"/>
+    <GetPropertyValue>
+        <Object name="object2"/>
+        <Property name="int1"/>
+    </GetPropertyValue>
+</AssignToProperty>

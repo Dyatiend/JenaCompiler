@@ -1,0 +1,8 @@
+<AssignToProperty>
+    <Object name="object1"/>
+    <Property name="boolean"/>
+    <GetPropertyValue>
+        <Object name="object4"/>
+        <Property name="booleanStatic1"/>
+    </GetPropertyValue>
+</AssignToProperty>

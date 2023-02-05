@@ -1,0 +1,4 @@
+<AssignToDecisionTreeVar>
+    <DecisionTreeVar name="Y"/>
+    <DecisionTreeVar name="X"/>
+</AssignToDecisionTreeVar>

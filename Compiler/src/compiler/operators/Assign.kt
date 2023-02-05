@@ -7,11 +7,11 @@ import compiler.literals.EnumLiteral
 import compiler.literals.IntegerLiteral
 import compiler.literals.PropertyLiteral
 import compiler.util.CompilationResult
-import dictionaries.EnumsDictionary
 import dictionaries.PropertiesDictionary
 import util.DataType
 import util.JenaUtil
 import util.JenaUtil.DECISION_TREE_VAR_PREDICATE
+import util.JenaUtil.PAUSE_MARK
 import util.JenaUtil.POAS_PREF
 import util.NamingManager
 
@@ -21,51 +21,72 @@ import util.NamingManager
 class Assign(args: List<Operator>) : BaseOperator(args) {
 
     init {
+        // TODO: больше проверок
         if (args.size == 3) {
             val arg2 = arg(2)
 
             val propertyName = (arg(1) as PropertyLiteral).value
             val newValueDataType = arg(2).resultDataType!!
 
-            // Проверяем, что свойство не статическое
-            require(PropertiesDictionary.isStatic(propertyName) == true) {
-                "Свойство $propertyName не должно быть статическим"
+            require(PropertiesDictionary.isStatic(propertyName) == false) {
+                "Свойство $propertyName не должно быть статическим."
             }
             require(PropertiesDictionary.dataType(propertyName) == newValueDataType) {
-                "Тип данных значения не совпадает с типом данных свойства"
+                "Тип данных $newValueDataType не соответствует типу ${PropertiesDictionary.dataType(propertyName)} свойства $propertyName."
             }
-            // Проверяем, что присваиваемое значение статическое
             require(arg2 is Literal || arg2 is GetPropertyValue) {
-                "Нельзя присвоить динамическое значение"
+                "Нельзя присвоить свойству динамическое значение." // FIXME?: можно, но тогда не получится его контролировать
             }
-            if (arg2 is Literal) {
-                when (arg2) {
-                    is IntegerLiteral -> {
-                        PropertiesDictionary.isValueInRange(propertyName, arg2.value.toInt())
-                    }
 
-                    is DoubleLiteral -> {
-                        PropertiesDictionary.isValueInRange(propertyName, arg2.value.toDouble())
+            // FIXME?: проверять попадает ли в диапазон значение при arg2 is GetPropertyValue?
+            when (arg2) {
+                is IntegerLiteral -> {
+                    require(PropertiesDictionary.isValueInRange(propertyName, arg2.value.toInt()) == true) {
+                        "Значение ${arg2.value.toInt()} вне диапазона значений свойства $propertyName."
                     }
+                }
 
-                    is EnumLiteral -> {
-                        EnumsDictionary.containsValue(PropertiesDictionary.enumName(propertyName)!!, arg2.value)
+                is DoubleLiteral -> {
+                    require(PropertiesDictionary.isValueInRange(propertyName, arg2.value.toDouble()) == true) {
+                        "Значение ${arg2.value.toDouble()} вне диапазона значений свойства $propertyName."
+                    }
+                }
+
+                is EnumLiteral -> {
+                    require(PropertiesDictionary.enumName(propertyName)!! == arg2.owner) {
+                        "Тип перечисления ${PropertiesDictionary.enumName(propertyName)} свойства $propertyName не соответствует типу перечисления ${arg2.owner} значения."
+                    }
+                }
+
+                is GetPropertyValue -> {
+                    require(
+                        PropertiesDictionary.dataType(propertyName) != DataType.Enum
+                                || PropertiesDictionary.enumName(propertyName)!!
+                                == PropertiesDictionary.enumName((arg2.arg(1) as PropertyLiteral).value)!!
+                    ) {
+                        "Тип перечисления ${PropertiesDictionary.enumName(propertyName)} свойства $propertyName не соответствует типу перечисления ${
+                            PropertiesDictionary.enumName(
+                                (arg2.arg(1) as PropertyLiteral).value
+                            )
+                        } значения."
                     }
                 }
             }
         }
     }
 
-    override val argsDataTypes = listOf(
-        listOf(DataType.Object, DataType.Property, DataType.Integer),
-        listOf(DataType.Object, DataType.Property, DataType.Double),
-        listOf(DataType.Object, DataType.Property, DataType.Boolean),
-        listOf(DataType.Object, DataType.Property, DataType.String),
-        listOf(DataType.Object, DataType.Property, DataType.Enum),
-        listOf(DataType.DecisionTreeVar, DataType.Object)
-    )
+    override val argsDataTypes
+        get() = listOf(
+            listOf(DataType.Object, DataType.Property, DataType.Integer),
+            listOf(DataType.Object, DataType.Property, DataType.Double),
+            listOf(DataType.Object, DataType.Property, DataType.Boolean),
+            listOf(DataType.Object, DataType.Property, DataType.String),
+            listOf(DataType.Object, DataType.Property, DataType.Enum),
+            listOf(DataType.DecisionTreeVar, DataType.Object)
+        )
 
-    override val resultDataType = null
+    override val resultDataType
+        get() = null
 
     override fun compile(): CompilationResult {
         // Объявляем переменные
@@ -98,8 +119,11 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
                         var rule = PROPERTY_ASSIGN_PATTERN
                         rule = rule.replace("<tmp0>", NamingManager.genVarName())
                         rule = rule.replace("<tmp1>", NamingManager.genVarName())
+                        rule = rule.replace("<dropped>", NamingManager.genPredicateName())
 
                         rule = rule.replace("<ruleHead>", head)
+                        rule = rule.replace("<propHead>", head1)
+                        rule = rule.replace("<valueHead>", head2)
                         rule = rule.replace("<subjName>", compiledArg0.value)
                         rule = rule.replace("<propName>", compiledArg1.value)
                         rule = rule.replace("<value>", compiledArg2.value)
@@ -115,7 +139,7 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             val arg1 = arg(1)
 
             // Получаем имя переменной
-            val varName = (arg0 as Literal).value
+            val varName = JenaUtil.genVal((arg0 as Literal).value)
 
             // Компилируем аргументы
             val compiledArg0 = arg0.compile()
@@ -133,8 +157,13 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
 
                     // Заполняем шаблон
                     var rule = DECISION_TREE_VAR_ASSIGN_PATTERN
+                    rule = rule.replace("<tmp0>", NamingManager.genVarName())
+                    rule = rule.replace("<dropped>", NamingManager.genPredicateName())
+
                     rule = rule.replace("<ruleHead>", head)
+                    rule = rule.replace("<newObjHead>", head1)
                     rule = rule.replace("<newObj>", compiledArg1.value)
+                    rule = rule.replace("<oldObj>", compiledArg0.value)
                     rule = rule.replace("<varPredicate>", JenaUtil.genLink(POAS_PREF, DECISION_TREE_VAR_PREDICATE))
                     rule = rule.replace("<varName>", varName)
 
@@ -144,7 +173,7 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             }
         }
 
-        return CompilationResult("", listOf(""), completedRules)
+        return CompilationResult(rules = completedRules)
     }
 
     override fun clone(): Operator {
@@ -164,14 +193,62 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
     companion object {
 
         /**
-         * Шаблон правила присваивания значения свойства
+         * Шаблон правила присваивания значения свойству
          */
-        private const val PROPERTY_ASSIGN_PATTERN =
-            "[\n(<tmp0> <propName> <tmp1>)\n<ruleHead>\nequal(<subjName>, <tmp0>)\n->\ndrop(0)\n(<subjName> <propName> <value>)\n]\n"
+        private val PROPERTY_ASSIGN_PATTERN = """
+            [
+            (<tmp0> <propName> <tmp1>)
+            <ruleHead>
+            equal(<subjName>, <tmp0>)
+            ->
+            drop(0)
+            (<subjName> <dropped> "true"^^${JenaUtil.XSD_PREF}boolean)
+            ]
+            
+            $PAUSE_MARK
+            
+            [
+            (<subjName> <dropped> <tmp0>)
+            <propHead>
+            <valueHead>
+            ->
+            (<subjName> <propName> <value>)
+            ]
+            
+            [
+            noValue(<tmp0>, <dropped>)
+            <ruleHead>
+            ->
+            (<subjName> <propName> <value>)
+            ]
+        """.trimIndent()
 
         /**
          * Шаблон правила присваивания значения переменной дерева мысли
          */
-        private const val DECISION_TREE_VAR_ASSIGN_PATTERN = "[\n<ruleHead>\n->\ndrop(0)\n(<newObj> <varPredicate> <varName>)\n]\n"
+        private val DECISION_TREE_VAR_ASSIGN_PATTERN = """
+            [
+            <ruleHead>
+            ->
+            drop(0)
+            (<oldObj> <dropped> "true"^^${JenaUtil.XSD_PREF}boolean)
+            ]
+            
+            $PAUSE_MARK
+            
+            [
+            (<oldObj> <dropped> <tmp0>)
+            <newObjHead>
+            ->
+            (<newObj> <varPredicate> <varName>)
+            ]
+            
+            [
+            noValue(<tmp0>, <dropped>)
+            <newObjHead>
+            ->
+            (<newObj> <varPredicate> <varName>)
+            ]
+        """.trimIndent()
     }
 }
