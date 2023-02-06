@@ -1,0 +1,6 @@
+<LogicalNot>
+    <CheckClass>
+        <Object name="object2"/>
+        <Class name="class7"/>
+    </CheckClass>
+</LogicalNot>

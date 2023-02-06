@@ -216,6 +216,7 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             ]
             
             [
+            (${NamingManager.genVarName()} ${NamingManager.genVarName()} ${NamingManager.genVarName()})
             noValue(<tmp0>, <dropped>)
             <ruleHead>
             ->
@@ -244,6 +245,7 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             ]
             
             [
+            (${NamingManager.genVarName()} ${NamingManager.genVarName()} ${NamingManager.genVarName()})
             noValue(<tmp0>, <dropped>)
             <newObjHead>
             ->

@@ -1,15 +1,11 @@
 package compiler.operators.testAssign
 
 import builtins.util.registerAllCustomBuiltin
-import compiler.Operator
-import compiler.util.CompilationResult
-import dictionaries.util.DictionariesUtil.initAllDictionaries
-import org.apache.jena.rdf.model.InfModel
-import org.apache.jena.rdf.model.Model
-import org.apache.jena.rdf.model.ModelFactory
-import org.apache.jena.reasoner.rulesys.GenericRuleReasoner
-import org.apache.jena.reasoner.rulesys.Rule
-import org.apache.jena.riot.RDFDataMgr
+import compiler.operators.util.TestUtil.compileVoid
+import compiler.operators.util.TestUtil.createModel
+import compiler.operators.util.TestUtil.readExpr
+import compiler.operators.util.TestUtil.runReasoner
+import dictionaries.util.DictionariesUtil
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
@@ -29,12 +25,12 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/decisionTreeVar/test_createNewVar_valueIs_objectLiteral.xml")
 
         // Компилируем        
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
-        // Создаем модель         
+        // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToVar.owl")
 
-        // Запускаем правила        
+        // Запускаем правила
         val inf = runReasoner(model, result)
 
         // Проверяем результат
@@ -77,9 +73,9 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/decisionTreeVar/test_createNewVar_valueIs_foundObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
-        // Создаем модель 
+        // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToVar.owl")
 
         // Запускаем правила
@@ -125,9 +121,9 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/decisionTreeVar/test_createNewVar_valueIs_otherVar.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
-        // Создаем модель 
+        // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToVar.owl")
 
         // Запускаем правила
@@ -172,9 +168,9 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/decisionTreeVar/test_rewriteExistingVar_valueIs_objectLiteral.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
-        // Создаем модель 
+        // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToVar.owl")
 
         // Запускаем правила
@@ -218,9 +214,9 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/decisionTreeVar/test_rewriteExistingVar_valueIs_foundObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
-        // Создаем модель 
+        // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToVar.owl")
 
         // Запускаем правила
@@ -264,9 +260,9 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/decisionTreeVar/test_rewriteExistingVar_valueIs_otherVar.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
-        // Создаем модель 
+        // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToVar.owl")
 
         // Запускаем правила
@@ -317,7 +313,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/integer/test_createNewIntProperty_valueIs_literal.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -351,7 +347,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/integer/test_createNewIntProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -385,7 +381,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/integer/test_createNewIntProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -419,7 +415,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/integer/test_rewriteIntProperty_valueIs_literal.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -453,7 +449,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/integer/test_rewriteIntProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -487,7 +483,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/integer/test_rewriteIntProperty_valueIs_staticPropertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -524,7 +520,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/double/test_createNewDoubleProperty_valueIs_literal.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -558,7 +554,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/double/test_createNewDoubleProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -592,7 +588,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/double/test_createNewDoubleProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -626,7 +622,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/double/test_rewriteDoubleProperty_valueIs_literal.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -660,7 +656,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/double/test_rewriteDoubleProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -694,7 +690,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/double/test_rewriteDoubleProperty_valueIs_staticPropertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -731,7 +727,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/boolean/test_createNewBooleanProperty_valueIs_literal.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -765,7 +761,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/boolean/test_createNewBooleanProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -799,7 +795,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/boolean/test_createNewBooleanProperty_valueIs_staticPropertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -833,7 +829,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/boolean/test_rewriteBooleanProperty_valueIs_literal.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -867,7 +863,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/boolean/test_rewriteBooleanProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -901,7 +897,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/boolean/test_rewriteBooleanProperty_valueIs_staticPropertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -938,7 +934,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/string/test_createNewStringProperty_valueIs_literal.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -972,7 +968,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/string/test_createNewStringProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -1006,7 +1002,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/string/test_createNewStringProperty_valueIs_staticPropertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -1040,7 +1036,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/string/test_rewriteStringProperty_valueIs_literal.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -1074,7 +1070,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/string/test_rewriteStringProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -1108,7 +1104,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/string/test_rewriteStringProperty_valueIs_staticPropertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -1145,7 +1141,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/enum/test_createNewEnumProperty_valueIs_literal.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -1179,7 +1175,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/enum/test_createNewEnumProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -1213,7 +1209,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/enum/test_createNewEnumProperty_valueIs_staticPropertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -1247,7 +1243,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/enum/test_rewriteEnumProperty_valueIs_literal.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -1281,7 +1277,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/enum/test_rewriteEnumProperty_valueIs_propertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -1315,7 +1311,7 @@ internal class AssignTest {
             readExpr("test/compiler/operators/testAssign/expressions/enum/test_rewriteEnumProperty_valueIs_staticPropertyOfOtherObject.xml")
 
         // Компилируем
-        val result = compile(operator)
+        val result = compileVoid(operator)
 
         // Создаем модель
         val model = createModel("test/compiler/operators/testAssign/models/test_assignToProperty.owl")
@@ -1349,7 +1345,7 @@ internal class AssignTest {
         @BeforeAll
         @JvmStatic
         fun init() {
-            initAllDictionaries(
+            DictionariesUtil.initAllDictionaries(
                 "test/compiler/operators/testAssign/dictionaries/classes.csv",
                 "test/compiler/operators/testAssign/dictionaries/decisionTreeVars.csv",
                 "test/compiler/operators/testAssign/dictionaries/enums.csv",
@@ -1358,66 +1354,6 @@ internal class AssignTest {
             )
 
             registerAllCustomBuiltin()
-        }
-
-        /**
-         * Считывает выражение и проверяет корректность считывания
-         * @param path Пусть к XML файлу с выражением
-         * @return Выражение
-         */
-        fun readExpr(path: String): Operator {
-            var operator: Operator? = null
-            try {
-                operator =
-                    Operator.fromXMLFile(path)
-            } catch (ex: IllegalAccessException) {
-                ex.printStackTrace()
-            }
-            Assertions.assertNotNull(operator)
-            return operator!!
-        }
-
-        /**
-         * Компилирует выражение и проверяет корректность компиляции
-         * @param operator Выражение
-         * @return Результат компиляции
-         */
-        fun compile(operator: Operator): CompilationResult {
-            val result = operator.compileExpression()
-            Assertions.assertTrue(result.value.isEmpty())
-            Assertions.assertTrue(result.heads.size == 1)
-            Assertions.assertTrue(result.heads.first().isEmpty())
-            Assertions.assertFalse(result.rules.isEmpty())
-            return result
-        }
-
-        /**
-         * Создает модель
-         * @param path Путь в RDF файлу
-         * @return Модель
-         */
-        fun createModel(path: String): Model {
-            val model = ModelFactory.createDefaultModel()
-            val input = RDFDataMgr.open(path)
-            model.read(input, null)
-            return model
-        }
-
-        /**
-         * Запускает Jena Reasoner на правилах, полученных в результате компиляции
-         * @param model Входная модель
-         * @param compilationResult Результат компиляции
-         * @return Результирующая модель
-         */
-        fun runReasoner(model: Model, compilationResult: CompilationResult): InfModel {
-            var inf = ModelFactory.createInfModel(GenericRuleReasoner(listOf()), model)
-            val rulesSets = compilationResult.rules.split(JenaUtil.PAUSE_MARK)
-            for (set in rulesSets) {
-                val rules = Rule.parseRules(set)
-                val reasoner = GenericRuleReasoner(rules)
-                inf = ModelFactory.createInfModel(reasoner, inf)
-            }
-            return inf
         }
     }
 }

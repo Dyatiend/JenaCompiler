@@ -1,5 +1,6 @@
 package util
 
+import util.NamingManager.PROTECTIVE_CHARS
 import util.NamingManager.genPredicateName
 
 /**
@@ -50,12 +51,12 @@ object JenaUtil {
     /**
      * Предикат переменной дерева мысли
      */
-    val DECISION_TREE_VAR_PREDICATE = genPredicateName()
+    const val DECISION_TREE_VAR_PREDICATE = "var$PROTECTIVE_CHARS"
 
     /**
      * Предикат результата сравнения
      */
-    val COMPARE_RESULT_PREDICATE = genPredicateName()
+    const val COMPARE_RESULT_PREDICATE = "compareResult$PROTECTIVE_CHARS"
 
     /**
      * Маркировка паузы
@@ -73,14 +74,14 @@ object JenaUtil {
     /**
      * Основной шаблон правила с возвращаемым значением
      */
-    private const val MAIN_RULE_PATTERN =
-        "[\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> <resVarName>)\n]\n\n"
+    private val MAIN_RULE_PATTERN =
+        "[\n(${NamingManager.genVarName()} ${NamingManager.genVarName()} ${NamingManager.genVarName()})\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> <resVarName>)\n]\n\n"
 
     /**
      * Шаблон для boolean правила
      */
-    private const val BOOLEAN_RULE_PATTERN =
-        "[\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> \"true\"^^xsd:boolean)\n]\n\n"
+    private val BOOLEAN_RULE_PATTERN =
+        "[\n(${NamingManager.genVarName()} ${NamingManager.genVarName()} ${NamingManager.genVarName()})\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> \"true\"^^xsd:boolean)\n]\n\n"
 
     // ++++++++++++++++++++++++++++ Методы для генерации +++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

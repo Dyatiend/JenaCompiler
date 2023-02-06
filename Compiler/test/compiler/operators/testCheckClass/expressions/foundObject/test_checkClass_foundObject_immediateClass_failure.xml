@@ -1,0 +1,10 @@
+<CheckClass>
+    <GetByCondition varName="X">
+        <CheckPropertyValue>
+            <Variable name="X"/>
+            <Property name="someProp"/>
+            <Boolean value="TRUE"/>
+        </CheckPropertyValue>
+    </GetByCondition>
+    <Class name="class5"/>
+</CheckClass>

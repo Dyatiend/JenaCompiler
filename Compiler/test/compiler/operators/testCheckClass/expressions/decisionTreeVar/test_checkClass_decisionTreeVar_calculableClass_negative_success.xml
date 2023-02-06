@@ -1,0 +1,6 @@
+<LogicalNot>
+    <CheckClass>
+        <DecisionTreeVar name="X"/>
+        <Class name="class6"/>
+    </CheckClass>
+</LogicalNot>

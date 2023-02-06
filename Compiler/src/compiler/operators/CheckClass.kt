@@ -1,10 +1,11 @@
 package compiler.operators
 
 import compiler.Operator
-import compiler.values.ClassValue
-import dictionaries.ClassesDictionary.howToCalculate
-import dictionaries.ClassesDictionary.isComputable
-import util.CompilationResult
+import compiler.literals.ClassLiteral
+import compiler.util.CompilationResult
+import dictionaries.ClassesDictionary.calcExpr
+import dictionaries.ClassesDictionary.isCalculable
+import models.ClassModel
 import util.DataType
 import util.JenaUtil
 import util.JenaUtil.genBindPrim
@@ -23,13 +24,11 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
      */
     internal var isNegative = false
 
-    override fun argsDataTypes(): List<List<DataType>> {
-        return listOf(listOf(DataType.Object, DataType.Class))
-    }
+    override val argsDataTypes
+        get() = listOf(listOf(DataType.Object, DataType.Class))
 
-    override fun resultDataType(): DataType {
-        return DataType.Boolean
-    }
+    override val resultDataType
+        get() = DataType.Boolean
 
     override fun compile(): CompilationResult {
         // Объявляем переменные
@@ -45,15 +44,15 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
         val compiledArg1 = arg1.compile()
 
         // Если класс можно вычислить (вычисляемый класс можно получить только указав его имя т.е. через ClassValue)
-        if (isComputable((arg1 as ClassValue).value)) {
+        if (isCalculable((arg1 as ClassLiteral).value)) {
             // Получаем выражение для вычисления
-            val calculation = howToCalculate(arg1.value)
+            val calculation = calcExpr(arg1.value)
 
-            // Проверям корректность словаря
+            // Проверяем корректность словаря
             requireNotNull(calculation) { "Для класса ${arg1.value} в словаре нет выражения" }
 
-            val varName = calculation.first
-            var expression = calculation.second
+            val varName = ClassModel.CALC_EXPR_VAR_NAME
+            var expression = calculation
 
             // Если негативная форма - добавляем отрицание
             if (isNegative) {
@@ -61,17 +60,17 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
             }
 
             // Компилируем выражение для вычисления
-            val compiledCalculation = expression.doSemantic().compile()
+            val compiledCalculation = expression.semantic().compile()
 
             // Передаем завершенные правила дальше
-            completedRules += compiledArg0.completedRules +
-                    compiledArg1.completedRules +
-                    compiledCalculation.completedRules
+            completedRules += compiledArg0.rules +
+                    compiledArg1.rules +
+                    compiledCalculation.rules
 
             // Для всех результатов компиляции
-            compiledArg0.ruleHeads.forEach { head0 ->
-                compiledArg1.ruleHeads.forEach { head1 ->
-                    compiledCalculation.ruleHeads.forEach { calculationHead ->
+            compiledArg0.heads.forEach { head0 ->
+                compiledArg1.heads.forEach { head1 ->
+                    compiledCalculation.heads.forEach { calculationHead ->
                         // Собираем правило
                         var head = head0 + head1 // Собираем части первого и второго аргументов
                         head += genBindPrim(compiledArg0.value, genVar(varName)) // Инициализируем переменную
@@ -84,12 +83,12 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
             }
         } else {
             // Передаем завершенные правила дальше
-            completedRules += compiledArg0.completedRules +
-                    compiledArg1.completedRules
+            completedRules += compiledArg0.rules +
+                    compiledArg1.rules
 
             // Для всех результатов компиляции
-            compiledArg0.ruleHeads.forEach { head0 ->
-                compiledArg1.ruleHeads.forEach { head1 ->
+            compiledArg0.heads.forEach { head0 ->
+                compiledArg1.heads.forEach { head1 ->
                     // Собираем правило
                     var head = head0 + head1 // Собираем части первого и второго аргументов
 
@@ -116,16 +115,20 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
             }
         }
 
-        return CompilationResult("", heads, completedRules)
+        return CompilationResult(heads = heads, rules = completedRules)
     }
 
     override fun clone(): Operator {
         val newArgs = ArrayList<Operator>()
 
-        args().forEach { arg ->
+        args.forEach { arg ->
             newArgs.add(arg.clone())
         }
 
+        return CheckClass(newArgs)
+    }
+
+    override fun clone(newArgs: List<Operator>): Operator {
         return CheckClass(newArgs)
     }
 
