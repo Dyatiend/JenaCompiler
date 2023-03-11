@@ -1,7 +1,6 @@
 package compiler.operators
 
 import compiler.Operator
-import util.DataType
 
 /**
  * Базовый оператор
@@ -25,52 +24,53 @@ abstract class BaseOperator(args: List<Operator>) : Operator {
      */
     private fun checkArgs(args: List<Operator>) {
         // Получаем список типов данных
-        val actual: MutableList<DataType> = ArrayList()
-        args.forEach {arg ->
-            val resDataType = arg.resultDataType
-
+        val actual = args.map { arg ->
             // Проверяем, что все операторы имеют возвращаемое значение
-            requireNotNull(resDataType) { "Аргумент без возвращаемого значения" }
-
-            actual.add(resDataType)
+            requireNotNull(arg.resultDataType) { "Аргумент без возвращаемого значения" }
         }
 
-        var success = false
-        // Для каждого набора типа данных
-        argsDataTypes.forEach { expected ->
+        val success = argsDataTypes.any { expected ->
             // Если количество аргументов неограниченно
             if (isArgsCountUnlimited) {
                 // Проверяем, что кол-во полученных аргументов больше или равно ожидаемым
                 if (expected.size <= actual.size) {
                     var equals = true
-                    // Сравниваем аргументы
-                    var i = 0
-                    var j = 0
-                    while (i < actual.size) {
 
+                    // Сравниваем аргументы
+                    actual.forEachIndexed { index, actualType ->
                         // Если дошли до последнего аргумента - сравниваем все полученные с последним ожидаемым
-                        if (j > expected.size - 1) {
-                            j = expected.size - 1
+                        val expectedType = if (index > expected.size - 1) {
+                            expected.last()
+                        } else {
+                            expected[index]
                         }
+
                         // Аргументы совпадают - если типы данных равны или могут быть преобразованы
-                        equals = equals && (actual[i] == expected[j]
-                                || actual[i].canCast(expected[j]))
-                        ++i
-                        ++j
+                        equals = equals && (actualType == expectedType
+                                || actualType.canCast(expectedType))
                     }
-                    success = success || equals
+
+                    equals
+                } else {
+                    false
                 }
             } else {
                 // Проверяем, что кол-во полученных аргументов равно ожидаемым
                 if (expected.size == actual.size) {
                     var equals = true
+
                     // Сравниваем аргументы
-                    for (i in actual.indices) {
+                    actual.forEachIndexed { index, actualType ->
+                        val expectedType = expected[index]
+
                         // Аргументы совпадают - если типы данных равны или могут быть преобразованы
-                        equals = equals && (actual[i] == expected[i]
-                                || actual[i].canCast(expected[i]))
+                        equals = equals && (actualType == expectedType
+                                || actualType.canCast(expectedType))
                     }
-                    success = success || equals
+
+                    equals
+                } else {
+                    false
                 }
             }
         }
