@@ -33,7 +33,7 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
 
     override fun compile(): CompilationResult {
         // Объявляем переменные
-        val heads = ArrayList<String>()
+        val bodies = ArrayList<String>()
         var completedRules = ""
 
         // Получаем аргументы
@@ -69,16 +69,16 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
                     compiledCalculation.rules
 
             // Для всех результатов компиляции
-            compiledArg0.heads.forEach { head0 ->
-                compiledArg1.heads.forEach { head1 ->
-                    compiledCalculation.heads.forEach { calculationHead ->
+            compiledArg0.bodies.forEach { body0 ->
+                compiledArg1.bodies.forEach { body1 ->
+                    compiledCalculation.bodies.forEach { calculationBody ->
                         // Собираем правило
-                        var head = head0 + head1 // Собираем части первого и второго аргументов
-                        head += genBindPrim(compiledArg0.value, genVar(varName)) // Инициализируем переменную
-                        head += calculationHead // Добавляем результат компиляции вычисления
+                        var body = body0 + body1 // Собираем части первого и второго аргументов
+                        body += genBindPrim(compiledArg0.value, genVar(varName)) // Инициализируем переменную
+                        body += calculationBody // Добавляем результат компиляции вычисления
 
                         // Добавляем в массив
-                        heads.add(head)
+                        bodies.add(body)
                     }
                 }
             }
@@ -88,13 +88,13 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
                     compiledArg1.rules
 
             // Для всех результатов компиляции
-            compiledArg0.heads.forEach { head0 ->
-                compiledArg1.heads.forEach { head1 ->
+            compiledArg0.bodies.forEach { body0 ->
+                compiledArg1.bodies.forEach { body1 ->
                     // Собираем правило
-                    var head = head0 + head1 // Собираем части первого и второго аргументов
+                    var body = body0 + body1 // Собираем части первого и второго аргументов
 
                     // Добавляем проверку класса
-                    head += if (isNegative) {
+                    body += if (isNegative) {
                         // Если форма негативная - проверяем отсутствие класса
                         genNoValuePrim(
                             compiledArg0.value,
@@ -111,12 +111,12 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
                     }
 
                     // Добавляем в массив
-                    heads.add(head)
+                    bodies.add(body)
                 }
             }
         }
 
-        return CompilationResult(heads = heads, rules = completedRules)
+        return CompilationResult(bodies = bodies, rules = completedRules)
     }
 
     override fun clone(): Operator {
