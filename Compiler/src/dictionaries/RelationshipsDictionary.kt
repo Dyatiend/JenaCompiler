@@ -281,14 +281,14 @@ object RelationshipsDictionary {
                                     argsClasses = args,
                                     flags = flags,
                                     varsCount = REVERSE_VAR_COUNT,
-                                    head = REVERSE_PATTERN.replace("<predicate>", genLink(POAS_PREF, name))
+                                    body = REVERSE_PATTERN.replace("<predicate>", genLink(POAS_PREF, name))
                                 ),
                                 RelationshipModel(
                                     name = scaleRelations[1],
                                     argsClasses = args,
                                     flags = 16,
                                     varsCount = TRANSITIVE_CLOSURE_VAR_COUNT,
-                                    head = TRANSITIVE_CLOSURE_PATTERN.replace(
+                                    body = TRANSITIVE_CLOSURE_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
                                     )
@@ -298,7 +298,7 @@ object RelationshipsDictionary {
                                     argsClasses = args,
                                     flags = 16,
                                     varsCount = REVERSE_TRANSITIVE_CLOSURE_VAR_COUNT,
-                                    head = REVERSE_TRANSITIVE_CLOSURE_PATTERN.replace(
+                                    body = REVERSE_TRANSITIVE_CLOSURE_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
                                     )
@@ -308,7 +308,7 @@ object RelationshipsDictionary {
                                     argsClasses = args.plus(args[0]),
                                     flags = 0,
                                     varsCount = IS_BETWEEN_VAR_COUNT,
-                                    head = IS_BETWEEN_PATTERN.replace(
+                                    body = IS_BETWEEN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
                                     )
@@ -318,7 +318,7 @@ object RelationshipsDictionary {
                                     argsClasses = args.plus(args[0]),
                                     flags = 0,
                                     varsCount = IS_CLOSER_TO_THAN_VAR_COUNT,
-                                    head = IS_CLOSER_TO_THAN_PATTERN.replace(
+                                    body = IS_CLOSER_TO_THAN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
                                     )
@@ -328,7 +328,7 @@ object RelationshipsDictionary {
                                     argsClasses = args.plus(args[0]),
                                     flags = 0,
                                     varsCount = IS_FURTHER_FROM_THAN_VAR_COUNT,
-                                    head = IS_FURTHER_FROM_THAN_PATTERN.replace(
+                                    body = IS_FURTHER_FROM_THAN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
                                     )
@@ -354,7 +354,7 @@ object RelationshipsDictionary {
                                     argsClasses = args,
                                     flags = flags,
                                     varsCount = PartialScalePatterns.REVERSE_VAR_COUNT,
-                                    head = PartialScalePatterns.REVERSE_PATTERN.replace(
+                                    body = PartialScalePatterns.REVERSE_PATTERN.replace(
                                         "<predicate>",
                                         genLink(POAS_PREF, name)
                                     )
@@ -364,7 +364,7 @@ object RelationshipsDictionary {
                                     argsClasses = args,
                                     flags = 16,
                                     varsCount = PartialScalePatterns.TRANSITIVE_CLOSURE_VAR_COUNT,
-                                    head = PartialScalePatterns.TRANSITIVE_CLOSURE_PATTERN.replace(
+                                    body = PartialScalePatterns.TRANSITIVE_CLOSURE_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
                                     )
@@ -374,7 +374,7 @@ object RelationshipsDictionary {
                                     argsClasses = args,
                                     flags = 16,
                                     varsCount = PartialScalePatterns.REVERSE_TRANSITIVE_CLOSURE_VAR_COUNT,
-                                    head = PartialScalePatterns.REVERSE_TRANSITIVE_CLOSURE_PATTERN.replace(
+                                    body = PartialScalePatterns.REVERSE_TRANSITIVE_CLOSURE_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
                                     )
@@ -384,7 +384,7 @@ object RelationshipsDictionary {
                                     argsClasses = args.plus(args[0]),
                                     flags = 0,
                                     varsCount = PartialScalePatterns.IS_BETWEEN_VAR_COUNT,
-                                    head = PartialScalePatterns.IS_BETWEEN_PATTERN.replace(
+                                    body = PartialScalePatterns.IS_BETWEEN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
                                     )
@@ -394,7 +394,7 @@ object RelationshipsDictionary {
                                     argsClasses = args.plus(args[0]),
                                     flags = 0,
                                     varsCount = PartialScalePatterns.IS_CLOSER_TO_THAN_VAR_COUNT,
-                                    head = PartialScalePatterns.IS_CLOSER_TO_THAN_PATTERN.replace(
+                                    body = PartialScalePatterns.IS_CLOSER_TO_THAN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
                                     )
@@ -404,7 +404,7 @@ object RelationshipsDictionary {
                                     argsClasses = args.plus(args[0]),
                                     flags = 0,
                                     varsCount = PartialScalePatterns.IS_FURTHER_FROM_THAN_VAR_COUNT,
-                                    head = PartialScalePatterns.IS_FURTHER_FROM_THAN_PATTERN.replace(
+                                    body = PartialScalePatterns.IS_FURTHER_FROM_THAN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
                                     )
@@ -426,7 +426,7 @@ object RelationshipsDictionary {
                     1
                 }
 
-                val head = if (args.size == 2) {
+                val body = if (args.size == 2) {
                     "(<arg1> ${genLink(POAS_PREF, name)} <arg2>)\n"
                 } else {
                     var tmp = "(<arg1> ${genLink(POAS_PREF, name)} <var1>)\n"
@@ -449,7 +449,7 @@ object RelationshipsDictionary {
                         relationType = relationType,
                         flags = flags,
                         varsCount = varsCount,
-                        head = head
+                        body = body
                     )
                 )
             }
@@ -526,10 +526,10 @@ object RelationshipsDictionary {
     fun varsCount(name: String) = get(name)?.varsCount
 
     /**
-     * Получить голову правила для проверки отношения
+     * Получить тело правила для проверки отношения
      * @param name Имя отношения
      */
-    fun head(name: String) = get(name)?.head
+    fun body(name: String) = get(name)?.body
 
     /**
      * Получить завершенные правила для проверки отношения

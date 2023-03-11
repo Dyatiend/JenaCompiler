@@ -9,7 +9,7 @@ package models
  * @param relationType Тип связи между классами
  * @param flags Флаги свойств отношения
  * @param varsCount Количество переменных в правиле для вычисления
- * @param head Голова правила для проверки отношения
+ * @param body Тело правила для проверки отношения
  * @param rules Завершенные вспомогательные правила для проверки отношения
  */
 data class RelationshipModel(
@@ -20,7 +20,7 @@ data class RelationshipModel(
     val relationType: RelationType? = null,
     val flags: Int,
     val varsCount: Int,
-    val head: String,
+    val body: String,
     val rules: String? = null
 ) {
 
