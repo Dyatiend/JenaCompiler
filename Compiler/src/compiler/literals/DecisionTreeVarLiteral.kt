@@ -23,7 +23,7 @@ class DecisionTreeVarLiteral(value: String) : Literal(value) {
         val resVarName = NamingManager.genVarName()
         return CompilationResult(
             value = resVarName,
-            heads = listOf(
+            bodies = listOf(
                 genTriple(
                     resVarName,
                     JenaUtil.genLink(POAS_PREF, DECISION_TREE_VAR_PREDICATE),

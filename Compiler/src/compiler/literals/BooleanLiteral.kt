@@ -19,12 +19,15 @@ class BooleanLiteral(value: Boolean) : Literal(value.toString()) {
         CompilationResult(value = JenaUtil.genVal(value.toBoolean()))
 
     /**
-     * Скомпилировать boolean литерал как head
-     * @return Голова правила, прерывающая правило, если значение false
+     * Скомпилировать boolean литерал как body
+     * @return Тело правила, прерывающее правило, если значение false
      */
-    fun compileAsHead() =
-        if (value.toBoolean()) JenaUtil.genEqualPrim("1", "1")
-        else JenaUtil.genEqualPrim("0", "1")
+    fun compileAsBody() =
+        if (value.toBoolean()) {
+            JenaUtil.genEqualPrim("1", "1")
+        } else {
+            JenaUtil.genEqualPrim("0", "1")
+        }
 
     override fun clone(): Operator = BooleanLiteral(value.toBoolean())
 }
