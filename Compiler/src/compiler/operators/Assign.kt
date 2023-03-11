@@ -109,11 +109,11 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
                     compiledArg2.rules
 
             // Для всех результатов компиляции
-            compiledArg0.heads.forEach { head0 ->
-                compiledArg1.heads.forEach { head1 ->
-                    compiledArg2.heads.forEach { head2 ->
+            compiledArg0.bodies.forEach { body0 ->
+                compiledArg1.bodies.forEach { body1 ->
+                    compiledArg2.bodies.forEach { body2 ->
                         // Собираем правила для аргументов
-                        val head = head0 + head1 + head2
+                        val body = body0 + body1 + body2
 
                         // Заполняем шаблон
                         var rule = PROPERTY_ASSIGN_PATTERN
@@ -121,9 +121,9 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
                         rule = rule.replace("<tmp1>", NamingManager.genVarName())
                         rule = rule.replace("<dropped>", NamingManager.genPredicateName())
 
-                        rule = rule.replace("<ruleHead>", head)
-                        rule = rule.replace("<propHead>", head1)
-                        rule = rule.replace("<valueHead>", head2)
+                        rule = rule.replace("<ruleBody>", body)
+                        rule = rule.replace("<propBody>", body1)
+                        rule = rule.replace("<valueBody>", body2)
                         rule = rule.replace("<subjName>", compiledArg0.value)
                         rule = rule.replace("<propName>", compiledArg1.value)
                         rule = rule.replace("<value>", compiledArg2.value)
@@ -150,18 +150,18 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
                     compiledArg1.rules
 
             // Для всех результатов компиляции
-            compiledArg0.heads.forEach { head0 ->
-                compiledArg1.heads.forEach { head1 ->
+            compiledArg0.bodies.forEach { body0 ->
+                compiledArg1.bodies.forEach { body1 ->
                     // Собираем правила для аргументов
-                    val head = head0 + head1
+                    val body = body0 + body1
 
                     // Заполняем шаблон
                     var rule = DECISION_TREE_VAR_ASSIGN_PATTERN
                     rule = rule.replace("<tmp0>", NamingManager.genVarName())
                     rule = rule.replace("<dropped>", NamingManager.genPredicateName())
 
-                    rule = rule.replace("<ruleHead>", head)
-                    rule = rule.replace("<newObjHead>", head1)
+                    rule = rule.replace("<ruleBody>", body)
+                    rule = rule.replace("<newObjBody>", body1)
                     rule = rule.replace("<newObj>", compiledArg1.value)
                     rule = rule.replace("<oldObj>", compiledArg0.value)
                     rule = rule.replace("<varPredicate>", JenaUtil.genLink(POAS_PREF, DECISION_TREE_VAR_PREDICATE))
@@ -198,7 +198,7 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
         private val PROPERTY_ASSIGN_PATTERN = """
             [
             (<tmp0> <propName> <tmp1>)
-            <ruleHead>
+            <ruleBody>
             equal(<subjName>, <tmp0>)
             ->
             drop(0)
@@ -209,8 +209,8 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             
             [
             (<subjName> <dropped> <tmp0>)
-            <propHead>
-            <valueHead>
+            <propBody>
+            <valueBody>
             ->
             (<subjName> <propName> <value>)
             ]
@@ -218,7 +218,7 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             [
             (${NamingManager.genVarName()} ${NamingManager.genVarName()} ${NamingManager.genVarName()})
             noValue(<tmp0>, <dropped>)
-            <ruleHead>
+            <ruleBody>
             ->
             (<subjName> <propName> <value>)
             ]
@@ -229,7 +229,7 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
          */
         private val DECISION_TREE_VAR_ASSIGN_PATTERN = """
             [
-            <ruleHead>
+            <ruleBody>
             ->
             drop(0)
             (<oldObj> <dropped> "true"^^${JenaUtil.XSD_PREF}boolean)
@@ -239,7 +239,7 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             
             [
             (<oldObj> <dropped> <tmp0>)
-            <newObjHead>
+            <newObjBody>
             ->
             (<newObj> <varPredicate> <varName>)
             ]
@@ -247,7 +247,7 @@ class Assign(args: List<Operator>) : BaseOperator(args) {
             [
             (${NamingManager.genVarName()} ${NamingManager.genVarName()} ${NamingManager.genVarName()})
             noValue(<tmp0>, <dropped>)
-            <newObjHead>
+            <newObjBody>
             ->
             (<newObj> <varPredicate> <varName>)
             ]
