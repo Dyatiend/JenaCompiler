@@ -8,6 +8,7 @@ import dictionaries.ClassesDictionary.isCalculable
 import models.ClassModel
 import util.DataType
 import util.JenaUtil
+import util.JenaUtil.CLASS_PREDICATE_NAME
 import util.JenaUtil.genBindPrim
 import util.JenaUtil.genLink
 import util.JenaUtil.genNoValuePrim
@@ -130,13 +131,5 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
 
     override fun clone(newArgs: List<Operator>): Operator {
         return CheckClass(newArgs)
-    }
-
-    companion object {
-
-        /**
-         * Имя предиката, используемое при компиляции
-         */
-        private const val CLASS_PREDICATE_NAME = "type"
     }
 }
