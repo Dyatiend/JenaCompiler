@@ -13,10 +13,10 @@ class Variable(
 ) : Operator {
 
     override val args: List<Operator>
-        get() = ArrayList()
+        get() = emptyList()
 
     override val argsDataTypes: List<List<DataType>>
-        get() = ArrayList()
+        get() = emptyList()
 
     override val resultDataType: DataType
         get() = DataType.Object
