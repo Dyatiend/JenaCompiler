@@ -10,6 +10,7 @@ fun registerAllCustomBuiltin() {
     BuiltinRegistry.theRegistry.register(AbsoluteValue())
     BuiltinRegistry.theRegistry.register(Bind())
     BuiltinRegistry.theRegistry.register(CountValues())
+    BuiltinRegistry.theRegistry.register(IsReachable())
     BuiltinRegistry.theRegistry.register(MakeUniqueID())
     BuiltinRegistry.theRegistry.register(PartialScaleDistance())
     BuiltinRegistry.theRegistry.register(StartsWith())
