@@ -63,6 +63,16 @@ object JenaUtil {
      */
     const val PAUSE_MARK = "<pause>"
 
+    /**
+     * Имя предиката класса
+     */
+    const val CLASS_PREDICATE_NAME = "type"
+
+    /**
+     * Имя предиката подкласса
+     */
+    const val SUBCLASS_PREDICATE_NAME = "subClassOf"
+
     // +++++++++++++++++++++++++++++++++ Шаблоны +++++++++++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -75,13 +85,13 @@ object JenaUtil {
      * Основной шаблон правила с возвращаемым значением
      */
     private val MAIN_RULE_PATTERN =
-        "[\n(${NamingManager.genVarName()} ${NamingManager.genVarName()} ${NamingManager.genVarName()})\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> <resVarName>)\n]\n\n"
+        "[\n(${NamingManager.genVarName()} ${NamingManager.genVarName()} ${NamingManager.genVarName()})\n<ruleBody>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> <resVarName>)\n]\n\n"
 
     /**
      * Шаблон для boolean правила
      */
     private val BOOLEAN_RULE_PATTERN =
-        "[\n(${NamingManager.genVarName()} ${NamingManager.genVarName()} ${NamingManager.genVarName()})\n<ruleHead>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> \"true\"^^xsd:boolean)\n]\n\n"
+        "[\n(${NamingManager.genVarName()} ${NamingManager.genVarName()} ${NamingManager.genVarName()})\n<ruleBody>makeSkolem(<skolemName>)\n->\n(<skolemName> <resPredicateName> \"true\"^^xsd:boolean)\n]\n\n"
 
     // ++++++++++++++++++++++++++++ Методы для генерации +++++++++++++++++++++++++++
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -235,15 +245,15 @@ object JenaUtil {
 
     /**
      * Сгенерировать правило с возвращаемым значением
-     * @param ruleHead Голова правила
+     * @param ruleBody Тело правила
      * @param skolemName Имя сколем
      * @param resPredicateName Предикат, указывающий на результат
      * @param resVarName Переменная, содержащая результат
      * @return Правило
      */
-    fun genRule(ruleHead: String, skolemName: String, resPredicateName: String, resVarName: String): String {
+    fun genRule(ruleBody: String, skolemName: String, resPredicateName: String, resVarName: String): String {
         var rule = MAIN_RULE_PATTERN
-        rule = rule.replace("<ruleHead>", ruleHead)
+        rule = rule.replace("<ruleBody>", ruleBody)
         rule = rule.replace("<skolemName>", skolemName)
         rule = rule.replace("<resPredicateName>", resPredicateName)
         rule = rule.replace("<resVarName>", resVarName)
@@ -252,14 +262,14 @@ object JenaUtil {
 
     /**
      * Сгенерировать булево правило
-     * @param ruleHead Голова правила
+     * @param ruleBody Тело правила
      * @param skolemName Имя сколем
      * @param resPredicateName Предикат, являющийся флагом результата
      * @return Правило
      */
-    fun genBooleanRule(ruleHead: String, skolemName: String, resPredicateName: String): String {
+    fun genBooleanRule(ruleBody: String, skolemName: String, resPredicateName: String): String {
         var rule = BOOLEAN_RULE_PATTERN
-        rule = rule.replace("<ruleHead>", ruleHead)
+        rule = rule.replace("<ruleBody>", ruleBody)
         rule = rule.replace("<skolemName>", skolemName)
         rule = rule.replace("<resPredicateName>", resPredicateName)
         return rule
