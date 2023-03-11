@@ -41,7 +41,7 @@ interface Operator {
     /**
      * Является ли количество аргументов бесконечным
      */
-    val isArgsCountUnlimited
+    val isArgsCountUnlimited: Boolean
         get() = false
 
     /**
@@ -75,8 +75,8 @@ interface Operator {
      * @see CompilationResult
      */
     fun compileExpression(): CompilationResult {
+        // TODO: таблица переменных, вводимых операторами
         // TODO: валидация переменных, вводимых операторами
-        // TODO: таблица переменных, вводимых операторами и их валидация
         // TODO?: оптимизация пауз?
         // TODO?: оптимизация правил? (удаление одинаковых строк)
 
@@ -99,10 +99,10 @@ interface Operator {
         // Если корневой оператор - булево значение
         if (expr is BooleanLiteral) {
             // Добавляем выражение, равное значению
-            val head = expr.compileAsHead()
+            val body = expr.compileAsBody()
 
             // Генерируем правило и добавляем правило к остальным
-            rules += JenaUtil.genBooleanRule(head, skolemName, resPredicateName)
+            rules += JenaUtil.genBooleanRule(body, skolemName, resPredicateName)
         } else {
             // Компилируем оператор
             val result = expr.compile()
@@ -111,14 +111,14 @@ interface Operator {
             rules += result.rules
 
             // Для всех незаконченных правил
-            result.heads.forEach { head ->
+            result.bodies.forEach { body ->
                 // Если есть незаконченное правило
-                if (head.isNotEmpty() && resultDataType != null) {
+                if (body.isNotEmpty() && resultDataType != null) {
                     // Генерируем правило и добавляем правило к остальным
                     rules += if (resultDataType == DataType.Boolean) {
-                        JenaUtil.genBooleanRule(head, skolemName, resPredicateName)
+                        JenaUtil.genBooleanRule(body, skolemName, resPredicateName)
                     } else {
-                        JenaUtil.genRule(head, skolemName, resPredicateName, result.value)
+                        JenaUtil.genRule(body, skolemName, resPredicateName, result.value)
                     }
                 }
             }
@@ -262,7 +262,7 @@ interface Operator {
                 val document = documentBuilder.parse(IOUtils.toInputStream(str, StandardCharsets.UTF_8))
 
                 // Получаем корневой элемент документа
-                val xml: Node = document.documentElement
+                val xml = document.documentElement
 
                 // Строим дерево
                 return build(xml)
@@ -289,7 +289,7 @@ interface Operator {
                 val document = documentBuilder.parse(path)
 
                 // Получаем корневой элемент документа
-                val xml: Node = document.documentElement
+                val xml = document.documentElement
 
                 // Строим дерево
                 return build(xml)
@@ -414,8 +414,11 @@ interface Operator {
                 "GetByRelationship" -> {
                     return GetByRelationship(
                         children,
-                        if (node.attributes.getNamedItem("varName") == null) null
-                        else node.attributes.getNamedItem("varName").nodeValue
+                        if (node.attributes.getNamedItem("varName") == null) {
+                            null
+                        } else {
+                            node.attributes.getNamedItem("varName").nodeValue
+                        }
                     )
                 }
 
