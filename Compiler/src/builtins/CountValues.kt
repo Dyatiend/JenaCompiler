@@ -30,7 +30,7 @@ class CountValues : BaseBuiltin() {
      */
     override fun bodyCall(args: Array<Node>, length: Int, context: RuleContext): Boolean {
         checkArgs(length, context)
-        val values = ArrayList<Node>()
+        val values = mutableListOf<Node>()
 
         val arg0 = getArg(0, args, context)
         val arg1 = getArg(1, args, context)
@@ -40,15 +40,7 @@ class CountValues : BaseBuiltin() {
         while (iterator.hasNext()) {
             val currentObject = iterator.next().getObject()
 
-            var equals = false
-            for (value in values) {
-                if (value.matches(currentObject)) {
-                    equals = true
-                    break
-                }
-            }
-
-            if (!equals) {
+            if (!values.any { it.sameValueAs(currentObject) }) {
                 values.add(currentObject)
             }
         }
