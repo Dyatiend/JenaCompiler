@@ -21,7 +21,10 @@ data class RelationshipModel(
     val flags: Int,
     val varsCount: Int,
     val body: String,
-    val rules: String? = null
+    val rules: String? = null,
+    val negativeVarsCount: Int,
+    val negativeBody: String,
+    val negativeRules: String? = null
 ) {
 
     /**

@@ -1,0 +1,8 @@
+<CheckPropertyValue>
+    <Object name="object3"/>
+    <Property name="booleanStatic2"/>
+    <GetPropertyValue>
+        <Object name="object1"/>
+        <Property name="booleanStatic1"/>
+    </GetPropertyValue>
+</CheckPropertyValue>

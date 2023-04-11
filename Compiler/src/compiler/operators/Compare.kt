@@ -1,8 +1,7 @@
 package compiler.operators
 
 import compiler.Operator
-import util.ComparisonResult
-import util.CompilationResult
+import compiler.util.CompilationResult
 import util.DataType
 import util.JenaUtil.COMPARE_RESULT_PREDICATE
 import util.JenaUtil.POAS_PREF
@@ -11,8 +10,8 @@ import util.JenaUtil.genGreaterThanPrim
 import util.JenaUtil.genLessThanPrim
 import util.JenaUtil.genLink
 import util.JenaUtil.genNotEqualPrim
-import util.JenaUtil.genStingVal
 import util.JenaUtil.genTriple
+import util.JenaUtil.genVal
 import util.NamingManager.genVarName
 
 /**
@@ -21,8 +20,8 @@ import util.NamingManager.genVarName
  */
 class Compare(args: List<Operator>) : BaseOperator(args) {
 
-    override fun argsDataTypes(): List<List<DataType>> {
-        return listOf(
+    override val argsDataTypes
+        get() = listOf(
             listOf(DataType.Integer, DataType.Double),
             listOf(DataType.Double, DataType.Integer),
             listOf(DataType.Integer, DataType.Integer),
@@ -30,11 +29,8 @@ class Compare(args: List<Operator>) : BaseOperator(args) {
             listOf(DataType.String, DataType.String),
             listOf(DataType.Object, DataType.Object)
         )
-    }
 
-    override fun resultDataType(): DataType {
-        return DataType.ComparisonResult
-    }
+    override val resultDataType get() = DataType.ComparisonResult
 
     override fun compile(): CompilationResult {
         // Объявляем переменные
@@ -51,19 +47,20 @@ class Compare(args: List<Operator>) : BaseOperator(args) {
         val compiledArg1 = arg1.compile()
 
         // Передаем завершенные правила дальше
-        completedRules += compiledArg0.completedRules +
-                compiledArg1.completedRules
+        completedRules += compiledArg0.rules +
+                compiledArg1.rules
 
         // Вспомогательные переменные
         val empty = genVarName()
         val compareResultPredicate = genLink(POAS_PREF, COMPARE_RESULT_PREDICATE)
 
         // Для всех результатов компиляции
-        compiledArg0.ruleHeads.forEach { head0 ->
-            compiledArg1.ruleHeads.forEach { head1 ->
+        compiledArg0.bodies.forEach { head0 ->
+            compiledArg1.bodies.forEach { head1 ->
                 // Если аргументы можно сравнивать только на эквивалентность
-                if (arg0.resultDataType() == DataType.Object
-                    || arg0.resultDataType() == DataType.String) {
+                if (arg0.resultDataType == DataType.Object
+                    || arg0.resultDataType == DataType.String
+                ) {
                     // Правило для эквивалентности
                     var equalHead = head0 + head1
                     equalHead += genEqualPrim(compiledArg0.value, compiledArg1.value)
@@ -71,7 +68,7 @@ class Compare(args: List<Operator>) : BaseOperator(args) {
                     equalHead += genTriple(
                         empty,
                         compareResultPredicate,
-                        genStingVal(ComparisonResult.Equal.toString())
+                        genVal(compiler.util.ComparisonResult.Equal.toString())
                     )
                     equalHead += genTriple(
                         empty,
@@ -86,7 +83,7 @@ class Compare(args: List<Operator>) : BaseOperator(args) {
                     notEqualHead += genTriple(
                         empty,
                         compareResultPredicate,
-                        genStingVal(ComparisonResult.NotEqual.toString())
+                        genVal(compiler.util.ComparisonResult.NotEqual.toString())
                     )
                     notEqualHead += genTriple(
                         empty,
@@ -105,7 +102,7 @@ class Compare(args: List<Operator>) : BaseOperator(args) {
                     equalHead += genTriple(
                         empty,
                         compareResultPredicate,
-                        genStingVal(ComparisonResult.Equal.toString())
+                        genVal(compiler.util.ComparisonResult.Equal.toString())
                     )
                     equalHead += genTriple(
                         empty,
@@ -120,7 +117,7 @@ class Compare(args: List<Operator>) : BaseOperator(args) {
                     lessHead += genTriple(
                         empty,
                         compareResultPredicate,
-                        genStingVal(ComparisonResult.Less.toString())
+                        genVal(compiler.util.ComparisonResult.Less.toString())
                     )
                     lessHead += genTriple(
                         empty,
@@ -135,7 +132,7 @@ class Compare(args: List<Operator>) : BaseOperator(args) {
                     greaterHead += genTriple(
                         empty,
                         compareResultPredicate,
-                        genStingVal(ComparisonResult.Greater.toString())
+                        genVal(compiler.util.ComparisonResult.Greater.toString())
                     )
                     greaterHead += genTriple(
                         empty,
@@ -157,10 +154,14 @@ class Compare(args: List<Operator>) : BaseOperator(args) {
     override fun clone(): Operator {
         val newArgs = ArrayList<Operator>()
 
-        args().forEach { arg ->
+        args.forEach { arg ->
             newArgs.add(arg.clone())
         }
 
+        return Compare(newArgs)
+    }
+
+    override fun clone(newArgs: List<Operator>): Operator {
         return Compare(newArgs)
     }
 }

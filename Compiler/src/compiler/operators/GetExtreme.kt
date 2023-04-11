@@ -1,16 +1,16 @@
 package compiler.operators
 
 import compiler.Operator
-import compiler.values.BooleanValue
-import util.CompilationResult
+import compiler.literals.BooleanLiteral
+import compiler.util.CompilationResult
 import util.DataType
 import util.JenaUtil
 import util.JenaUtil.genCountValuesPrim
 import util.JenaUtil.genEqualPrim
-import util.JenaUtil.genIntegerVal
 import util.JenaUtil.genNoValuePrim
 import util.JenaUtil.genRule
 import util.JenaUtil.genTriple
+import util.JenaUtil.genVal
 import util.JenaUtil.genVar
 import util.NamingManager.genPredicateName
 import util.NamingManager.genVarName
@@ -24,13 +24,11 @@ class GetExtreme(
     val extremeVarName: String
 ): BaseOperator(args) {
 
-    override fun argsDataTypes(): List<List<DataType>> {
-        return listOf(listOf(DataType.Boolean, DataType.Boolean))
-    }
+    override val argsDataTypes get() = listOf(listOf(DataType.Boolean, DataType.Boolean))
 
-    override fun resultDataType(): DataType {
-        return DataType.Object
-    }
+
+    override val resultDataType get() = DataType.Object
+
 
     override fun compile(): CompilationResult {
         // Объявляем переменные
@@ -47,8 +45,8 @@ class GetExtreme(
         val compiledArg1 = arg1.compile()
 
         // Передаем завершенные правила дальше
-        completedRules += compiledArg0.completedRules +
-                compiledArg1.completedRules
+        completedRules += compiledArg0.rules +
+                compiledArg1.rules
 
         // Вспомогательные переменные
         val empty0 = genVarName()
@@ -65,18 +63,18 @@ class GetExtreme(
         val cycleVar = genVarName()
 
         // Для всех результатов компиляции
-        compiledArg0.ruleHeads.forEach { head0 ->
-            compiledArg1.ruleHeads.forEach { head1 ->
+        compiledArg0.bodies.forEach { head0 ->
+            compiledArg1.bodies.forEach { head1 ->
 
                 // ---------------- Генерируем правило, помечающее объекты множества --------------
 
                 // Инициализируем переменную FIXME?: сюда не попадут объекты без связей
-                var tmpHead0 = genTriple(genVar(varName), genVarName(), genVarName())
+                var tmpHead0 = ""
 
                 tmpHead0 += head0
 
                 // Если оператор булево значение
-                if (arg0 is BooleanValue) {
+                if (arg0 is BooleanLiteral) {
                     // Добавляем выражение, равное значению
                     tmpHead0 += if (arg0.value.toBoolean()) {
                         genEqualPrim("1", "1")
@@ -102,7 +100,7 @@ class GetExtreme(
                 var tmpHead1 = head1
 
                 // Если оператор булево значение
-                if (arg1 is BooleanValue) {
+                if (arg1 is BooleanLiteral) {
                     // Добавляем выражение, равное значению
                     tmpHead1 += if (arg1.value.toBoolean()) {
                         genEqualPrim("1", "1")
@@ -120,7 +118,7 @@ class GetExtreme(
                 // Добавляем в основное правило получение объекта и проверку их количества
                 val mainHead = genTriple(empty0, cycleFlag, value) +
                         genCountValuesPrim(empty0, cycleFlag, empty1) +
-                        genEqualPrim(empty1, genIntegerVal("1"))
+                        genEqualPrim(empty1, genVal(1))
 
                 // Добавляем в рзультат
                 heads.add(mainHead)
@@ -137,10 +135,14 @@ class GetExtreme(
     override fun clone(): Operator {
         val newArgs = ArrayList<Operator>()
 
-        args().forEach { arg ->
+        args.forEach { arg ->
             newArgs.add(arg.clone())
         }
 
+        return GetExtreme(newArgs, varName, extremeVarName)
+    }
+
+    override fun clone(newArgs: List<Operator>): Operator {
         return GetExtreme(newArgs, varName, extremeVarName)
     }
 

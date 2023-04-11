@@ -38,8 +38,8 @@ object TestUtil {
     fun compile(operator: Operator): CompilationResult {
         val result = operator.compileExpression()
         Assertions.assertTrue(result.value.isNotBlank())
-        Assertions.assertTrue(result.heads.size == 1)
-        Assertions.assertTrue(result.heads.first().isEmpty())
+        Assertions.assertTrue(result.bodies.size == 1)
+        Assertions.assertTrue(result.bodies.first().isEmpty())
         Assertions.assertFalse(result.rules.isEmpty())
         return result
     }
@@ -52,8 +52,8 @@ object TestUtil {
     fun compileVoid(operator: Operator): CompilationResult {
         val result = operator.compileExpression()
         Assertions.assertTrue(result.value.isBlank())
-        Assertions.assertTrue(result.heads.size == 1)
-        Assertions.assertTrue(result.heads.first().isEmpty())
+        Assertions.assertTrue(result.bodies.size == 1)
+        Assertions.assertTrue(result.bodies.first().isEmpty())
         Assertions.assertFalse(result.rules.isEmpty())
         return result
     }

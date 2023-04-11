@@ -9,9 +9,9 @@ import util.DataType
  */
 class LogicalNot(args: List<Operator>) : BaseOperator(args) {
 
-    override val argsDataTypes = listOf(listOf(DataType.Boolean))
+    override val argsDataTypes get() = listOf(listOf(DataType.Boolean))
 
-    override val resultDataType = DataType.Boolean
+    override val resultDataType get() = DataType.Boolean
 
     override fun compile(): CompilationResult {
         throw RuntimeException("Оператор LogicalNot должен быть удален при упрощении выражения")

@@ -1,0 +1,270 @@
+@base <http://www.vstu.ru/poas/code> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# (X + А) [ B + C * D ] - выбран второй +
+
+# ++++++++++++++++++++++++++++++++++ Классы ++++++++++++++++++++++++++++++++++
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+<#element>
+    <#countOfTokens> "1"^^xsd:integer .
+
+<#plus>
+    rdfs:subClassOf          <#element> ;
+    <#countOfTokens>         "1"^^xsd:integer ;
+    <#arity>                 <#binary> ;
+    <#place>                 <#infix> ;
+    <#precedence>            "6"^^xsd:integer ;
+    <#associativity>         <#left> ;
+    <#hasStrictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand>      "true"^^xsd:boolean ;
+    <#needsRightOperand>     "true"^^xsd:boolean ;
+    <#needsInnerOperand>     "false"^^xsd:boolean .
+
+<#minus>
+    rdfs:subClassOf          <#element> ;
+    <#countOfTokens>         "1"^^xsd:integer ;
+    <#arity>                 <#binary> ;
+    <#place>                 <#infix> ;
+    <#precedence>            "6"^^xsd:integer ;
+    <#associativity>         <#left> ;
+    <#hasStrictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand>      "true"^^xsd:boolean ;
+    <#needsRightOperand>     "true"^^xsd:boolean ;
+    <#needsInnerOperand>     "false"^^xsd:boolean .
+
+<#and>
+    rdfs:subClassOf          <#element> ;
+    <#countOfTokens>         "1"^^xsd:integer ;
+    <#arity>                 <#binary> ;
+    <#place>                 <#infix> ;
+    <#precedence>            "14"^^xsd:integer ;
+    <#associativity>         <#left> ;
+    <#hasStrictOperandOrder> "true"^^xsd:boolean ;
+    <#needsLeftOperand>      "true"^^xsd:boolean ;
+    <#needsRightOperand>     "true"^^xsd:boolean ;
+    <#needsInnerOperand>     "false"^^xsd:boolean .
+
+<#or>
+    rdfs:subClassOf          <#element> ;
+    <#countOfTokens>         "1"^^xsd:integer ;
+    <#arity>                 <#binary> ;
+    <#place>                 <#infix> ;
+    <#precedence>            "15"^^xsd:integer ;
+    <#associativity>         <#left> ;
+    <#hasStrictOperandOrder> "true"^^xsd:boolean ;
+    <#needsLeftOperand>      "true"^^xsd:boolean ;
+    <#needsRightOperand>     "true"^^xsd:boolean ;
+    <#needsInnerOperand>     "false"^^xsd:boolean .
+
+<#ternaryConditional>
+    rdfs:subClassOf          <#element> ;
+    <#countOfTokens>         "2"^^xsd:integer ;
+    <#arity>                 <#ternary> ;
+    <#place>                 <#infix> ;
+    <#precedence>            "16"^^xsd:integer ;
+    <#associativity>         <#right> ;
+    <#hasStrictOperandOrder> "true"^^xsd:boolean ;
+    <#needsLeftOperand>      "true"^^xsd:boolean ;
+    <#needsRightOperand>     "true"^^xsd:boolean ;
+    <#needsInnerOperand>     "true"^^xsd:boolean .
+
+<#comma>
+    rdfs:subClassOf          <#element> ;
+    <#countOfTokens>         "1"^^xsd:integer ;
+    <#arity>                 <#binary> ;
+    <#place>                 <#infix> ;
+    <#precedence>            "17"^^xsd:integer ;
+    <#associativity>         <#left> ;
+    <#hasStrictOperandOrder> "true"^^xsd:boolean ;
+    <#needsLeftOperand>      "true"^^xsd:boolean ;
+    <#needsRightOperand>     "true"^^xsd:boolean ;
+    <#needsInnerOperand>     "false"^^xsd:boolean .
+
+<#multiplication>
+    rdfs:subClassOf          <#element> ;
+    <#countOfTokens>         "1"^^xsd:integer ;
+    <#arity>                 <#binary> ;
+    <#place>                 <#infix> ;
+    <#precedence>            "5"^^xsd:integer ;
+    <#associativity>         <#left> ;
+    <#hasStrictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand>      "true"^^xsd:boolean ;
+    <#needsRightOperand>     "true"^^xsd:boolean ;
+    <#needsInnerOperand>     "false"^^xsd:boolean .
+
+<#division>
+    rdfs:subClassOf          <#element> ;
+    <#countOfTokens>         "1"^^xsd:integer ;
+    <#arity>                 <#binary> ;
+    <#place>                 <#infix> ;
+    <#precedence>            "5"^^xsd:integer ;
+    <#associativity>         <#left> ;
+    <#hasStrictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand>      "true"^^xsd:boolean ;
+    <#needsRightOperand>     "true"^^xsd:boolean ;
+    <#needsInnerOperand>     "false"^^xsd:boolean .
+
+<#power>
+    rdfs:subClassOf          <#element> ;
+    <#countOfTokens>         "1"^^xsd:integer ;
+    <#arity>                 <#binary> ;
+    <#place>                 <#infix> ;
+    <#precedence>            "4"^^xsd:integer ;
+    <#associativity>         <#left> ;
+    <#hasStrictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand>      "true"^^xsd:boolean ;
+    <#needsRightOperand>     "true"^^xsd:boolean ;
+    <#needsInnerOperand>     "false"^^xsd:boolean .
+
+<#brackets>
+    rdfs:subClassOf          <#element> ;
+    <#countOfTokens>         "2"^^xsd:integer ;
+    <#arity>                 <#binary> ;
+    <#place>                 <#infix> ;
+    <#precedence>            "2"^^xsd:integer ;
+    <#associativity>         <#left> ;
+    <#hasStrictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand>      "true"^^xsd:boolean ;
+    <#needsRightOperand>     "false"^^xsd:boolean ;
+    <#needsInnerOperand>     "true"^^xsd:boolean .
+
+<#parenthesis>
+    rdfs:subClassOf          <#element> ;
+    <#countOfTokens>         "2"^^xsd:integer ;
+    <#arity>                 <#unary> ;
+    <#place>                 <#around> ;
+    <#precedence>            "1"^^xsd:integer ;
+    <#associativity>         <#non-assoc> ;
+    <#hasStrictOperandOrder> "false"^^xsd:boolean ;
+    <#needsLeftOperand>      "false"^^xsd:boolean ;
+    <#needsRightOperand>     "false"^^xsd:boolean ;
+    <#needsInnerOperand>     "true"^^xsd:boolean .
+
+# +++++++++++++++++++++++++++++++++ Элементы +++++++++++++++++++++++++++++++++
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+<#element_parenthesis_1>
+    a      <#parenthesis> ;
+    <#has> <#token_parenthesis_1> ;
+    <#has> <#token_parenthesis_2> .
+
+<#element_X_1>
+    a           <#element> ;
+    <#state>    <#evaluated> ;
+    <#has>      <#token_X_1> ;
+    <#isInside> <#element_parenthesis_1> .
+
+<#element_plus_1>
+    a           <#plus> ;
+    <#state>    <#unevaluated> ;
+    <#has>      <#token_plus_1> ;
+    <#isInside> <#element_parenthesis_1> .
+
+<#element_A_1>
+    a           <#element> ;
+    <#state>    <#evaluated> ;
+    <#has>      <#token_A_1> ;
+    <#isInside> <#element_parenthesis_1> .
+
+<#element_brackets_1>
+    a        <#brackets> ;
+    <#state> <#unevaluated> ;
+    <#has>   <#token_brackets_1> ;
+    <#has>   <#token_brackets_2> .
+
+<#element_B_1>
+    a           <#element> ;
+    <#state>    <#evaluated> ;
+    <#has>      <#token_B_1> ;
+    <#isInside> <#element_brackets_1> .
+
+<#element_plus_2>
+    a           <#plus> ;
+    <#state>    <#unevaluated> ;
+    <#has>      <#token_plus_2> ;
+    <#var...>   "X"^^xsd:string ;
+    <#isInside> <#element_brackets_1> .
+
+<#element_C_1>
+    a           <#element> ;
+    <#state>    <#evaluated> ;
+    <#has>      <#token_C_1> ;
+    <#isInside> <#element_brackets_1> .
+
+<#element_multiplication_1>
+    a           <#multiplication> ;
+    <#state>    <#unevaluated> ;
+    <#has>      <#token_multiplication_1> ;
+    <#isInside> <#element_brackets_1> .
+
+<#element_D_1>
+    a           <#element> ;
+    <#state>    <#evaluated> ;
+    <#has>      <#token_D_1> ;
+    <#isInside> <#element_brackets_1> .
+
+# ++++++++++++++++++++++++++++++++++ Токены ++++++++++++++++++++++++++++++++++
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+<#token_parenthesis_1>
+    a                 <#token> ;
+    <#directlyLeftOf> <#token_X_1> ;
+    <#belongsTo>      <#element_parenthesis_1> .
+
+<#token_X_1>
+    a                 <#token> ;
+    <#directlyLeftOf> <#token_plus_1> ;
+    <#belongsTo>      <#element_X_1> .
+
+<#token_plus_1>
+    a                 <#token> ;
+    <#directlyLeftOf> <#token_A_1> ;
+    <#belongsTo>      <#element_plus_1> .
+
+<#token_A_1>
+    a                 <#token> ;
+    <#directlyLeftOf> <#token_parenthesis_2> ;
+    <#belongsTo>      <#element_A_1> .
+
+<#token_parenthesis_2>
+    a                 <#token> ;
+    <#directlyLeftOf> <#token_brackets_1> ;
+    <#belongsTo>      <#element_parenthesis_1> .
+
+<#token_brackets_1>
+    a                 <#token> ;
+    <#directlyLeftOf> <#token_B_1> ;
+    <#belongsTo>      <#element_brackets_1> .
+
+<#token_B_1>
+    a                 <#token> ;
+    <#directlyLeftOf> <#token_plus_2> ;
+    <#belongsTo>      <#element_B_1> .
+
+<#token_plus_2>
+    a                 <#token> ;
+    <#directlyLeftOf> <#token_C_1> ;
+    <#belongsTo>      <#element_plus_2> ;
+    <#var...>         "X1"^^xsd:string .
+
+<#token_C_1>
+    a                 <#token> ;
+    <#directlyLeftOf> <#token_multiplication_1> ;
+    <#belongsTo>      <#element_C_1> .
+
+<#token_multiplication_1>
+    a                 <#token> ;
+    <#directlyLeftOf> <#token_D_1> ;
+    <#belongsTo>      <#element_multiplication_1> .
+
+<#token_D_1>
+    a                 <#token> ;
+    <#directlyLeftOf> <#token_brackets_2> ;
+    <#belongsTo>      <#element_D_1> .
+
+<#token_brackets_2>
+    a            <#token> ;
+    <#belongsTo> <#element_brackets_1> .

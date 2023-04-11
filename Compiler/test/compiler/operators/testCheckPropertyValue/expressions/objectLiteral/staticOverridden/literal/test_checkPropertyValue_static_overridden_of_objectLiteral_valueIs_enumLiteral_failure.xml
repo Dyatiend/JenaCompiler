@@ -1,0 +1,5 @@
+<CheckPropertyValue>
+    <Object name="object2"/>
+    <Property name="enumStatic1"/>
+    <Enum value="value4" owner="someEnum"/>
+</CheckPropertyValue>

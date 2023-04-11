@@ -1,0 +1,231 @@
+@base <http://www.vstu.ru/poas/code> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+# input: A{b:B, k:int} B{c:*C} C{d:int} variables: a:A target:d
+
+# --------- Классы ---------
+
+<#ItemWithVisibleMemory>
+    rdfs:subClassOf <#Item> .
+
+<#Operand>
+    rdfs:subClassOf <#Token> .
+
+<#Operator>
+    rdfs:subClassOf <#Token> .
+
+<#Class>
+    rdfs:subClassOf <#Item> .
+
+<#Pointer>
+    rdfs:subClassOf <#ItemWithVisibleMemory> .
+
+<#ClassObject>
+    rdfs:subClassOf <#ItemWithVisibleMemory> .
+
+<#Value>
+    rdfs:subClassOf <#ItemWithVisibleMemory> .
+
+<#IntegerValue>
+    rdfs:subClassOf <#Value> ;
+    <#type>         "int"^^xsd:string .
+
+<#FloatValue>
+    rdfs:subClassOf <#Value> ;
+    <#type>         "float"^^xsd:string .
+
+<#StringValue>
+    rdfs:subClassOf <#Value> ;
+    <#type>         "std::string"^^xsd:string .
+
+<#Field>
+    rdfs:subClassOf <#Connection> .
+
+<#PointedItem>
+    rdfs:subClassOf <#Connection> .
+
+<#PointedField>
+    rdfs:subClassOf <#Connection> .
+
+<#StaticField>
+    rdfs:subClassOf <#Connection> .
+
+<#Dot>
+    rdfs:subClassOf <#Operator> ;
+#	<#associated_with> <#Field> ;
+#	<#can_be_applied_to> <#ClassObject> ;
+    <#text>         "."^^xsd:string .
+
+<#Arrow>
+    rdfs:subClassOf <#Operator> ;
+#	<#associated_with> <#PointTo> ;
+#	<#can_be_applied_to> <#Pointer> ;
+    <#text>         "->"^^xsd:string .
+
+<#DoubleColon>
+    rdfs:subClassOf <#Operator> ;
+#	<#associated_with> <#StaticField> ;
+#	<#can_be_applied_to> <#Class> ;
+    <#text>         "::"^^xsd:string .
+
+<#ItemName>
+    rdfs:subClassOf <#Operand> .
+#	<#can_be_used_with> <#Dot> ;
+#	<#can_be_used_with> <#Arrow> ;
+#	<#can_be_used_with> <#DoubleColon> .
+
+# --------- Тернарные связи ---------
+
+
+# --------- Классы ---------
+
+<#A>
+    a                     <#Class> ;
+    <#name>               "A"^^xsd:string ;
+    <#was_visited_before> "false"^^xsd:boolean .
+
+<#B>
+    a                     <#Class> ;
+    <#name>               "B"^^xsd:string ;
+    <#was_visited_before> "false"^^xsd:boolean .
+
+<#C>
+    a                     <#Class> ;
+    <#name>               "C"^^xsd:string ;
+    <#was_visited_before> "false"^^xsd:boolean .
+
+# -------- Объекты --------
+
+<#a>
+    a                     <#ClassObject> ;
+    <#instance_of>        <#A> ;
+    <#contains>           <#b> ;
+    <#contains>           <#k> ;
+    <#has>                <#field_a_b> ;
+    <#has>                <#field_a_k> ;
+    <#name>               "a"^^xsd:string ;
+    <#was_visited_before> "true"^^xsd:boolean .
+
+<#b>
+    a                     <#ClassObject> ;
+    <#instance_of>        <#B> ;
+    <#contains>           <#c> ;
+    <#contained_in>       <#a> ;
+    <#reachable_from>     <#a> ;
+    <#is_a>               <#field_a_b> ;
+    <#has>                <#field_b_c> ;
+    <#name>               "b"^^xsd:string ;
+    <#was_visited_before> "true"^^xsd:boolean .
+
+<#c>
+    a                     <#Pointer> ;
+    <#contained_in>       <#b> ;
+    <#reachable_from>     <#a> ;
+    <#reachable_from>     <#b> ;
+    <#is_a>               <#field_b_c> ;
+    <#has>                <#point_to_c_d> ;
+    <#has>                <#point_to_c_c> ;
+    <#name>               "c"^^xsd:string ;
+    <#was_visited_before> "true"^^xsd:boolean ;
+    <#var...>             "currentItem"^^xsd:string .
+
+<#c_p>
+    a                     <#ClassObject> ;
+    <#instance_of>        <#C> ;
+    <#contains>           <#d> ;
+    <#reachable_from>     <#a> ;
+    <#reachable_from>     <#b> ;
+    <#reachable_from>     <#c> ;
+    <#is_a>               <#point_to_c_c> ;
+    <#has>                <#field_c_d> ;
+    <#name>               ""^^xsd:string ;
+    <#was_visited_before> "false"^^xsd:boolean .
+
+<#k>
+    a                     <#IntegerValue> ;
+    <#contained_in>       <#a> ;
+    <#reachable_from>     <#a> ;
+    <#is_a>               <#field_a_k> ;
+    <#name>               "k"^^xsd:string ;
+    <#was_visited_before> "false"^^xsd:boolean .
+
+<#d>
+    a                     <#IntegerValue> ;
+    <#contained_in>       <#c_p> ;
+    <#reachable_from>     <#a> ;
+    <#reachable_from>     <#b> ;
+    <#reachable_from>     <#c> ;
+    <#reachable_from>     <#c_p> ;
+    <#is_a>               <#field_c_d> ;
+    <#is_a>               <#point_to_c_d> ;
+    <#name>               "d"^^xsd:string ;
+    <#was_visited_before> "false"^^xsd:boolean ;
+    <#var...>             "nextItem"^^xsd:string ;
+    <#var...>             "targetItem"^^xsd:string .
+
+# ------- Отношения принадлежности ----------
+
+<#field_a_b>
+    a <#Field> .
+
+<#field_a_k>
+    a <#Field> .
+
+<#field_b_c>
+    a <#Field> .
+
+<#field_c_d>
+    a <#Field> .
+
+<#point_to_c_d>
+    a <#PointedField> .
+
+<#point_to_c_c>
+    a <#PointedItem> .
+
+# -------- Входные данные --------------
+
+<#symbol>
+    a           <#Element> ;
+    <#operator> <#arrow1> ;
+    <#operand>  <#item_name_1> ;
+    <#var...>   "symbol"^^xsd:string .
+
+<#arrow1>
+    a                    <#Arrow> ;
+    <#associated_with>   <#PointedItem_Helper> ;
+    <#can_be_applied_to> <#Pointer_Helper> .
+
+<#PointedItem_Helper>
+    a <#PointedItem> .
+
+<#Pointer_Helper>
+    a <#Pointer> .
+
+<#item_name_1>
+    a                            <#ItemName> ;
+    <#linked_with>               <#d> ;
+    <#can_be_used_with>          <#arrow1> ;
+    <#can_be_used_to_get_access> <#can_be_used_to_get_access_helper> .
+#    <#can_be_used_to_get_access> <#can_be_used_to_get_access_1> ;
+#    <#can_be_used_to_get_access> <#can_be_used_to_get_access_2> ;
+#    <#can_be_used_to_get_access> <#can_be_used_to_get_access_3> .
+#	<#can_be_used_with> <#Dot> .
+#	<#can_be_used_with> <#DoubleColon> .
+
+<#can_be_used_to_get_access_helper>
+    a <#Arrow> ;
+    a <#Item> .
+
+#<#can_be_used_to_get_access_1>
+#    <#can_be_used_to_get_access> <#arrow1> ;
+#    <#can_be_used_to_get_access> <#a> .
+#
+#<#can_be_used_to_get_access_2>
+#    <#can_be_used_to_get_access> <#arrow1> ;
+#    <#can_be_used_to_get_access> <#b> .
+#
+#<#can_be_used_to_get_access_3>
+#    <#can_be_used_to_get_access> <#arrow1> ;
+#    <#can_be_used_to_get_access> <#c> .

@@ -80,11 +80,14 @@ interface Operator {
         // TODO?: оптимизация пауз?
         // TODO?: оптимизация правил? (удаление одинаковых строк)
 
-        // Добавляем вспомогательные правила
-        var rules = JenaUtil.AUXILIARY_RULES
-
         // Добавляем вспомогательные правила, сгенерированные по словарям
-        rules += generateAuxiliaryRules()
+        var rules = generateAuxiliaryRules()
+
+        // Добавляем паузу
+        rules += JenaUtil.PAUSE_MARK
+
+        // Добавляем вспомогательные правила
+        rules += JenaUtil.AUXILIARY_RULES
 
         // Добавляем паузу
         rules += JenaUtil.PAUSE_MARK
@@ -115,7 +118,7 @@ interface Operator {
                 // Если есть незаконченное правило
                 if (body.isNotEmpty() && resultDataType != null) {
                     // Генерируем правило и добавляем правило к остальным
-                    rules += if (resultDataType == DataType.Boolean) {
+                    rules += if (resultDataType == DataType.Boolean && this !is GetPropertyValue) {
                         JenaUtil.genBooleanRule(body, skolemName, resPredicateName)
                     } else {
                         JenaUtil.genRule(body, skolemName, resPredicateName, result.value)
@@ -181,7 +184,7 @@ interface Operator {
                     val newArgs = args.map { arg -> arg.simplify() }
 
                     val res = clone(newArgs) as CheckRelationship
-                    res.isNegative = true
+                    res.isNegative = !res.isNegative
 
                     res
                 }

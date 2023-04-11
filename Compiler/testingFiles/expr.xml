@@ -1,0 +1,36 @@
+<AssignToDecisionTreeVar>
+    <DecisionTreeVar name="A"/>
+    <GetExtreme varName="_A" extremeVarName="A">
+        <LogicalNot>
+            <ExistenceQuantifier varName="_A">
+                <CheckRelationship>
+
+                    <Relationship name="isBetween"/>
+                    <Variable name="_A"/>
+                    <Variable name="A"/>
+                    <DecisionTreeVar name="X"/>
+                </CheckRelationship>
+            </ExistenceQuantifier>
+        </LogicalNot>
+        <LogicalAnd>
+            <CheckClass>
+                <Variable name="A"/>
+                <Class name="operand"/>
+            </CheckClass>
+            <LogicalAnd>
+                <Compare operator="NOT_EQUAL">
+                    <GetPropertyValue>
+                        <Variable name="A"/>
+                        <Property name="state"/>
+                    </GetPropertyValue>
+                    <Enum owner="state" value="used"/>
+                </Compare>
+                <CheckRelationship>
+                    <Variable name="A"/>
+                    <Relationship name="leftOf"/>
+                    <DecisionTreeVar name="X"/>
+                </CheckRelationship>
+            </LogicalAnd>
+        </LogicalAnd>
+    </GetExtreme>
+</AssignToDecisionTreeVar>

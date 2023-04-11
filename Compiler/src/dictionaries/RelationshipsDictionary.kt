@@ -41,6 +41,7 @@ object RelationshipsDictionary {
             [
             (?var1 <linerPredicate> ?var2)
             noValue(?var3, <linerPredicate>, ?var1)
+            noValue(?var1, <numberPredicate>)
             ->
             (?var1 <numberPredicate> "1"^^xsd:integer)
             ]
@@ -116,6 +117,7 @@ object RelationshipsDictionary {
             [
             (?var1 <partialPredicate> ?var2)
             noValue(?var2, <partialPredicate>, ?var3)
+            noValue(?var2, <numberPredicate>)
             makeUniqueID(?var4)
             ->
             (?var2 <numberPredicate> ?var4)
@@ -281,7 +283,9 @@ object RelationshipsDictionary {
                                     argsClasses = args,
                                     flags = flags,
                                     varsCount = REVERSE_VAR_COUNT,
-                                    body = REVERSE_PATTERN.replace("<predicate>", genLink(POAS_PREF, name))
+                                    body = REVERSE_PATTERN.replace("<predicate>", genLink(POAS_PREF, name)),
+                                    negativeVarsCount = REVERSE_VAR_COUNT,
+                                    negativeBody = "(<arg1> ${genLink(POAS_PREF, name)} <arg2>)\n",
                                 ),
                                 RelationshipModel(
                                     name = scaleRelations[1],
@@ -291,7 +295,16 @@ object RelationshipsDictionary {
                                     body = TRANSITIVE_CLOSURE_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
-                                    )
+                                    ),
+                                    negativeVarsCount = TRANSITIVE_CLOSURE_VAR_COUNT,
+                                    negativeBody = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            ge(<var1>, <var2>)
+        """.trimIndent().replace(
+                                        "<numberPredicate>",
+                                        genLink(POAS_PREF, scalePredicate)
+                                    ),
                                 ),
                                 RelationshipModel(
                                     name = scaleRelations[2],
@@ -301,7 +314,16 @@ object RelationshipsDictionary {
                                     body = REVERSE_TRANSITIVE_CLOSURE_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
-                                    )
+                                    ),
+                                    negativeVarsCount = REVERSE_TRANSITIVE_CLOSURE_VAR_COUNT,
+                                    negativeBody = """
+            (<arg1> <numberPredicate> <var1>)
+            (<arg2> <numberPredicate> <var2>)
+            le(<var1>, <var2>)
+        """.trimIndent().replace(
+                                        "<numberPredicate>",
+                                        genLink(POAS_PREF, scalePredicate)
+                                    ),
                                 ),
                                 RelationshipModel(
                                     name = scaleRelations[3],
@@ -311,7 +333,9 @@ object RelationshipsDictionary {
                                     body = IS_BETWEEN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
-                                    )
+                                    ),
+                                    negativeVarsCount = IS_BETWEEN_VAR_COUNT,
+                                    negativeBody = "", // TODO
                                 ),
                                 RelationshipModel(
                                     name = scaleRelations[4],
@@ -321,7 +345,9 @@ object RelationshipsDictionary {
                                     body = IS_CLOSER_TO_THAN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
-                                    )
+                                    ),
+                                    negativeVarsCount = IS_CLOSER_TO_THAN_VAR_COUNT,
+                                    negativeBody = "", // TODO
                                 ),
                                 RelationshipModel(
                                     name = scaleRelations[5],
@@ -331,7 +357,9 @@ object RelationshipsDictionary {
                                     body = IS_FURTHER_FROM_THAN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
-                                    )
+                                    ),
+                                    negativeVarsCount = IS_FURTHER_FROM_THAN_VAR_COUNT,
+                                    negativeBody = "", // TODO
                                 )
                             )
                         )
@@ -357,7 +385,9 @@ object RelationshipsDictionary {
                                     body = PartialScalePatterns.REVERSE_PATTERN.replace(
                                         "<predicate>",
                                         genLink(POAS_PREF, name)
-                                    )
+                                    ),
+                                    negativeVarsCount = PartialScalePatterns.REVERSE_VAR_COUNT,
+                                    negativeBody = "(<arg1> ${genLink(POAS_PREF, name)} <arg2>)\n",
                                 ),
                                 RelationshipModel(
                                     name = scaleRelations[1],
@@ -367,7 +397,12 @@ object RelationshipsDictionary {
                                     body = PartialScalePatterns.TRANSITIVE_CLOSURE_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
-                                    )
+                                    ),
+                                    negativeVarsCount = PartialScalePatterns.TRANSITIVE_CLOSURE_VAR_COUNT,
+                                    negativeBody = PartialScalePatterns.REVERSE_TRANSITIVE_CLOSURE_PATTERN.replace(
+                                        "<numberPredicate>",
+                                        genLink(POAS_PREF, scalePredicate)
+                                    ),
                                 ),
                                 RelationshipModel(
                                     name = scaleRelations[2],
@@ -377,7 +412,12 @@ object RelationshipsDictionary {
                                     body = PartialScalePatterns.REVERSE_TRANSITIVE_CLOSURE_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
-                                    )
+                                    ),
+                                    negativeVarsCount = PartialScalePatterns.REVERSE_TRANSITIVE_CLOSURE_VAR_COUNT,
+                                    negativeBody = PartialScalePatterns.TRANSITIVE_CLOSURE_PATTERN.replace(
+                                        "<numberPredicate>",
+                                        genLink(POAS_PREF, scalePredicate)
+                                    ),
                                 ),
                                 RelationshipModel(
                                     name = scaleRelations[3],
@@ -387,7 +427,9 @@ object RelationshipsDictionary {
                                     body = PartialScalePatterns.IS_BETWEEN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
-                                    )
+                                    ),
+                                    negativeVarsCount = PartialScalePatterns.IS_BETWEEN_VAR_COUNT,
+                                    negativeBody = "", // TODO
                                 ),
                                 RelationshipModel(
                                     name = scaleRelations[4],
@@ -397,7 +439,9 @@ object RelationshipsDictionary {
                                     body = PartialScalePatterns.IS_CLOSER_TO_THAN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
-                                    )
+                                    ),
+                                    negativeVarsCount = PartialScalePatterns.IS_CLOSER_TO_THAN_VAR_COUNT,
+                                    negativeBody = "", // TODO
                                 ),
                                 RelationshipModel(
                                     name = scaleRelations[5],
@@ -407,7 +451,9 @@ object RelationshipsDictionary {
                                     body = PartialScalePatterns.IS_FURTHER_FROM_THAN_PATTERN.replace(
                                         "<numberPredicate>",
                                         genLink(POAS_PREF, scalePredicate)
-                                    )
+                                    ),
+                                    negativeVarsCount = PartialScalePatterns.IS_FURTHER_FROM_THAN_VAR_COUNT,
+                                    negativeBody = "", // TODO
                                 )
                             )
                         )
@@ -440,6 +486,12 @@ object RelationshipsDictionary {
                     tmp
                 }
 
+                val negativeBody = if (args.size == 2) {
+                    "(<arg2> ${genLink(POAS_PREF, name)} <arg1>)\n"
+                } else {
+                    "" // TODO
+                }
+
                 relationships.add(
                     RelationshipModel(
                         name = name,
@@ -449,7 +501,9 @@ object RelationshipsDictionary {
                         relationType = relationType,
                         flags = flags,
                         varsCount = varsCount,
-                        body = body
+                        body = body,
+                        negativeVarsCount = varsCount,
+                        negativeBody = negativeBody
                     )
                 )
             }
@@ -536,4 +590,23 @@ object RelationshipsDictionary {
      * @param name Имя отношения
      */
     fun rules(name: String) = get(name)?.rules
+
+
+    /**
+     * Получить количество переменных в шаблоне правила
+     * @param name Имя отношения
+     */
+    fun negativeVarsCount(name: String) = get(name)?.negativeVarsCount
+
+    /**
+     * Получить тело правила для проверки отношения
+     * @param name Имя отношения
+     */
+    fun negativeBody(name: String) = get(name)?.negativeBody
+
+    /**
+     * Получить завершенные правила для проверки отношения
+     * @param name Имя отношения
+     */
+    fun negativeRules(name: String) = get(name)?.negativeRules
 }

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:ns0="http://www.vstu.ru/poas/code#">
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#ItemWithVisibleMemory">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Item"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#Operand">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Token"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#Operator">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Token"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#Class">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Item"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#Pointer">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#ItemWithVisibleMemory"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#ClassObject">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#ItemWithVisibleMemory"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#Value">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#ItemWithVisibleMemory"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#IntegerValue">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Value"/>
+    <ns0:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">int</ns0:type>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#FloatValue">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Value"/>
+    <ns0:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">float</ns0:type>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#StringValue">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Value"/>
+    <ns0:type rdf:datatype="http://www.w3.org/2001/XMLSchema#string">std::string</ns0:type>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#Field">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Connection"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#PointedItem">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Connection"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#PointedField">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Connection"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#StaticField">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Connection"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#Dot">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Operator"/>
+    <ns0:text rdf:datatype="http://www.w3.org/2001/XMLSchema#string">.</ns0:text>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#Arrow">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Operator"/>
+    <ns0:text rdf:datatype="http://www.w3.org/2001/XMLSchema#string">-&gt;</ns0:text>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#DoubleColon">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Operator"/>
+    <ns0:text rdf:datatype="http://www.w3.org/2001/XMLSchema#string">::</ns0:text>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#ItemName">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#Operand"/>
+  </rdf:Description>
+
+  <ns0:Class rdf:about="http://www.vstu.ru/poas/code#A">
+    <ns0:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A</ns0:name>
+    <ns0:was_visited_before rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:was_visited_before>
+  </ns0:Class>
+
+  <ns0:Class rdf:about="http://www.vstu.ru/poas/code#B">
+    <ns0:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B</ns0:name>
+    <ns0:was_visited_before rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:was_visited_before>
+  </ns0:Class>
+
+  <ns0:Class rdf:about="http://www.vstu.ru/poas/code#C">
+    <ns0:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C</ns0:name>
+    <ns0:was_visited_before rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:was_visited_before>
+  </ns0:Class>
+
+  <ns0:ClassObject rdf:about="http://www.vstu.ru/poas/code#a">
+    <ns0:instance_of rdf:resource="http://www.vstu.ru/poas/code#A"/>
+    <ns0:contains rdf:resource="http://www.vstu.ru/poas/code#b"/>
+    <ns0:contains>
+      <ns0:IntegerValue rdf:about="http://www.vstu.ru/poas/code#k">
+        <ns0:contained_in rdf:resource="http://www.vstu.ru/poas/code#a"/>
+        <ns0:reachable_from rdf:resource="http://www.vstu.ru/poas/code#a"/>
+        <ns0:is_a rdf:resource="http://www.vstu.ru/poas/code#field_a_k"/>
+        <ns0:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">k</ns0:name>
+        <ns0:was_visited_before rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:was_visited_before>
+      </ns0:IntegerValue>
+    </ns0:contains>
+
+    <ns0:has rdf:resource="http://www.vstu.ru/poas/code#field_a_b"/>
+    <ns0:has rdf:resource="http://www.vstu.ru/poas/code#field_a_k"/>
+    <ns0:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">a</ns0:name>
+    <ns0:was_visited_before rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:was_visited_before>
+  </ns0:ClassObject>
+
+  <ns0:ClassObject rdf:about="http://www.vstu.ru/poas/code#b">
+    <ns0:instance_of rdf:resource="http://www.vstu.ru/poas/code#B"/>
+    <ns0:contains rdf:resource="http://www.vstu.ru/poas/code#c"/>
+    <ns0:contained_in rdf:resource="http://www.vstu.ru/poas/code#a"/>
+    <ns0:reachable_from rdf:resource="http://www.vstu.ru/poas/code#a"/>
+    <ns0:is_a rdf:resource="http://www.vstu.ru/poas/code#field_a_b"/>
+    <ns0:has rdf:resource="http://www.vstu.ru/poas/code#field_b_c"/>
+    <ns0:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">b</ns0:name>
+    <ns0:was_visited_before rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:was_visited_before>
+  </ns0:ClassObject>
+
+  <ns0:Pointer rdf:about="http://www.vstu.ru/poas/code#c">
+    <ns0:contained_in rdf:resource="http://www.vstu.ru/poas/code#b"/>
+    <ns0:reachable_from rdf:resource="http://www.vstu.ru/poas/code#a"/>
+    <ns0:reachable_from rdf:resource="http://www.vstu.ru/poas/code#b"/>
+    <ns0:is_a rdf:resource="http://www.vstu.ru/poas/code#field_b_c"/>
+    <ns0:has rdf:resource="http://www.vstu.ru/poas/code#point_to_c_d"/>
+    <ns0:has rdf:resource="http://www.vstu.ru/poas/code#point_to_c_c"/>
+    <ns0:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">c</ns0:name>
+    <ns0:was_visited_before rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:was_visited_before>
+    <ns0:var... rdf:datatype="http://www.w3.org/2001/XMLSchema#string">currentItem</ns0:var...>
+  </ns0:Pointer>
+
+  <ns0:ClassObject rdf:about="http://www.vstu.ru/poas/code#c_p">
+    <ns0:instance_of rdf:resource="http://www.vstu.ru/poas/code#C"/>
+    <ns0:contains rdf:resource="http://www.vstu.ru/poas/code#d"/>
+    <ns0:reachable_from rdf:resource="http://www.vstu.ru/poas/code#a"/>
+    <ns0:reachable_from rdf:resource="http://www.vstu.ru/poas/code#b"/>
+    <ns0:reachable_from rdf:resource="http://www.vstu.ru/poas/code#c"/>
+    <ns0:is_a rdf:resource="http://www.vstu.ru/poas/code#point_to_c_c"/>
+    <ns0:has rdf:resource="http://www.vstu.ru/poas/code#field_c_d"/>
+    <ns0:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></ns0:name>
+    <ns0:was_visited_before rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:was_visited_before>
+  </ns0:ClassObject>
+
+  <ns0:IntegerValue rdf:about="http://www.vstu.ru/poas/code#d">
+    <ns0:contained_in rdf:resource="http://www.vstu.ru/poas/code#c_p"/>
+    <ns0:reachable_from rdf:resource="http://www.vstu.ru/poas/code#a"/>
+    <ns0:reachable_from rdf:resource="http://www.vstu.ru/poas/code#b"/>
+    <ns0:reachable_from rdf:resource="http://www.vstu.ru/poas/code#c"/>
+    <ns0:reachable_from rdf:resource="http://www.vstu.ru/poas/code#c_p"/>
+    <ns0:is_a rdf:resource="http://www.vstu.ru/poas/code#field_c_d"/>
+    <ns0:is_a rdf:resource="http://www.vstu.ru/poas/code#point_to_c_d"/>
+    <ns0:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">d</ns0:name>
+    <ns0:was_visited_before rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:was_visited_before>
+    <ns0:var... rdf:datatype="http://www.w3.org/2001/XMLSchema#string">nextItem</ns0:var...>
+    <ns0:var... rdf:datatype="http://www.w3.org/2001/XMLSchema#string">targetItem</ns0:var...>
+  </ns0:IntegerValue>
+
+  <ns0:Field rdf:about="http://www.vstu.ru/poas/code#field_a_b">
+  </ns0:Field>
+
+  <ns0:Field rdf:about="http://www.vstu.ru/poas/code#field_a_k">
+  </ns0:Field>
+
+  <ns0:Field rdf:about="http://www.vstu.ru/poas/code#field_b_c">
+  </ns0:Field>
+
+  <ns0:Field rdf:about="http://www.vstu.ru/poas/code#field_c_d">
+  </ns0:Field>
+
+  <ns0:PointedField rdf:about="http://www.vstu.ru/poas/code#point_to_c_d">
+  </ns0:PointedField>
+
+  <ns0:PointedItem rdf:about="http://www.vstu.ru/poas/code#point_to_c_c">
+  </ns0:PointedItem>
+
+  <ns0:Element rdf:about="http://www.vstu.ru/poas/code#symbol">
+    <ns0:operator rdf:resource="http://www.vstu.ru/poas/code#arrow1"/>
+    <ns0:operand>
+      <ns0:ItemName rdf:about="http://www.vstu.ru/poas/code#item_name_1">
+        <ns0:linked_with rdf:resource="http://www.vstu.ru/poas/code#d"/>
+        <ns0:can_be_used_with rdf:resource="http://www.vstu.ru/poas/code#arrow1"/>
+        <ns0:can_be_used_to_get_access>
+          <ns0:Arrow rdf:about="http://www.vstu.ru/poas/code#can_be_used_to_get_access_helper">
+            <rdf:type rdf:resource="http://www.vstu.ru/poas/code#Item"/>
+          </ns0:Arrow>
+        </ns0:can_be_used_to_get_access>
+
+      </ns0:ItemName>
+    </ns0:operand>
+
+    <ns0:var... rdf:datatype="http://www.w3.org/2001/XMLSchema#string">symbol</ns0:var...>
+  </ns0:Element>
+
+  <ns0:Arrow rdf:about="http://www.vstu.ru/poas/code#arrow1">
+    <ns0:associated_with>
+      <ns0:PointedItem rdf:about="http://www.vstu.ru/poas/code#PointedItem_Helper">
+      </ns0:PointedItem>
+    </ns0:associated_with>
+
+    <ns0:can_be_applied_to>
+      <ns0:Pointer rdf:about="http://www.vstu.ru/poas/code#Pointer_Helper">
+      </ns0:Pointer>
+    </ns0:can_be_applied_to>
+
+  </ns0:Arrow>
+
+</rdf:RDF>

@@ -9,9 +9,9 @@ import util.DataType
  */
 class LogicalOr(args: List<Operator>): BaseOperator(args) {
 
-    override val argsDataTypes = listOf(listOf(DataType.Boolean, DataType.Boolean))
+    override val argsDataTypes get() = listOf(listOf(DataType.Boolean, DataType.Boolean))
 
-    override val resultDataType = DataType.Boolean
+    override val resultDataType get() = DataType.Boolean
 
     override fun compile(): CompilationResult {
         // Объявляем переменные
@@ -43,9 +43,9 @@ class LogicalOr(args: List<Operator>): BaseOperator(args) {
         }
 
         // Собираем полученные правила
-        heads.addAll(compiledExpr0.heads)
-        heads.addAll(compiledExpr1.heads)
-        heads.addAll(compiledExpr2.heads)
+        heads.addAll(compiledExpr0.bodies)
+        heads.addAll(compiledExpr1.bodies)
+        heads.addAll(compiledExpr2.bodies)
 
         return CompilationResult("", heads, completedRules)
     }

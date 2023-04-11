@@ -1,7 +1,7 @@
 package compiler.operators
 
 import compiler.Operator
-import util.CompilationResult
+import compiler.util.CompilationResult
 import util.DataType
 import util.JenaUtil
 import util.JenaUtil.genLink
@@ -14,13 +14,11 @@ import util.NamingManager.genVarName
  */
 class GetClass(args: List<Operator>) : BaseOperator(args) {
 
-    override fun argsDataTypes(): List<List<DataType>> {
-        return listOf(listOf(DataType.Object))
-    }
+    override val argsDataTypes get() = listOf(listOf(DataType.Object))
 
-    override fun resultDataType(): DataType {
-        return DataType.Object
-    }
+
+    override val resultDataType get() = DataType.Class
+
 
     override fun compile(): CompilationResult {
         // Объявляем переменные
@@ -35,10 +33,10 @@ class GetClass(args: List<Operator>) : BaseOperator(args) {
         val compiledArg0 = arg0.compile()
 
         // Передаем завершенные правила дальше
-        completedRules += compiledArg0.completedRules
+        completedRules += compiledArg0.rules
 
         // Для всех результатов компиляции
-        compiledArg0.ruleHeads.forEach { head0 ->
+        compiledArg0.bodies.forEach { head0 ->
             var head = head0
             head += genTriple(
                 compiledArg0.value,
@@ -59,10 +57,14 @@ class GetClass(args: List<Operator>) : BaseOperator(args) {
     override fun clone(): Operator {
         val newArgs = ArrayList<Operator>()
 
-        args().forEach { arg ->
+        args.forEach { arg ->
             newArgs.add(arg.clone())
         }
 
+        return GetClass(newArgs)
+    }
+
+    override fun clone(newArgs: List<Operator>): Operator {
         return GetClass(newArgs)
     }
 

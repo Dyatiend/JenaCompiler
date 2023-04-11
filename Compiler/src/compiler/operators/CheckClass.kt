@@ -4,6 +4,7 @@ import compiler.Operator
 import compiler.literals.ClassLiteral
 import compiler.util.CompilationResult
 import dictionaries.ClassesDictionary.calcExpr
+import dictionaries.ClassesDictionary.calcExprXML
 import dictionaries.ClassesDictionary.isCalculable
 import models.ClassModel
 import util.DataType
@@ -14,6 +15,7 @@ import util.JenaUtil.genLink
 import util.JenaUtil.genNoValuePrim
 import util.JenaUtil.genTriple
 import util.JenaUtil.genVar
+import util.NamingManager
 
 /**
  * Оператор проверки класса объекта
@@ -45,7 +47,9 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
         val compiledArg1 = arg1.compile()
 
         // Если класс можно вычислить (вычисляемый класс можно получить только указав его имя т.е. через ClassValue)
-        if (isCalculable((arg1 as ClassLiteral).value)) {
+        if (arg1 is ClassLiteral && isCalculable((arg1).value)) {
+            val xml = calcExprXML(arg1.value)?.replace("obj...", compiledArg0.value)
+
             // Получаем выражение для вычисления
             val calculation = calcExpr(arg1.value)
 
@@ -74,8 +78,11 @@ class CheckClass(args: List<Operator>) : BaseOperator(args) {
                     compiledCalculation.bodies.forEach { calculationBody ->
                         // Собираем правило
                         var body = body0 + body1 // Собираем части первого и второго аргументов
-                        body += genBindPrim(compiledArg0.value, genVar(varName)) // Инициализируем переменную
-                        body += calculationBody // Добавляем результат компиляции вычисления
+//                        body += genBindPrim(compiledArg0.value, genVar(varName)) // Инициализируем переменную
+                        body += calculationBody.replace(
+                            "?obj...",
+                            compiledArg0.value
+                        ) // Добавляем результат компиляции вычисления
 
                         // Добавляем в массив
                         bodies.add(body)

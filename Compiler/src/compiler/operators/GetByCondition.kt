@@ -1,15 +1,15 @@
 package compiler.operators
 
 import compiler.Operator
-import compiler.values.BooleanValue
-import util.CompilationResult
+import compiler.literals.BooleanLiteral
+import compiler.util.CompilationResult
 import util.DataType
 import util.JenaUtil
 import util.JenaUtil.genCountValuesPrim
 import util.JenaUtil.genEqualPrim
-import util.JenaUtil.genIntegerVal
 import util.JenaUtil.genRule
 import util.JenaUtil.genTriple
+import util.JenaUtil.genVal
 import util.JenaUtil.genVar
 import util.NamingManager.genPredicateName
 import util.NamingManager.genVarName
@@ -19,13 +19,11 @@ class GetByCondition(
     val varName: String
 ) : BaseOperator(args) {
 
-    override fun argsDataTypes(): List<List<DataType>> {
-        return listOf(listOf(DataType.Boolean))
-    }
+    override val argsDataTypes get() = listOf(listOf(DataType.Boolean))
 
-    override fun resultDataType(): DataType {
-        return DataType.Boolean
-    }
+
+    override val resultDataType get() = DataType.Object
+
 
     override fun compile(): CompilationResult {
         // Объявляем переменные
@@ -40,7 +38,7 @@ class GetByCondition(
         val compiledArg0 = arg0.compile()
 
         // Передаем завершенные правила дальше
-        completedRules += compiledArg0.completedRules
+        completedRules += compiledArg0.rules
 
         // Флаг, указывающий на объекты множества
         val flag = genPredicateName()
@@ -52,14 +50,14 @@ class GetByCondition(
         val empty1 = genVarName()
 
         // Для всех результатов компиляции
-        compiledArg0.ruleHeads.forEach { head0 ->
+        compiledArg0.bodies.forEach { head0 ->
             // Инициализируем переменную FIXME?: сюда не попадут объекты без связей
-            var head = genTriple(value, genVarName(), genVarName())
+            var head = ""
 
             head += head0
 
             // Если оператор булево значение
-            if (arg0 is BooleanValue) {
+            if (arg0 is BooleanLiteral) {
                 // Добавляем выражение, равное значению
                 head += if (arg0.value.toBoolean()) {
                     genEqualPrim("1", "1")
@@ -74,7 +72,7 @@ class GetByCondition(
             // Добавляем в основное правило
             val mainHead = genTriple(empty0, flag, value) +
                     genCountValuesPrim(empty0, flag, empty1) +
-                    genEqualPrim(empty1, genIntegerVal("1"))
+                    genEqualPrim(empty1, genVal(1))
 
             // Добавляем в рзультат
             heads.add(mainHead)
@@ -90,10 +88,14 @@ class GetByCondition(
     override fun clone(): Operator {
         val newArgs = ArrayList<Operator>()
 
-        args().forEach { arg ->
+        args.forEach { arg ->
             newArgs.add(arg.clone())
         }
 
+        return GetByCondition(newArgs, varName)
+    }
+
+    override fun clone(newArgs: List<Operator>): Operator {
         return GetByCondition(newArgs, varName)
     }
 }

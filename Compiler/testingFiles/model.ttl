@@ -1,0 +1,48 @@
+[makeSkolem
+(?tmp)
+        -> ( ?tmp http://www.vstu.ru/poas/code#predicate1 .
+
+. .
+        "true"^^
+http://www.w3.org/2001/XMLSchema#boolean
+         )]
+[(?a ?p ?b), (?p http://www.w3.org/2000/01/rdf-schema#domain ?c) -> (?a http://www.w3.org/1999/02/22-rdf-syntax-ns#type ?c)]
+[(?a ?p ?b), (?p http://www.w3.org/2000/01/rdf-schema#range ?c) -> (?b http://www.w3.org/1999/02/22-rdf-syntax-ns#type ?c)]
+[(?a ?p ?b), (?p http://www.w3.org/2000/01/rdf-schema#subPropertyOf ?q) -> (?a ?q ?b)]
+[(?a http://www.w3.org/2000/01/rdf-schema#subClassOf ?b), (?b http://www.w3.org/2000/01/rdf-schema#subClassOf ?c) -> (?a http://www.w3.org/2000/01/rdf-schema#subClassOf ?c)]
+[(?a http://www.w3.org/2000/01/rdf-schema#subClassOf ?b), (?c http://www.w3.org/1999/02/22-rdf-syntax-ns#type ?a) -> (?c http://www.w3.org/1999/02/22-rdf-syntax-ns#type ?b)]
+[
+(?var1 http://www.w3.org/2000/01/rdf-schema#subClassOf ?var2)
+noValue(?var2, http://www.w3.org/2000/01/rdf-schema#subClassOf, ?var3)
+makeUniqueID(?var4)
+->
+(?var2 http://www.vstu.ru/poas/code#http://www.vstu.ru/poas/code#predicate2 .
+
+. .
+        ?var4 ) ]
+
+[
+(?var1 http://www.w3.org/2000/01/rdf-schema#subClassOf ?var2)
+        noValue(?var1, http://www.vstu.ru/poas/code#http://www.vstu.ru/poas/code#predicate2 .
+
+. . )
+(?var2 http://www.vstu.ru/poas/code#http://www.vstu.ru/poas/code#predicate2... ?var3)
+        makeUniqueID(?var4)
+strConcat(?var3, ".", ?var4, ?var5)
+->
+(?var1 http://www.vstu.ru/poas/code#http://www.vstu.ru/poas/code#predicate2 .
+
+.. ?var5)
+]
+        <pause>[
+(?var4... ?var5... ?var6...)
+        (http://www.vstu.ru/poas/code#object3 http://www.w3.org/1999/02/22-rdf-syntax-ns#type ?var8...)
+noValue(?var8...,http://www.vstu.ru/poas/code#stringStatic2,"text5"^^http://www.w3.org/2001/XMLSchema#string)
+makeSkolem(?var7...)
+->
+( ?var7... http://www.vstu.ru/poas/code#predicate3 .
+
+. .
+        "true"^^
+xsd:boolean
+         ) ]

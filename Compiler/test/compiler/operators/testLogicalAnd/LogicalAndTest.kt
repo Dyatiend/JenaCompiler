@@ -24,7 +24,7 @@ internal class LogicalAndTest {
         // Читаем выражение
         var operator: Operator? = null
         try {
-            operator = Operator.fromXML("./test/compiler/operators/testLogicalAnd/expressions/test_trueAndTrue.xml")
+            operator = Operator.fromXMLFile("./test/compiler/operators/testLogicalAnd/expressions/test_trueAndTrue.xml")
         } catch (ex: IllegalAccessException) {
             ex.printStackTrace()
         }
@@ -34,16 +34,16 @@ internal class LogicalAndTest {
         val result = operator!!.compileExpression()
         assertNotNull(result)
         assertFalse(result.value.isEmpty())
-        assertTrue(result.ruleHeads.size == 1)
-        assertTrue(result.ruleHeads.first().isEmpty())
-        assertFalse(result.completedRules.isEmpty())
+        assertTrue(result.bodies.size == 1)
+        assertTrue(result.bodies.first().isEmpty())
+        assertFalse(result.rules.isEmpty())
 
         // Создаем модель
         val model = ModelFactory.createDefaultModel()
 
         // Запускаем ризонер
         var inf = ModelFactory.createInfModel(GenericRuleReasoner(listOf()), model)
-        val rulesSets = result.completedRules.split(PAUSE_MARK)
+        val rulesSets = result.rules.split(PAUSE_MARK)
         for (set in rulesSets) {
             val rules = Rule.parseRules(set)
             val reasoner: Reasoner = GenericRuleReasoner(rules)
@@ -62,7 +62,8 @@ internal class LogicalAndTest {
         // Читаем выражение
         var operator: Operator? = null
         try {
-            operator = Operator.fromXML("./test/compiler/operators/testLogicalAnd/expressions/test_trueAndFalse.xml")
+            operator =
+                Operator.fromXMLFile("./test/compiler/operators/testLogicalAnd/expressions/test_trueAndFalse.xml")
         } catch (ex: IllegalAccessException) {
             ex.printStackTrace()
         }
@@ -72,16 +73,16 @@ internal class LogicalAndTest {
         val result = operator!!.compileExpression()
         assertNotNull(result)
         assertFalse(result.value.isEmpty())
-        assertTrue(result.ruleHeads.size == 1)
-        assertTrue(result.ruleHeads.first().isEmpty())
-        assertFalse(result.completedRules.isEmpty())
+        assertTrue(result.bodies.size == 1)
+        assertTrue(result.bodies.first().isEmpty())
+        assertFalse(result.rules.isEmpty())
 
         // Создаем модель
         val model = ModelFactory.createDefaultModel()
 
         // Запускаем ризонер
         var inf = ModelFactory.createInfModel(GenericRuleReasoner(listOf()), model)
-        val rulesSets = result.completedRules.split(PAUSE_MARK)
+        val rulesSets = result.rules.split(PAUSE_MARK)
         for (set in rulesSets) {
             val rules = Rule.parseRules(set)
             val reasoner: Reasoner = GenericRuleReasoner(rules)
@@ -100,7 +101,8 @@ internal class LogicalAndTest {
         // Читаем выражение
         var operator: Operator? = null
         try {
-            operator = Operator.fromXML("./test/compiler/operators/testLogicalAnd/expressions/test_falseAndTrue.xml")
+            operator =
+                Operator.fromXMLFile("./test/compiler/operators/testLogicalAnd/expressions/test_falseAndTrue.xml")
         } catch (ex: IllegalAccessException) {
             ex.printStackTrace()
         }
@@ -110,16 +112,16 @@ internal class LogicalAndTest {
         val result = operator!!.compileExpression()
         assertNotNull(result)
         assertFalse(result.value.isEmpty())
-        assertTrue(result.ruleHeads.size == 1)
-        assertTrue(result.ruleHeads.first().isEmpty())
-        assertFalse(result.completedRules.isEmpty())
+        assertTrue(result.bodies.size == 1)
+        assertTrue(result.bodies.first().isEmpty())
+        assertFalse(result.rules.isEmpty())
 
         // Создаем модель
         val model = ModelFactory.createDefaultModel()
 
         // Запускаем ризонер
         var inf = ModelFactory.createInfModel(GenericRuleReasoner(listOf()), model)
-        val rulesSets = result.completedRules.split(PAUSE_MARK)
+        val rulesSets = result.rules.split(PAUSE_MARK)
         for (set in rulesSets) {
             val rules = Rule.parseRules(set)
             val reasoner: Reasoner = GenericRuleReasoner(rules)
@@ -138,7 +140,8 @@ internal class LogicalAndTest {
         // Читаем выражение
         var operator: Operator? = null
         try {
-            operator = Operator.fromXML("./test/compiler/operators/testLogicalAnd/expressions/test_falseAndFalse.xml")
+            operator =
+                Operator.fromXMLFile("./test/compiler/operators/testLogicalAnd/expressions/test_falseAndFalse.xml")
         } catch (ex: IllegalAccessException) {
             ex.printStackTrace()
         }
@@ -148,16 +151,16 @@ internal class LogicalAndTest {
         val result = operator!!.compileExpression()
         assertNotNull(result)
         assertFalse(result.value.isEmpty())
-        assertTrue(result.ruleHeads.size == 1)
-        assertTrue(result.ruleHeads.first().isEmpty())
-        assertFalse(result.completedRules.isEmpty())
+        assertTrue(result.bodies.size == 1)
+        assertTrue(result.bodies.first().isEmpty())
+        assertFalse(result.rules.isEmpty())
 
         // Создаем модель
         val model = ModelFactory.createDefaultModel()
 
         // Запускаем ризонер
         var inf = ModelFactory.createInfModel(GenericRuleReasoner(listOf()), model)
-        val rulesSets = result.completedRules.split(PAUSE_MARK)
+        val rulesSets = result.rules.split(PAUSE_MARK)
         for (set in rulesSets) {
             val rules = Rule.parseRules(set)
             val reasoner: Reasoner = GenericRuleReasoner(rules)
@@ -176,7 +179,8 @@ internal class LogicalAndTest {
         // Читаем выражение
         var operator: Operator? = null
         try {
-            operator = Operator.fromXML("./test/compiler/operators/testLogicalAnd/expressions/test_complexLogical.xml")
+            operator =
+                Operator.fromXMLFile("./test/compiler/operators/testLogicalAnd/expressions/test_complexLogical.xml")
         } catch (ex: IllegalAccessException) {
             ex.printStackTrace()
         }
@@ -186,16 +190,16 @@ internal class LogicalAndTest {
         val result = operator!!.compileExpression()
         assertNotNull(result)
         assertFalse(result.value.isEmpty())
-        assertTrue(result.ruleHeads.size == 1)
-        assertTrue(result.ruleHeads.first().isEmpty())
-        assertFalse(result.completedRules.isEmpty())
+        assertTrue(result.bodies.size == 1)
+        assertTrue(result.bodies.first().isEmpty())
+        assertFalse(result.rules.isEmpty())
 
         // Создаем модель
         val model = ModelFactory.createDefaultModel()
 
         // Запускаем ризонер
         var inf = ModelFactory.createInfModel(GenericRuleReasoner(listOf()), model)
-        val rulesSets = result.completedRules.split(PAUSE_MARK)
+        val rulesSets = result.rules.split(PAUSE_MARK)
         for (set in rulesSets) {
             val rules = Rule.parseRules(set)
             val reasoner: Reasoner = GenericRuleReasoner(rules)

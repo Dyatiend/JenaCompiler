@@ -1,0 +1,16 @@
+mark|BOOLEAN||||
+int1|INTEGER||||
+double1|DOUBLE||||
+boolean1|BOOLEAN||||
+string1|STRING||||
+enum1|ENUM|someEnum|||
+intStatic1|INTEGER||TRUE|class1;class2;class3;class5|
+doubleStatic1|DOUBLE||TRUE|class1;class2;class3;class5|
+booleanStatic1|BOOLEAN||TRUE|class1;class2;class3;class5|
+stringStatic1|STRING||TRUE|class1;class2;class3;class5|
+enumStatic1|ENUM|someEnum|TRUE|class1;class2;class3;class5|
+intStatic2|INTEGER||TRUE|class7|
+doubleStatic2|DOUBLE||TRUE|class7|
+booleanStatic2|BOOLEAN||TRUE|class7|
+stringStatic2|STRING||TRUE|class7|
+enumStatic2|ENUM|someEnum|TRUE|class7|

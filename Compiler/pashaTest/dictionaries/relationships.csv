@@ -1,0 +1,12 @@
+can_be_applied_to||Operator;Item||TRUE|ONE_TO_MANY||0
+can_be_used_with||Operand;Operator||TRUE|ONE_TO_MANY||0
+can_be_used_to_get_access||Operand;Operator||TRUE|ONE_TO_MANY||0
+linked_with||Operand;Item|||||0
+contained_in||Item;Item|||||0
+contains||Item;Item|||||0
+associated_with||Operator;Connection||TRUE|ONE_TO_MANY||0
+is_a||Item;Connection|||||0
+reachable_from||Item;Item|||||0
+has||Item;Connection|||||0
+operator||Element;Operator|||||0
+operand||Element;Operand|||||0

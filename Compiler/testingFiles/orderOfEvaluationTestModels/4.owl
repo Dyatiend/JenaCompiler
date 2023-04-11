@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:ns0="http://www.vstu.ru/poas/code#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#element">
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:countOfTokens>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#plus">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:countOfTokens>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:hasStrictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:hasStrictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#minus">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:countOfTokens>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:hasStrictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:hasStrictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#and">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:countOfTokens>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">14</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:hasStrictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:hasStrictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#or">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:countOfTokens>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:hasStrictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:hasStrictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#ternaryConditional">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:countOfTokens>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#ternary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">16</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#right"/>
+    <ns0:hasStrictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:hasStrictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsInnerOperand>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#comma">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:countOfTokens>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">17</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:hasStrictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:hasStrictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#multiplication">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:countOfTokens>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:hasStrictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:hasStrictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#division">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:countOfTokens>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:hasStrictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:hasStrictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#power">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:countOfTokens>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:hasStrictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:hasStrictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsInnerOperand>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#brackets">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:countOfTokens>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#binary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#infix"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#left"/>
+    <ns0:hasStrictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:hasStrictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsInnerOperand>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#parenthesis">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#element"/>
+    <ns0:countOfTokens rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:countOfTokens>
+    <ns0:arity rdf:resource="http://www.vstu.ru/poas/code#unary"/>
+    <ns0:place rdf:resource="http://www.vstu.ru/poas/code#around"/>
+    <ns0:precedence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:precedence>
+    <ns0:associativity rdf:resource="http://www.vstu.ru/poas/code#non-assoc"/>
+    <ns0:hasStrictOperandOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:hasStrictOperandOrder>
+    <ns0:needsLeftOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsLeftOperand>
+    <ns0:needsRightOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:needsRightOperand>
+    <ns0:needsInnerOperand rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:needsInnerOperand>
+  </rdf:Description>
+
+  <ns0:element rdf:about="http://www.vstu.ru/poas/code#element_A_1">
+    <ns0:state rdf:resource="http://www.vstu.ru/poas/code#evaluated"/>
+    <ns0:has>
+      <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_A_1">
+        <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_division_1"/>
+        <ns0:belongsTo rdf:resource="http://www.vstu.ru/poas/code#element_A_1"/>
+      </ns0:token>
+    </ns0:has>
+
+  </ns0:element>
+
+  <ns0:division rdf:about="http://www.vstu.ru/poas/code#element_division_1">
+    <ns0:state rdf:resource="http://www.vstu.ru/poas/code#unevaluated"/>
+    <ns0:has rdf:resource="http://www.vstu.ru/poas/code#token_division_1"/>
+  </ns0:division>
+
+  <ns0:element rdf:about="http://www.vstu.ru/poas/code#element_B_1">
+    <ns0:state rdf:resource="http://www.vstu.ru/poas/code#evaluated"/>
+    <ns0:has rdf:resource="http://www.vstu.ru/poas/code#token_B_1"/>
+  </ns0:element>
+
+  <ns0:multiplication rdf:about="http://www.vstu.ru/poas/code#element_multiplication_1">
+    <ns0:state rdf:resource="http://www.vstu.ru/poas/code#unevaluated"/>
+    <ns0:has rdf:resource="http://www.vstu.ru/poas/code#token_multiplication_1"/>
+    <ns0:var... rdf:datatype="http://www.w3.org/2001/XMLSchema#string">X</ns0:var...>
+  </ns0:multiplication>
+
+  <ns0:element rdf:about="http://www.vstu.ru/poas/code#element_C_1">
+    <ns0:state rdf:resource="http://www.vstu.ru/poas/code#evaluated"/>
+    <ns0:has rdf:resource="http://www.vstu.ru/poas/code#token_C_1"/>
+  </ns0:element>
+
+  <ns0:plus rdf:about="http://www.vstu.ru/poas/code#element_plus_1">
+    <ns0:state rdf:resource="http://www.vstu.ru/poas/code#unevaluated"/>
+    <ns0:has>
+      <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_plus_1">
+        <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_D_1"/>
+        <ns0:belongsTo rdf:resource="http://www.vstu.ru/poas/code#element_plus_1"/>
+      </ns0:token>
+    </ns0:has>
+
+  </ns0:plus>
+
+  <ns0:element rdf:about="http://www.vstu.ru/poas/code#element_D_1">
+    <ns0:state rdf:resource="http://www.vstu.ru/poas/code#evaluated"/>
+    <ns0:has rdf:resource="http://www.vstu.ru/poas/code#token_D_1"/>
+  </ns0:element>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_division_1">
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_B_1"/>
+    <ns0:belongsTo rdf:resource="http://www.vstu.ru/poas/code#element_division_1"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_B_1">
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_multiplication_1"/>
+    <ns0:belongsTo rdf:resource="http://www.vstu.ru/poas/code#element_B_1"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_multiplication_1">
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_C_1"/>
+    <ns0:belongsTo rdf:resource="http://www.vstu.ru/poas/code#element_multiplication_1"/>
+    <ns0:var... rdf:datatype="http://www.w3.org/2001/XMLSchema#string">X1</ns0:var...>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_C_1">
+    <ns0:directlyLeftOf rdf:resource="http://www.vstu.ru/poas/code#token_plus_2"/>
+    <ns0:belongsTo rdf:resource="http://www.vstu.ru/poas/code#element_C_1"/>
+  </ns0:token>
+
+  <ns0:token rdf:about="http://www.vstu.ru/poas/code#token_D_1">
+    <ns0:belongsTo rdf:resource="http://www.vstu.ru/poas/code#element_D_1"/>
+  </ns0:token>
+
+</rdf:RDF>

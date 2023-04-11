@@ -1,10 +1,15 @@
 token||
 element||
-operand|element|<LogicalNot><CheckPropertyValue><Variable name="obj"/><Property name="state"/><Enum value="unevaluated" owner="state"/></CheckPropertyValue></LogicalNot>
-operator|element|<CheckPropertyValue><Variable name="obj"/><Property name="state"/><Enum value="unevaluated" owner="state"/></CheckPropertyValue>
+operand|element|<LogicalAnd><CheckClass><Variable name="obj..."/><Class name="element"/></CheckClass><LogicalNot><CheckPropertyValue><Variable name="obj..."/><Property name="state"/><Enum value="unevaluated" owner="state"/></CheckPropertyValue></LogicalNot></LogicalAnd>
+operator|element|<LogicalAnd><CheckClass><Variable name="obj..."/><Class name="element"/></CheckClass><CheckPropertyValue><Variable name="obj..."/><Property name="state"/><Enum value="unevaluated" owner="state"/></CheckPropertyValue></LogicalAnd>
 plus|element|
 minus|element|
+and|element|
+or|element|
+ternaryConditional|element|
+comma|element|
 multiplication|element|
 division|element|
-squareParenthesis|element|
+power|element|
+brackets|element|
 parenthesis|element|

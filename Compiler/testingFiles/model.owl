@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:ns0="http://www.vstu.ru/poas/code#">
+
+    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#a">
+        <ns0:next rdf:resource="http://www.vstu.ru/poas/code#b"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#b">
+        <ns0:next rdf:resource="http://www.vstu.ru/poas/code#c"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#c">
+        <ns0:next rdf:resource="http://www.vstu.ru/poas/code#d"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#d">
+        <ns0:next rdf:resource="http://www.vstu.ru/poas/code#e"/>
+    </rdf:Description>
+
+
+    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#e">
+        <ns0:next rdf:resource="http://www.vstu.ru/poas/code#f"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#e">
+        <ns0:next rdf:resource="http://www.vstu.ru/poas/code#g"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="http://www.vstu.ru/poas/code#g">
+        <ns0:next rdf:resource="http://www.vstu.ru/poas/code#d"/>
+    </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#h">
+    <ns0:loner rdf:resource="http://www.vstu.ru/poas/code#loner"/>
+  </rdf:Description>
+
+</rdf:RDF>

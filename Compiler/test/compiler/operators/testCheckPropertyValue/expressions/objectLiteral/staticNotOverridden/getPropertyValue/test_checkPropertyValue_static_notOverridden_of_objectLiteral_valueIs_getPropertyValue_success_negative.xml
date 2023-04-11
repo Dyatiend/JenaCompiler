@@ -1,0 +1,10 @@
+<LogicalNot>
+    <CheckPropertyValue>
+        <Object name="object3"/>
+        <Property name="enumStatic2"/>
+        <GetPropertyValue>
+            <Object name="object1"/>
+            <Property name="enumStatic1"/>
+        </GetPropertyValue>
+    </CheckPropertyValue>
+</LogicalNot>

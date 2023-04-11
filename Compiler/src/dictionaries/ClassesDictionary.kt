@@ -117,4 +117,6 @@ object ClassesDictionary {
      * @return Выражение для вычисления
      */
     fun calcExpr(name: String) = get(name)?.calcExpr
+
+    fun calcExprXML(name: String) = get(name)?.calcExprXML
 }

@@ -1,0 +1,5 @@
+<CheckPropertyValue>
+    <Object name="object3"/>
+    <Property name="doubleStatic2"/>
+    <Double value="3.3"/>
+</CheckPropertyValue>

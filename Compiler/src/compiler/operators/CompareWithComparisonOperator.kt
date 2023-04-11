@@ -1,7 +1,7 @@
 package compiler.operators
 
 import compiler.Operator
-import util.CompilationResult
+import compiler.util.CompilationResult
 import util.DataType
 import util.JenaUtil.genEqualPrim
 import util.JenaUtil.genGreaterEqualPrim
@@ -57,16 +57,14 @@ class CompareWithComparisonOperator(
                 return arrayOf(Less, Greater, Equal, LessEqual, GreaterEqual, NotEqual)
             }
 
-            fun valueOf(value: String): ComparisonOperator {
-                return when (value) {
-                    "LESS" -> Less
-                    "GREATER" -> Greater
-                    "EQUAL" -> Equal
-                    "LESS_EQUAL" -> LessEqual
-                    "GREATER_EQUAL" -> Greater
-                    "NOT_EQUAL" -> NotEqual
-                    else -> throw IllegalArgumentException("No object compiler.operators.CompareWithComparisonOperator.ComparisonOperator.$value")
-                }
+            fun valueOf(value: String) = when (value) {
+                "LESS" -> Less
+                "GREATER" -> Greater
+                "EQUAL" -> Equal
+                "LESS_EQUAL" -> LessEqual
+                "GREATER_EQUAL" -> Greater
+                "NOT_EQUAL" -> NotEqual
+                else -> null
             }
         }
     }
@@ -77,16 +75,18 @@ class CompareWithComparisonOperator(
     internal var isNegative = false
 
     init {
-        require(!(
-                (arg(0).resultDataType() == DataType.String
-                        || arg(0).resultDataType() == DataType.Object )
-                && (operator != ComparisonOperator.Equal
-                        || operator != ComparisonOperator.NotEqual)
-        )) { "Указанный оператор не совместим с этими типам данных" }
+        require(
+            !(
+                    (arg(0).resultDataType == DataType.String
+                            || arg(0).resultDataType == DataType.Object)
+                            && (operator != ComparisonOperator.Equal
+                            && operator != ComparisonOperator.NotEqual)
+                    )
+        ) { "Указанный оператор не совместим с этими типам данных" }
     }
 
-    override fun argsDataTypes(): List<List<DataType>> {
-        return listOf(
+    override val argsDataTypes
+        get() = listOf(
             listOf(DataType.Integer, DataType.Double),
             listOf(DataType.Double, DataType.Integer),
             listOf(DataType.Integer, DataType.Integer),
@@ -94,11 +94,10 @@ class CompareWithComparisonOperator(
             listOf(DataType.String, DataType.String),
             listOf(DataType.Object, DataType.Object)
         )
-    }
 
-    override fun resultDataType(): DataType {
-        return DataType.Boolean
-    }
+
+    override val resultDataType get() = DataType.Boolean
+
 
     override fun compile(): CompilationResult {
         // Объявляем переменные
@@ -114,8 +113,8 @@ class CompareWithComparisonOperator(
         val compiledArg1 = arg1.compile()
 
         // Передаем завершенные правила дальше
-        completedRules += compiledArg0.completedRules +
-                compiledArg1.completedRules
+        completedRules += compiledArg0.rules +
+                compiledArg1.rules
 
         // Если нужно отрицание
         if (isNegative) {
@@ -131,8 +130,8 @@ class CompareWithComparisonOperator(
         }
 
         // Для всех результатов компиляции
-        compiledArg0.ruleHeads.forEach { head0 ->
-            compiledArg1.ruleHeads.forEach { head1 ->
+        compiledArg0.bodies.forEach { head0 ->
+            compiledArg1.bodies.forEach { head1 ->
                 var head = head0 + head1
 
                 // Добавляем проверку соответствующего оператору примитива
@@ -140,6 +139,7 @@ class CompareWithComparisonOperator(
                     ComparisonOperator.Equal -> {
                         genEqualPrim(compiledArg0.value, compiledArg1.value)
                     }
+
                     ComparisonOperator.Greater -> {
                         genGreaterThanPrim(compiledArg0.value, compiledArg1.value)
                     }
@@ -168,10 +168,14 @@ class CompareWithComparisonOperator(
     override fun clone(): Operator {
         val newArgs = ArrayList<Operator>()
 
-        args().forEach { arg ->
+        args.forEach { arg ->
             newArgs.add(arg.clone())
         }
 
+        return CompareWithComparisonOperator(newArgs, operator)
+    }
+
+    override fun clone(newArgs: List<Operator>): Operator {
         return CompareWithComparisonOperator(newArgs, operator)
     }
 }

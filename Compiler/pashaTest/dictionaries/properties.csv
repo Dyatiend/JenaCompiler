@@ -1,0 +1,5 @@
+unary|BOOLEAN||TRUE|Token;Operator|
+text|STRING||TRUE|Token;Operator|
+value|STRING||||
+name|STRING||||
+was_visited_before|BOOLEAN||||

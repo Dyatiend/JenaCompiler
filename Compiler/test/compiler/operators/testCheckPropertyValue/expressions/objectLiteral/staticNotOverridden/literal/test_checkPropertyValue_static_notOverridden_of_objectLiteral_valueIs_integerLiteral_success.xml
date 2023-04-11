@@ -1,0 +1,5 @@
+<CheckPropertyValue>
+    <Object name="object3"/>
+    <Property name="intStatic2"/>
+    <Integer value="5"/>
+</CheckPropertyValue>

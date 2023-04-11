@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:ns0="http://www.vstu.ru/poas/code#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#class1">
+    <ns0:intStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:intStatic1>
+    <ns0:doubleStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.1</ns0:doubleStatic1>
+    <ns0:booleanStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:booleanStatic1>
+    <ns0:stringStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text1</ns0:stringStatic1>
+    <ns0:enumStatic1 rdf:resource="http://www.vstu.ru/poas/code#value1"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#class2">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#class1"/>
+    <ns0:intStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:intStatic1>
+    <ns0:doubleStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">2.2</ns0:doubleStatic1>
+    <ns0:booleanStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:booleanStatic1>
+    <ns0:stringStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text2</ns0:stringStatic1>
+    <ns0:enumStatic1 rdf:resource="http://www.vstu.ru/poas/code#value2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#class3">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#class2"/>
+    <ns0:intStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ns0:intStatic1>
+    <ns0:doubleStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">3.3</ns0:doubleStatic1>
+    <ns0:booleanStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:booleanStatic1>
+    <ns0:stringStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text3</ns0:stringStatic1>
+    <ns0:enumStatic1 rdf:resource="http://www.vstu.ru/poas/code#value3"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#class4">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#class1"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#class5">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#class4"/>
+    <ns0:intStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ns0:intStatic1>
+    <ns0:doubleStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">4.4</ns0:doubleStatic1>
+    <ns0:booleanStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:booleanStatic1>
+    <ns0:stringStatic1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text4</ns0:stringStatic1>
+    <ns0:enumStatic1 rdf:resource="http://www.vstu.ru/poas/code#value4"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#class6">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#class5"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://www.vstu.ru/poas/code#class7">
+    <rdfs:subClassOf rdf:resource="http://www.vstu.ru/poas/code#class6"/>
+    <ns0:intStatic2 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ns0:intStatic2>
+    <ns0:doubleStatic2 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">5.5</ns0:doubleStatic2>
+    <ns0:booleanStatic2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:booleanStatic2>
+    <ns0:stringStatic2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text5</ns0:stringStatic2>
+    <ns0:enumStatic2 rdf:resource="http://www.vstu.ru/poas/code#value5"/>
+  </rdf:Description>
+
+  <ns0:class3 rdf:about="http://www.vstu.ru/poas/code#object1">
+    <ns0:int1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:int1>
+    <ns0:double1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.1</ns0:double1>
+    <ns0:boolean1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:boolean1>
+    <ns0:string1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text1</ns0:string1>
+    <ns0:enum1 rdf:resource="http://www.vstu.ru/poas/code#value1"/>
+  </ns0:class3>
+
+  <ns0:class3 rdf:about="http://www.vstu.ru/poas/code#object2">
+    <ns0:int1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ns0:int1>
+    <ns0:double1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.1</ns0:double1>
+    <ns0:boolean1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:boolean1>
+    <ns0:string1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text1</ns0:string1>
+    <ns0:enum1 rdf:resource="http://www.vstu.ru/poas/code#value1"/>
+  </ns0:class3>
+
+  <ns0:class7 rdf:about="http://www.vstu.ru/poas/code#object3">
+    <ns0:mark rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</ns0:mark>
+    <ns0:int1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:int1>
+    <ns0:double1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">2.2</ns0:double1>
+    <ns0:boolean1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:boolean1>
+    <ns0:string1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text2</ns0:string1>
+    <ns0:enum1 rdf:resource="http://www.vstu.ru/poas/code#value2"/>
+  </ns0:class7>
+
+  <ns0:class7 rdf:about="http://www.vstu.ru/poas/code#object4">
+    <ns0:int1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ns0:int1>
+    <ns0:double1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">2.2</ns0:double1>
+    <ns0:boolean1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:boolean1>
+    <ns0:string1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text2</ns0:string1>
+    <ns0:enum1 rdf:resource="http://www.vstu.ru/poas/code#value2"/>
+  </ns0:class7>
+
+  <ns0:class7 rdf:about="http://www.vstu.ru/poas/code#object5">
+    <ns0:var... rdf:datatype="http://www.w3.org/2001/XMLSchema#string">X</ns0:var...>
+    <ns0:int1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ns0:int1>
+    <ns0:double1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">4.4</ns0:double1>
+    <ns0:boolean1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:boolean1>
+    <ns0:string1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text4</ns0:string1>
+    <ns0:enum1 rdf:resource="http://www.vstu.ru/poas/code#value4"/>
+  </ns0:class7>
+
+  <ns0:class5 rdf:about="http://www.vstu.ru/poas/code#object6">
+    <ns0:var... rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Y</ns0:var...>
+    <ns0:int1 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ns0:int1>
+    <ns0:double1 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">3.3</ns0:double1>
+    <ns0:boolean1 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</ns0:boolean1>
+    <ns0:string1 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">text3</ns0:string1>
+    <ns0:enum1 rdf:resource="http://www.vstu.ru/poas/code#value3"/>
+  </ns0:class5>
+
+</rdf:RDF>

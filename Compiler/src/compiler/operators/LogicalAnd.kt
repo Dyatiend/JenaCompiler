@@ -11,9 +11,9 @@ import util.JenaUtil.genEqualPrim
  */
 class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
 
-    override val argsDataTypes = listOf(listOf(DataType.Boolean, DataType.Boolean))
+    override val argsDataTypes get() = listOf(listOf(DataType.Boolean, DataType.Boolean))
 
-    override val resultDataType = DataType.Boolean
+    override val resultDataType get() = DataType.Boolean
     override fun compile(): CompilationResult {
         // Объявляем переменные
         val heads = ArrayList<String>()
@@ -54,7 +54,7 @@ class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
                 }
 
                 // Для всех результатов компиляции
-                compiledArg1.heads.forEach { head1 ->
+                compiledArg1.bodies.forEach { head1 ->
                     val head = head0 + head1
 
                     // Добавляем в массив
@@ -71,7 +71,7 @@ class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
                 }
 
                 // Для всех результатов компиляции
-                compiledArg0.heads.forEach { head0 ->
+                compiledArg0.bodies.forEach { head0 ->
                     val head = head0 + head1
 
                     // Добавляем в массив
@@ -80,8 +80,8 @@ class LogicalAnd(args: List<Operator>) : BaseOperator(args) {
             }
             else -> {
                 // Для всех результатов компиляции
-                compiledArg0.heads.forEach { head0 ->
-                    compiledArg1.heads.forEach { head1 ->
+                compiledArg0.bodies.forEach { head0 ->
+                    compiledArg1.bodies.forEach { head1 ->
                         val head = head0 + head1
 
                         // Добавляем в массив

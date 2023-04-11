@@ -1,0 +1,7 @@
+<LogicalNot>
+    <CheckPropertyValue>
+        <Object name="object2"/>
+        <Property name="doubleStatic1"/>
+        <Double value="3.3"/>
+    </CheckPropertyValue>
+</LogicalNot>

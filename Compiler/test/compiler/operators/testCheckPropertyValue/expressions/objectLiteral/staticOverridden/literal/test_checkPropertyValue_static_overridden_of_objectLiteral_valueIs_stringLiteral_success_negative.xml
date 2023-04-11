@@ -1,0 +1,7 @@
+<LogicalNot>
+    <CheckPropertyValue>
+        <Object name="object3"/>
+        <Property name="stringStatic1"/>
+        <String value="TEXT4"/>
+    </CheckPropertyValue>
+</LogicalNot>
